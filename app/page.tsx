@@ -1,13 +1,18 @@
 "use client";
 import Link from "next/link";
+import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
 import { useState } from "react";
-import Hero3D from "@/components/Hero3D";
 import Artwork from "@/components/Artwork";
 import { Reveal, FadeIn } from "@/components/Reveal";
 import { SectionHeading, Marquee, Sparkle, GoldButton, GhostButton, DemoBadge } from "@/components/ui";
 import { CATEGORIES, PIPELINE_STEPS } from "@/lib/store";
 import { WHATSAPP_URL, INSTAGRAM_URL } from "@/lib/client";
+
+const Hero3D = dynamic(() => import("@/components/Hero3D"), {
+  ssr: false,
+  loading: () => <div className="absolute inset-0" aria-hidden />,
+});
 
 /* ---------------- HERO ---------------- */
 function Hero() {
@@ -55,24 +60,18 @@ function Hero() {
               <GhostButton>See how it works</GhostButton>
             </Link>
           </motion.div>
-          {/* stats */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1, delay: 0.65 }}
-            className="mt-12 flex gap-8 md:gap-12"
-          >
+          <div className="mt-12 grid max-w-xl grid-cols-3 gap-4 border-t border-charcoal/10 pt-6">
             {[
-              ["500+", "keepsakes delivered"],
-              ["4.9★", "average rating"],
-              ["Pan-India", "shipping"],
-            ].map(([n, l]) => (
-              <div key={l}>
-                <p className="font-display text-3xl text-charcoal md:text-4xl">{n}</p>
-                <p className="mt-1 text-xs uppercase tracking-[0.18em] text-charcoal-muted">{l}</p>
+              ["01", "Made to order"],
+              ["02", "You approve the demo"],
+              ["03", "Clear quote first"],
+            ].map(([n, label]) => (
+              <div key={n}>
+                <p className="font-display text-xl text-rosegold-dark">{n}</p>
+                <p className="mt-1 text-[11px] font-medium leading-snug text-charcoal-muted sm:text-xs">{label}</p>
               </div>
             ))}
-          </motion.div>
+          </div>
         </div>
         {/* right column intentionally breathes — the 3D sculpture lives behind */}
         <div className="hidden md:block" />
@@ -128,10 +127,10 @@ function Categories() {
 
 /* ---------------- FEATURED WORK ---------------- */
 const FEATURED = [
-  { category: "Pets" as const, title: "Gappu — Golden Retriever", note: "4\" hand-painted replica" },
-  { category: "Couples" as const, title: "Aarav & Meera — Anniversary", note: "Wedding-day miniature" },
-  { category: "Idols" as const, title: "Radha Krishna", note: "6\" antique gold finish" },
-  { category: "Kids" as const, title: "Little Aarush", note: "First-birthday keepsake" },
+  { category: "Pets" as const, title: "Custom pet figurine", note: "A keepsake shaped from your photos" },
+  { category: "Couples" as const, title: "Couple miniature", note: "Made for anniversaries and weddings" },
+  { category: "Idols" as const, title: "Devotional figurine", note: "Personalised size and finish" },
+  { category: "Kids" as const, title: "Little moments, made tangible", note: "A custom piece for a milestone" },
 ];
 
 function FeaturedWork() {
@@ -142,7 +141,7 @@ function FeaturedWork() {
           <SectionHeading
             eyebrow="Featured work"
             title={<>Fresh from the <em className="text-rosegold-dark">studio</em></>}
-            sub="A glimpse of recent keepsakes — each one began as a customer's photograph."
+            sub="Illustrative concepts only. Visit the studio&apos;s Instagram to see real pieces and process videos."
           />
         </Reveal>
         <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
@@ -207,38 +206,61 @@ function HowItWorks() {
   );
 }
 
-/* ---------------- TESTIMONIALS ---------------- */
-const REVIEWS = [
-  { name: "Priya S.", city: "Mumbai", text: "The replica of my Bruno looks so real I teared up. The video demo before shipping gave me total confidence.", item: "Pet replica" },
-  { name: "Rohan & Ananya", city: "Delhi", text: "Ordered couple miniatures for our first anniversary. Guests couldn't stop asking where we got them!", item: "Couple miniature" },
-  { name: "Kavitha R.", city: "Chennai", text: "The Radha Krishna idol is the centrepiece of our pooja room now. Finish quality is genuinely premium.", item: "Idol" },
+/* ---------------- FROM THE STUDIO ---------------- */
+const INSTAGRAM_FEATURES = [
+  {
+    category: "HOME DECOR",
+    title: "Custom 3D-printed jewellery tray",
+    href: "https://www.instagram.com/reel/DZo781Eo1oU/",
+    tone: "from-[#ead9d2] to-[#f5eadc]",
+  },
+  {
+    category: "PERSONALISED GIFTS",
+    title: "A miniature made from your favourite photo",
+    href: "https://www.instagram.com/dikor_in/reel/DbsYFEFolkW/",
+    tone: "from-[#e2d5c6] to-[#f0e4d9]",
+  },
+  {
+    category: "PET KEEPSAKES",
+    title: "A little 3D-printed lookalike for your best friend",
+    href: "https://www.instagram.com/dikor_in/",
+    tone: "from-[#d9ded1] to-[#eee8d8]",
+  },
 ];
 
-function Testimonials() {
+function FromTheStudio() {
   return (
     <section className="bg-charcoal py-24 text-cream">
       <div className="mx-auto max-w-7xl px-5 md:px-8">
         <Reveal>
-          <div className="mb-12 text-center">
-            <p className="mb-4 flex items-center justify-center gap-2 text-xs font-semibold uppercase tracking-[0.28em] text-gold-light">
-              <Sparkle className="h-3.5 w-3.5" /> Loved across India <Sparkle className="h-3.5 w-3.5" />
-            </p>
-            <h2 className="font-display text-4xl md:text-5xl">Stories from happy homes</h2>
+          <div className="mb-12 flex flex-wrap items-end justify-between gap-6">
+            <div>
+              <p className="mb-4 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.28em] text-gold-light">
+                <Sparkle className="h-3.5 w-3.5" /> From the studio
+              </p>
+              <h2 className="font-display text-4xl md:text-5xl">Made by DIKOR, seen on Instagram.</h2>
+              <p className="mt-4 max-w-2xl text-cream/70">Concept thumbnails below link to Dikor&apos;s real Instagram posts—watch finished prints and the making process there.</p>
+            </div>
+            <a href={INSTAGRAM_URL} target="_blank" rel="noreferrer" className="text-sm font-semibold text-gold-light underline-offset-4 hover:underline">
+              Follow @dikor_in <span aria-hidden>↗</span>
+            </a>
           </div>
         </Reveal>
-        <div className="grid gap-6 md:grid-cols-3">
-          {REVIEWS.map((r, i) => (
-            <Reveal key={r.name} delay={i * 0.1}>
-              <figure className="flex h-full flex-col rounded-3xl border border-gold/25 bg-white/5 p-7 backdrop-blur transition-all duration-500 hover:-translate-y-1.5 hover:border-gold/50">
-                <div className="mb-4 flex gap-1 text-gold-light" aria-label="5 star rating">
-                  {"★★★★★".split("").map((s, j) => <span key={j}>{s}</span>)}
+        <div className="grid gap-5 md:grid-cols-3">
+          {INSTAGRAM_FEATURES.map((item, index) => (
+            <Reveal key={item.title} delay={index * 0.08}>
+              <a href={item.href} target="_blank" rel="noreferrer" className="group block h-full overflow-hidden rounded-3xl border border-cream/10 bg-white/[0.04] transition-transform duration-300 hover:-translate-y-1">
+                <div className={`relative grid aspect-[4/3] place-items-center overflow-hidden bg-gradient-to-br ${item.tone}`}>
+                  <Artwork category={index === 0 ? "Decor" : index === 1 ? "Couples" : "Pets"} className="h-full w-full transition-transform duration-500 group-hover:scale-[1.03]" />
+                  <span className="absolute left-4 top-4 rounded-full bg-charcoal/80 px-3 py-1 text-[10px] font-bold tracking-[0.18em] text-cream backdrop-blur">CONCEPT ILLUSTRATION</span>
+                  <span className="absolute bottom-4 right-4 grid h-10 w-10 place-items-center rounded-full bg-cream text-charcoal transition-transform group-hover:translate-x-1" aria-hidden>↗</span>
                 </div>
-                <blockquote className="flex-1 font-display text-xl italic leading-relaxed text-cream/90">“{r.text}”</blockquote>
-                <figcaption className="mt-6 border-t border-cream/10 pt-4">
-                  <p className="text-sm font-semibold text-gold-light">{r.name} · {r.city}</p>
-                  <p className="text-xs uppercase tracking-[0.18em] text-cream/50">{r.item}</p>
-                </figcaption>
-              </figure>
+                <div className="p-5">
+                  <p className="text-[10px] font-bold tracking-[0.2em] text-gold-light">{item.category}</p>
+                  <h3 className="mt-2 font-display text-xl text-cream">{item.title}</h3>
+                  <p className="mt-3 text-xs font-semibold text-cream/60">Watch on Instagram ↗</p>
+                </div>
+              </a>
             </Reveal>
           ))}
         </div>
@@ -377,7 +399,7 @@ export default function Home() {
       <Categories />
       <FeaturedWork />
       <HowItWorks />
-      <Testimonials />
+      <FromTheStudio />
       <Audiences />
       <PricingHint />
       <Faq />
