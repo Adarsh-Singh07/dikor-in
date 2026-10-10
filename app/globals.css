@@ -50,3 +50,31 @@ body {
 .hero-vignette {
   background: radial-gradient(ellipse 90% 70% at 50% 40%, transparent 40%, rgba(250, 245, 236, 0.9) 100%);
 }
+
+/* full-height hero with small-viewport unit fallback (iOS Safari) */
+.min-h-hero { min-height: 100vh; min-height: 100svh; }
+
+/* subtle paper grain (pure CSS, no network) */
+.grain {
+  background-image: radial-gradient(rgba(42, 35, 32, 0.08) 0.6px, transparent 0.6px);
+  background-size: 3px 3px;
+}
+
+/* hide horizontal scrollbar on tab rows */
+.no-scrollbar { scrollbar-width: none; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+
+/* consistent keyboard focus ring */
+:focus-visible {
+  outline: 2px solid #b76e79;
+  outline-offset: 3px;
+}
+a:focus:not(:focus-visible), button:focus:not(:focus-visible) { outline: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
