@@ -1,17 +1,38 @@
 "use client";
-import { useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Canvas, useFrame } from "@react-three/fiber";
 import { ContactShadows, Float, Sparkles } from "@react-three/drei";
 import * as THREE from "three";
+
+/** Reactive viewport size (updates on window resize / orientation change). */
+function useViewport() {
+  const [size, setSize] = useState(() =>
+    typeof window !== "undefined"
+      ? { width: window.innerWidth, height: window.innerHeight }
+      : { width: 1280, height: 800 }
+  );
+  useEffect(() => {
+    const onResize = () => setSize({ width: window.innerWidth, height: window.innerHeight });
+    window.addEventListener("resize", onResize);
+    window.addEventListener("orientationchange", onResize);
+    return () => {
+      window.removeEventListener("resize", onResize);
+      window.removeEventListener("orientationchange", onResize);
+    };
+  }, []);
+  return size;
+}
 
 /**
  * Abstract premium "keepsake" sculpture built from primitives:
  * a figurine-like form (capsule torso + sphere head) in rose-gold metal,
  * embraced by a floating gold torus ring, standing on a dark pedestal.
  */
-function Sculpture() {
+function Sculpture({ baseX, scale }: { baseX: number; scale: number }) {
   const group = useRef<THREE.Group>(null);
   const ring = useRef<THREE.Mesh>(null);
+  const baseXRef = useRef(baseX);
+  baseXRef.current = baseX;
   const reduce = useMemo(
     () => typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches,
     []
@@ -22,10 +43,14 @@ function Sculpture() {
     const t = state.clock.elapsedTime;
     if (group.current) {
       group.current.rotation.y += delta * 0.25;
-      // gentle mouse parallax
+      // gentle mouse parallax around the responsive base offset
       const { x, y } = state.pointer;
       group.current.rotation.x = THREE.MathUtils.lerp(group.current.rotation.x, y * 0.12, 0.05);
-      group.current.position.x = THREE.MathUtils.lerp(group.current.position.x, x * 0.25, 0.05);
+      group.current.position.x = THREE.MathUtils.lerp(
+        group.current.position.x,
+        baseXRef.current + x * 0.25,
+        0.05
+      );
     }
     if (ring.current) {
       ring.current.rotation.z = t * 0.3;
@@ -51,7 +76,7 @@ function Sculpture() {
   );
 
   return (
-    <group ref={group} position={[0, -0.4, 0]}>
+    <group ref={group} position={[baseX, -0.4, 0]} scale={scale}>
       {/* pedestal */}
       <mesh position={[0, -1.55, 0]} material={walnut}>
         <cylinderGeometry args={[0.85, 1.0, 0.5, 48]} />
@@ -92,23 +117,62 @@ function Sculpture() {
   );
 }
 
+const CAMERA_Z = 6.2;
+const CAMERA_FOV = 42;
+
 export default function Hero3D() {
-  const isMobile = useMemo(() => typeof window !== "undefined" && window.innerWidth < 640, []);
+  const { width, height } = useViewport();
+  const [ready, setReady] = useState(false);
+  const isDesktop = width >= 768;
+  const isMobile = width < 640;
+
+  // Half-width of the visible scene at the sculpture plane (z = 0).
+  const halfW = useMemo(() => {
+    const aspect = width / Math.max(height, 1);
+    return Math.tan(THREE.MathUtils.degToRad(CAMERA_FOV / 2)) * CAMERA_Z * aspect;
+  }, [width, height]);
+
+  // Desktop: park the sculpture in the right-hand column, clear of the headline,
+  // and keep the whole ring inside the viewport. Mobile: centred, slightly smaller.
+  const baseX = isDesktop
+    ? Math.min(halfW * 0.36, Math.max(0, halfW * 0.96 - 1.35))
+    : 0;
+  const sculptureScale = isDesktop ? 1 : 0.85;
+
   return (
     <div className="hero-canvas absolute inset-0" aria-hidden>
-      <Canvas
-        dpr={[1, isMobile ? 1.5 : 1.75]}
-        camera={{ position: [0, 0.6, 6.2], fov: 42 }}
-        gl={{ antialias: true, alpha: true }}
+      {/* graceful loading state — brand-coloured glow where the sculpture appears */}
+      <div
+        className={`absolute inset-0 transition-opacity duration-1000 ${ready ? "opacity-0" : "opacity-100"}`}
       >
-        <ambientLight intensity={0.55} color="#fff4e0" />
-        <spotLight position={[5, 6, 4]} angle={0.5} penumbra={1} intensity={2.2} color="#ffe9c4" />
-        <spotLight position={[-5, 3, -3]} angle={0.6} penumbra={1} intensity={1.1} color="#f0b8c0" />
-        <directionalLight position={[0, 4, 6]} intensity={0.5} color="#ffffff" />
-        <Sculpture />
-        <Sparkles count={isMobile ? 35 : 70} scale={[7, 5, 4]} position={[0, 0.5, 0]} size={4} speed={0.35} color="#e9ce7a" opacity={0.75} />
-        <ContactShadows position={[0, -1.85, 0]} opacity={0.35} scale={9} blur={2.6} far={4} color="#2a2320" />
-      </Canvas>
+        <div className="absolute left-1/2 top-[36%] h-64 w-64 -translate-x-1/2 animate-pulse rounded-full bg-[radial-gradient(circle,rgba(201,138,148,0.32)_0%,rgba(233,206,122,0.12)_45%,transparent_70%)] md:left-[68%] md:top-[38%]" />
+      </div>
+      <div
+        className={`absolute inset-0 transition-opacity duration-1000 ${ready ? "opacity-100" : "opacity-0"}`}
+      >
+        <Canvas
+          dpr={[1, isMobile ? 1.5 : 1.75]}
+          camera={{ position: [0, 0.6, CAMERA_Z], fov: CAMERA_FOV }}
+          gl={{ antialias: true, alpha: true }}
+          onCreated={() => setReady(true)}
+        >
+          <ambientLight intensity={0.55} color="#fff4e0" />
+          <spotLight position={[5, 6, 4]} angle={0.5} penumbra={1} intensity={2.2} color="#ffe9c4" />
+          <spotLight position={[-5, 3, -3]} angle={0.6} penumbra={1} intensity={1.1} color="#f0b8c0" />
+          <directionalLight position={[0, 4, 6]} intensity={0.5} color="#ffffff" />
+          <Sculpture baseX={baseX} scale={sculptureScale} />
+          <Sparkles count={isMobile ? 35 : 70} scale={[7, 5, 4]} position={[0, 0.5, 0]} size={4} speed={0.35} color="#e9ce7a" opacity={0.75} />
+          {/* shadow follows the sculpture; tightened so it never sprawls under the SCROLL cue */}
+          <ContactShadows
+            position={[baseX, -1.85, 0]}
+            opacity={0.3}
+            scale={isDesktop ? 5 : 7}
+            blur={2.6}
+            far={4}
+            color="#2a2320"
+          />
+        </Canvas>
+      </div>
     </div>
   );
 }

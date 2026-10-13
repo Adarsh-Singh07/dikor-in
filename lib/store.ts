@@ -72,7 +72,7 @@ export const PIPELINE_STEPS: { key: string; label: string; statuses: OrderStatus
   },
   {
     key: "advance",
-    label: "Advance green-lights it",
+    label: "Advance & go-ahead",
     statuses: ["advance_paid"],
     blurb: "A small advance confirms your slot and we begin crafting.",
   },

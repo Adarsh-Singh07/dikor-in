@@ -44,8 +44,8 @@ export default function HowItWorksPage() {
                 <h3 className="font-display text-2xl text-charcoal md:text-3xl">{s.label}</h3>
                 <p className="mt-2 leading-relaxed text-charcoal-muted">{s.blurb}</p>
                 {i === 3 && (
-                  <p className="mt-3 inline-flex items-center gap-2 rounded-full bg-blush px-4 py-1.5 text-xs font-semibold uppercase tracking-[0.16em] text-rosegold-dark">
-                    <Sparkle className="h-3.5 w-3.5 text-gold-dark" /> Revisions included — free
+                  <p className="mt-3 inline-flex items-center gap-2 rounded-full bg-blush px-4 py-2 text-xs font-semibold uppercase leading-relaxed tracking-[0.16em] text-rosegold-dark">
+                    <Sparkle className="h-3.5 w-3.5 shrink-0 text-gold-dark" /> Revisions included — free
                   </p>
                 )}
               </div>
