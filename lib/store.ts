@@ -5,15 +5,18 @@ export type Role = "customer" | "admin";
 
 export type Category = "Pets" | "Couples" | "Kids" | "Idols" | "Decor";
 
+/** DIKOR v2 order flow — matches the real process from DIKOR's IG Q&A:
+ *  photos (4–5) → 75% advance → print & paint → approval video → approved
+ *  → 25% balance → shipped → delivered. */
 export type OrderStatus =
-  | "submitted"
-  | "quoted"
+  | "photos_received"
   | "advance_paid"
-  | "demo_shared"
-  | "approved"
   | "in_production"
-  | "ready_for_balance"
-  | "completed";
+  | "approval_shared"
+  | "approved"
+  | "balance_paid"
+  | "shipped"
+  | "delivered";
 
 export interface User {
   id: string;
@@ -56,49 +59,67 @@ export interface Order {
   updatedAt: string;
 }
 
-/** Customer-facing 5-step pipeline (mirrors the order flow). */
+/** Customer-facing 8-step pipeline (mirrors the real order flow). */
 export const PIPELINE_STEPS: { key: string; label: string; statuses: OrderStatus[]; blurb: string }[] = [
   {
-    key: "share",
-    label: "Tell us what you need",
-    statuses: ["submitted"],
-    blurb: "Share reference photos and describe your keepsake — pet, couple, idol or decor.",
-  },
-  {
-    key: "quote",
-    label: "Clear quotation",
-    statuses: ["quoted"],
-    blurb: "You get a transparent quote with price and delivery timeline. No hidden costs.",
+    key: "photos",
+    label: "Photos received",
+    statuses: ["photos_received"],
+    blurb: "Your 4–5 reference photos are in — our studio studies every detail.",
   },
   {
     key: "advance",
-    label: "Advance & go-ahead",
+    label: "75% advance paid",
     statuses: ["advance_paid"],
-    blurb: "A small advance confirms your slot and we begin crafting.",
+    blurb: "The advance confirms your order and reserves your production slot.",
   },
   {
-    key: "review",
-    label: "Review before it ships",
-    statuses: ["demo_shared", "approved", "in_production"],
-    blurb: "Watch a video demo of your piece. Revisions included — we ship only when you love it.",
+    key: "production",
+    label: "Printing & painting",
+    statuses: ["in_production"],
+    blurb: "Your piece is 3D-printed layer by layer, then hand-painted by our artists. Takes 4–5 days.",
   },
   {
-    key: "deliver",
-    label: "Balance & delivery",
-    statuses: ["ready_for_balance", "completed"],
-    blurb: "Clear the balance and your keepsake ships pan-India, packed with care.",
+    key: "approval",
+    label: "Approval video shared",
+    statuses: ["approval_shared"],
+    blurb: "We send photos or a video of the finished piece — you approve it before anything ships.",
+  },
+  {
+    key: "approved",
+    label: "You approved it",
+    statuses: ["approved"],
+    blurb: "Perfect — you love it. Just the balance and we're off to shipping.",
+  },
+  {
+    key: "balance",
+    label: "25% balance paid",
+    statuses: ["balance_paid"],
+    blurb: "Balance cleared. Your keepsake is packed with care.",
+  },
+  {
+    key: "shipped",
+    label: "Shipped",
+    statuses: ["shipped"],
+    blurb: "On its way to your doorstep, anywhere in India.",
+  },
+  {
+    key: "delivered",
+    label: "Delivered",
+    statuses: ["delivered"],
+    blurb: "Delivered — enjoy your keepsake!",
   },
 ];
 
 export const STATUS_LABELS: Record<OrderStatus, string> = {
-  submitted: "Order placed",
-  quoted: "Quote ready",
-  advance_paid: "Advance paid",
-  demo_shared: "Demo video shared",
+  photos_received: "Photos received",
+  advance_paid: "Advance paid (75%)",
+  in_production: "Printing & painting",
+  approval_shared: "Approval video shared",
   approved: "Approved",
-  in_production: "In production",
-  ready_for_balance: "Balance due",
-  completed: "Delivered",
+  balance_paid: "Balance paid (25%)",
+  shipped: "Shipped",
+  delivered: "Delivered",
 };
 
 export const CATEGORIES: { key: Category; tagline: string; from: string }[] = [
@@ -171,14 +192,14 @@ function seed(db: DB) {
     userId: customer.id,
     title: "Gappu — Golden Retriever replica",
     category: "Pets",
-    description: "4-inch hand-painted replica of my golden retriever Gappu, sitting pose, with name base.",
+    description: "5-inch hand-painted replica of my golden retriever Gappu, sitting pose, with name base.",
     photos: [pawSvg("#F3EAD9", "#B76E79"), pawSvg("#F7E8E4", "#C9A227")],
-    size: '4 inch',
+    size: '5 inch · slim',
     material: "PLA + hand-painted finish",
     city: "Bengaluru",
-    status: "demo_shared",
-    price: 2499,
-    advancePct: 40,
+    status: "approval_shared",
+    price: 1500,
+    advancePct: 75,
     timelineDays: 12,
     demoVideo: null,
     demoNote: "Fresh from the paint booth — turn your sound on!",
@@ -187,10 +208,10 @@ function seed(db: DB) {
     advancePaid: true,
     balancePaid: false,
     events: [
-      { at: t0, status: "submitted", note: "Order placed with 2 reference photos", by: "customer" },
-      { at: t1, status: "quoted", note: "Quote shared: ₹2,499 · 12 days", by: "admin" },
-      { at: t1, status: "advance_paid", note: "Advance of ₹1,000 received (demo)", by: "customer" },
-      { at: t2, status: "demo_shared", note: "Demo video shared for review", by: "admin" },
+      { at: t0, status: "photos_received", note: "Order placed with 2 reference photos", by: "customer" },
+      { at: t1, status: "advance_paid", note: "Advance of ₹1,125 received (demo)", by: "customer" },
+      { at: t2, status: "in_production", note: "Printing & painting started", by: "admin" },
+      { at: t2, status: "approval_shared", note: "Approval video shared for review", by: "admin" },
     ],
     createdAt: t0,
     updatedAt: t2,
@@ -201,28 +222,25 @@ function seed(db: DB) {
     userId: customer.id,
     title: "Radha Krishna idol — 6 inch",
     category: "Idols",
-    description: "6-inch Radha Krishna idol in antique gold finish for the pooja room.",
+    description: "Radha Krishna idol in antique gold finish for the pooja room.",
     photos: [idolSvg("#FAF5EC", "#C9A227")],
     size: '6 inch',
     material: "Resin + antique gold finish",
     city: "Jalandhar",
     status: "in_production",
     price: 3499,
-    advancePct: 40,
+    advancePct: 75,
     timelineDays: 15,
     demoVideo: null,
     demoNote: "",
-    revisionCount: 1,
-    productionStage: "Printing",
+    revisionCount: 0,
+    productionStage: "Painting",
     advancePaid: true,
     balancePaid: false,
     events: [
-      { at: t0, status: "submitted", note: "Order placed", by: "customer" },
-      { at: t1, status: "quoted", note: "Quote shared: ₹3,499 · 15 days", by: "admin" },
-      { at: t1, status: "advance_paid", note: "Advance of ₹1,400 received (demo)", by: "customer" },
-      { at: t2, status: "demo_shared", note: "Demo video shared", by: "admin" },
-      { at: t2, status: "approved", note: "Approved after 1 revision", by: "customer" },
-      { at: t2, status: "in_production", note: "Printing started", by: "admin" },
+      { at: t0, status: "photos_received", note: "Order placed", by: "customer" },
+      { at: t1, status: "advance_paid", note: "Advance of ₹2,624 received (demo)", by: "customer" },
+      { at: t2, status: "in_production", note: "Printing & painting started", by: "admin" },
     ],
     createdAt: t0,
     updatedAt: t2,
@@ -249,14 +267,14 @@ export const db = {
   getOrders: (): Order[] => [...getDB().orders.values()].sort((a, b) => b.createdAt.localeCompare(a.createdAt)),
   getOrdersByUser: (userId: string): Order[] => db.getOrders().filter((o) => o.userId === userId),
   getOrder: (id: string) => getDB().orders.get(id),
-  createOrder: (data: Omit<Order, "id" | "status" | "price" | "advancePct" | "timelineDays" | "demoVideo" | "demoNote" | "revisionCount" | "productionStage" | "advancePaid" | "balancePaid" | "events" | "createdAt" | "updatedAt">): Order => {
+  createOrder: (data: Omit<Order, "id" | "status" | "advancePct" | "timelineDays" | "demoVideo" | "demoNote" | "revisionCount" | "productionStage" | "advancePaid" | "balancePaid" | "events" | "createdAt" | "updatedAt">): Order => {
     const d = getDB();
     const t = now();
     const o: Order = {
-      ...data, id: uid("ord"), status: "submitted", price: null, advancePct: 40,
-      timelineDays: null, demoVideo: null, demoNote: "", revisionCount: 0,
+      ...data, id: uid("ord"), status: "photos_received", price: data.price ?? null, advancePct: 75,
+      timelineDays: 12, demoVideo: null, demoNote: "", revisionCount: 0,
       productionStage: "", advancePaid: false, balancePaid: false,
-      events: [{ at: t, status: "submitted", note: "Order placed", by: "customer" }],
+      events: [{ at: t, status: "photos_received", note: "Order placed with reference photos", by: "customer" }],
       createdAt: t, updatedAt: t,
     };
     d.orders.set(o.id, o);
