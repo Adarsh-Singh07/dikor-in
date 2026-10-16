@@ -1,124 +1,167 @@
 "use client";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { useState } from "react";
-import Hero3D from "@/components/Hero3D";
-import Artwork from "@/components/Artwork";
-import { Reveal, FadeIn } from "@/components/Reveal";
-import { SectionHeading, Marquee, Sparkle, GoldButton, GhostButton, DemoBadge } from "@/components/ui";
-import { CATEGORIES, PIPELINE_STEPS } from "@/lib/store";
-import { WHATSAPP_URL, INSTAGRAM_URL } from "@/lib/client";
+import { Reveal } from "@/components/Reveal";
+import { SectionHeading, Marquee, Sparkle, GoldButton, GhostButton } from "@/components/ui";
+import Cylinder from "@/components/Cylinder";
+import OrderBuilder, { type BuilderSummary } from "@/components/OrderBuilder";
+import HowItWorksSection from "@/components/HowItWorksSection";
+import BeforeAfter from "@/components/BeforeAfter";
+import FaqAccordion from "@/components/FaqAccordion";
+import { CATEGORIES, INCLUDED_ALWAYS, WHATSAPP_LINK, INSTAGRAM_HANDLE } from "@/lib/catalog";
+import { REVIEWS, AGGREGATE } from "@/lib/reviews";
 
-/* ---------------- HERO ---------------- */
+const RING_IMAGES = [
+  { src: "/images/hero-dog.webp", label: "Pet miniature" },
+  { src: "/images/couple.webp", label: "Couple miniature" },
+  { src: "/images/ganesha.webp", label: "Ganesha idol" },
+  { src: "/images/kid.webp", label: "Child miniature" },
+  { src: "/images/decor.webp", label: "Home decor" },
+  { src: "/images/pets-group.webp", label: "Pet minis" },
+];
+
+/* ---------- pointer-tilting 3D pedestal card ---------- */
+function TiltCard() {
+  const [t, setT] = useState({ x: 0, y: 0 });
+  return (
+    <div style={{ perspective: 1200 }}>
+      <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
+        className="relative mx-auto w-full max-w-md"
+        style={{ transformStyle: "preserve-3d", transform: `rotateX(${-t.y * 8}deg) rotateY(${t.x * 10}deg)` }}
+        onMouseMove={(e) => {
+          const r = e.currentTarget.getBoundingClientRect();
+          setT({ x: (e.clientX - r.left) / r.width - 0.5, y: (e.clientY - r.top) / r.height - 0.5 });
+        }}
+        onMouseLeave={() => setT({ x: 0, y: 0 })}
+      >
+        {/* pedestal glow */}
+        <div className="absolute -inset-6 rounded-[3rem] bg-[radial-gradient(circle_at_50%_60%,rgba(201,162,39,0.28),rgba(183,110,121,0.14)_55%,transparent_75%)]" aria-hidden />
+        <div className="relative overflow-hidden rounded-[2.5rem] border border-gold/30 bg-white shadow-soft">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/images/hero-dog.webp" alt="Hand-painted DIKOR dog miniature on a wooden base" className="aspect-[4/5] w-full object-cover" fetchPriority="high" />
+          <div className="flex items-center justify-between bg-cream/90 px-6 py-4 backdrop-blur">
+            <div>
+              <p className="font-display text-xl text-charcoal">Pet miniature · 5 inch</p>
+              <p className="text-xs uppercase tracking-[0.18em] text-charcoal-muted">Hand-painted · name tag included</p>
+            </div>
+            <p className="font-display text-2xl text-gold-dark">₹1,500</p>
+          </div>
+        </div>
+        {/* floating chips */}
+        <div className="absolute -left-4 top-8 rounded-full bg-white/90 px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-rosegold-dark shadow-card backdrop-blur" style={{ transform: "translateZ(60px)" }}>
+          ✦ Made from your photos
+        </div>
+        <div className="absolute -right-3 bottom-24 rounded-full bg-white/90 px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-gold-dark shadow-card backdrop-blur" style={{ transform: "translateZ(60px)" }}>
+          ✦ 75% advance · 25% later
+        </div>
+      </motion.div>
+    </div>
+  );
+}
+
+/* ---------- hero ---------- */
 function Hero() {
   return (
-    <section className="relative flex min-h-[100svh] items-center overflow-hidden pt-24">
-      {/* warm gradient backdrop */}
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_70%_30%,#F7E8E4_0%,#FAF5EC_55%,#F3EAD9_100%)]" />
-      <Hero3D />
-      <div className="hero-vignette pointer-events-none absolute inset-0" />
-
-      <div className="relative z-10 mx-auto grid w-full max-w-7xl gap-10 px-5 pb-20 md:grid-cols-2 md:px-8">
-        <div className="flex flex-col justify-center">
-          <FadeIn>
-            <p className="mb-5 inline-flex w-fit items-center gap-2 rounded-full border border-gold/40 bg-white/60 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.24em] text-gold-dark backdrop-blur">
-              <Sparkle className="h-3 w-3" /> Custom 3D-printed gifting studio <DemoBadge />
-            </p>
-          </FadeIn>
-          <motion.h1
-            initial={{ opacity: 0, y: 36 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: 0.15, ease: [0.22, 1, 0.36, 1] }}
-            className="font-display text-5xl leading-[1.05] text-charcoal md:text-7xl"
+    <section className="relative overflow-hidden pt-28 md:pt-32">
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_90%_60%_at_70%_20%,#F7E8E4_0%,#FAF5EC_55%,#F3EAD9_100%)]" aria-hidden />
+      <div className="relative z-10 mx-auto grid w-full max-w-7xl items-center gap-12 px-5 pb-10 md:grid-cols-2 md:px-8">
+        <div>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}
+            className="mb-5 inline-flex w-fit items-center gap-2 rounded-full border border-gold/40 bg-white/60 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.24em] text-gold-dark backdrop-blur"
           >
-            Turn your favourite photo into a <em className="text-shimmer not-italic font-semibold">keepsake</em>.
+            <Sparkle className="h-3 w-3" /> Custom 3D-printed gifting studio
+          </motion.p>
+          <motion.h1
+            initial={{ opacity: 0, y: 36 }} animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.9, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
+            className="font-display text-5xl leading-[1.04] text-charcoal md:text-7xl"
+          >
+            Your pet, turned into a <em className="text-shimmer not-italic font-semibold">mini statue</em>.
           </motion.h1>
           <motion.p
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: 0.3 }}
+            initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.26 }}
             className="mt-6 max-w-md text-lg leading-relaxed text-charcoal-muted"
           >
-            Hand-finished 3D figurines of your pets, your people, your deities — crafted from your photos,
-            reviewed by you on video, shipped across India.
+            Send 4–5 clear photos — we 3D-print and hand-paint a figurine that looks just like them,
+            then share photos or a video for your approval before it ships.
           </motion.p>
           <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: 0.45 }}
-            className="mt-8 flex flex-wrap gap-4"
+            initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.4 }}
+            className="mt-8 flex flex-col gap-3 sm:flex-row"
           >
-            <Link href="/auth">
-              <GoldButton>Start your custom order</GoldButton>
-            </Link>
-            <Link href="/how-it-works">
-              <GhostButton>See how it works</GhostButton>
-            </Link>
+            <a href="#order"><GoldButton className="w-full sm:w-auto">Start your order</GoldButton></a>
+            <a href="#how-it-works"><GhostButton className="w-full sm:w-auto">See how it works</GhostButton></a>
           </motion.div>
-          {/* stats */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1, delay: 0.65 }}
-            className="mt-12 flex gap-8 md:gap-12"
+          <motion.p
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.6 }}
+            className="mt-5 text-sm font-medium text-charcoal-muted"
           >
-            {[
-              ["500+", "keepsakes delivered"],
-              ["4.9★", "average rating"],
-              ["Pan-India", "shipping"],
-            ].map(([n, l]) => (
-              <div key={l}>
-                <p className="font-display text-3xl text-charcoal md:text-4xl">{n}</p>
-                <p className="mt-1 text-xs uppercase tracking-[0.18em] text-charcoal-muted">{l}</p>
-              </div>
-            ))}
-          </motion.div>
+            From ₹1,500 · personalised name tag & shipping included · pan-India
+          </motion.p>
         </div>
-        {/* right column intentionally breathes — the 3D sculpture lives behind */}
-        <div className="hidden md:block" />
+        <TiltCard />
       </div>
-
-      <motion.div
-        animate={{ y: [0, 10, 0] }}
-        transition={{ repeat: Infinity, duration: 2.2 }}
-        className="absolute bottom-6 left-1/2 z-10 -translate-x-1/2 text-charcoal-muted"
-      >
-        <span className="text-xs uppercase tracking-[0.3em]">Scroll</span>
-      </motion.div>
+      {/* 3D ring of the collection — ThreeUI Volta-style */}
+      <div className="relative z-10 pb-16 pt-4">
+        <Cylinder
+          items={RING_IMAGES}
+          itemWidth={180}
+          itemHeight={210}
+          ariaLabel="DIKOR collection preview"
+          render={(it, i, active) => (
+            <div className="h-full w-full overflow-hidden rounded-3xl border border-gold/30 bg-white shadow-card">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={it.src} alt={it.label} className="h-full w-full object-cover" loading="lazy" draggable={false} />
+              <span className="absolute bottom-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-charcoal/80 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-gold-light backdrop-blur">
+                {it.label}
+              </span>
+            </div>
+          )}
+        />
+      </div>
     </section>
   );
 }
 
-/* ---------------- CATEGORIES ---------------- */
-function Categories() {
+/* ---------- category editorial rows (NOT a card grid, NOT bento) ---------- */
+function CategoryRows() {
   return (
-    <section className="mx-auto max-w-7xl px-5 py-24 md:px-8">
+    <section className="mx-auto max-w-7xl px-5 py-20 md:px-8 md:py-28">
       <Reveal>
         <SectionHeading
           eyebrow="What we craft"
           title={<>Made for the moments <em className="text-rosegold-dark">you treasure</em></>}
-          sub="Every piece starts from your photos and is hand-finished by our studio artists."
+          sub="Five keepsake families, one promise: hand-finished from your photos, approved by you before dispatch."
         />
       </Reveal>
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-5">
+      <div className="space-y-16 md:space-y-24">
         {CATEGORIES.map((c, i) => (
-          <Reveal key={c.key} delay={i * 0.08}>
-            <Link
-              href="/gallery"
-              className="group block overflow-hidden rounded-3xl bg-white shadow-card transition-all duration-500 hover:-translate-y-2 hover:shadow-soft"
-            >
-              <div className="overflow-hidden">
-                <Artwork
-                  category={c.key}
-                  className="aspect-square w-full transition-transform duration-700 group-hover:scale-105"
-                />
+          <Reveal key={c.key}>
+            <div className={`grid items-center gap-8 md:grid-cols-2 md:gap-14 ${i % 2 ? "md:[&>*:first-child]:order-2" : ""}`}>
+              <div className={`overflow-hidden rounded-[2.5rem] shadow-soft ${i % 2 ? "md:order-2" : ""}`}>
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={c.image} alt={`${c.key} figurine by DIKOR`} className="aspect-[4/3] w-full object-cover transition-transform duration-700 hover:scale-105" loading="lazy" />
               </div>
-              <div className="p-5">
-                <h3 className="font-display text-2xl text-charcoal">{c.key}</h3>
-                <p className="mt-1 text-sm text-charcoal-muted">{c.tagline}</p>
-                <p className="mt-3 text-xs font-bold uppercase tracking-[0.18em] text-gold-dark">from {c.from}</p>
+              <div className={i % 2 ? "md:order-1" : ""}>
+                <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.28em] text-rosegold-dark">
+                  <Sparkle className="h-3.5 w-3.5 text-gold" /> {c.key}
+                </p>
+                <h3 className="mt-3 font-display text-4xl text-charcoal md:text-5xl">{c.tagline}</h3>
+                <p className="mt-4 max-w-md leading-relaxed text-charcoal-muted">{c.copy}</p>
+                <p className="mt-4 text-sm">
+                  <span className="font-display text-2xl text-gold-dark">{c.fromPrice}</span>
+                  {!c.priceConfirmed && <span className="ml-2 text-xs text-charcoal-muted">· exact price confirmed on WhatsApp</span>}
+                </p>
+                <Link href="/order" className="mt-6 inline-block">
+                  <GoldButton>{c.cta}</GoldButton>
+                </Link>
               </div>
-            </Link>
+            </div>
           </Reveal>
         ))}
       </div>
@@ -126,286 +169,197 @@ function Categories() {
   );
 }
 
-/* ---------------- FEATURED WORK ---------------- */
-const FEATURED = [
-  { category: "Pets" as const, title: "Gappu — Golden Retriever", note: "4\" hand-painted replica" },
-  { category: "Couples" as const, title: "Aarav & Meera — Anniversary", note: "Wedding-day miniature" },
-  { category: "Idols" as const, title: "Radha Krishna", note: "6\" antique gold finish" },
-  { category: "Kids" as const, title: "Little Aarush", note: "First-birthday keepsake" },
-];
-
-function FeaturedWork() {
+/* ---------- reviews: 3D cylinder + aggregate header ---------- */
+function Reviews() {
   return (
-    <section className="bg-cream-dark/60 py-24">
+    <section className="bg-blush/50 py-20 md:py-28">
       <div className="mx-auto max-w-7xl px-5 md:px-8">
         <Reveal>
           <SectionHeading
-            eyebrow="Featured work"
-            title={<>Fresh from the <em className="text-rosegold-dark">studio</em></>}
-            sub="A glimpse of recent keepsakes — each one began as a customer's photograph."
+            eyebrow="Customer love"
+            title={<>Real keepsakes, <em className="text-rosegold-dark">real reactions</em></>}
+            sub={`${AGGREGATE.rating}★ ${AGGREGATE.ratingNote}. Delivered to ${AGGREGATE.deliveredCities.join(", ")} — and counting.`}
           />
         </Reveal>
-        <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">
-          {FEATURED.map((f, i) => (
-            <Reveal key={f.title} delay={i * 0.08}>
-              <div className="group overflow-hidden rounded-3xl bg-white shadow-card transition-all duration-500 hover:-translate-y-2 hover:shadow-soft">
-                <div className="relative overflow-hidden">
-                  <Artwork category={f.category} title={f.title} className="aspect-[4/5] w-full transition-transform duration-700 group-hover:scale-105" />
-                  <span className="absolute left-4 top-4 rounded-full bg-charcoal/80 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-gold-light backdrop-blur">
-                    {f.category}
-                  </span>
-                </div>
-                <div className="p-5">
-                  <h3 className="font-display text-xl text-charcoal">{f.title}</h3>
-                  <p className="mt-1 text-sm text-charcoal-muted">{f.note}</p>
-                </div>
+        <Cylinder
+          items={REVIEWS}
+          itemWidth={300}
+          itemHeight={360}
+          ariaLabel="Customer reviews"
+          render={(r, i, active) => (
+            <div className="flex h-full w-full flex-col justify-between rounded-[2rem] border border-gold/30 bg-white p-7 shadow-card">
+              <div>
+                <p className="text-lg tracking-wider text-gold" aria-label="5 star review">★★★★★</p>
+                <p className="mt-3 font-display text-xl leading-snug text-charcoal">“{r.quote}”</p>
               </div>
-            </Reveal>
-          ))}
-        </div>
-        <Reveal className="mt-10 text-center">
-          <Link href="/gallery" className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.18em] text-rosegold-dark hover:text-rosegold">
-            View full gallery <span aria-hidden>→</span>
-          </Link>
-        </Reveal>
-      </div>
-    </section>
-  );
-}
-
-/* ---------------- STATS BAND ---------------- */
-const STATS = [
-  ["500+", "keepsakes delivered"],
-  ["120+", "cities shipped"],
-  ["4.9★", "average rating"],
-  ["15k+", "photos transformed"],
-];
-
-function StatsBand() {
-  return (
-    <section className="border-y border-gold/20 bg-gradient-to-r from-cream-dark via-[#F7EEDB] to-cream-dark py-14">
-      <div className="mx-auto grid max-w-6xl grid-cols-2 gap-10 px-5 md:grid-cols-4 md:px-8">
-        {STATS.map(([n, l]) => (
-          <Reveal key={l} className="text-center">
-            <p className="font-display text-4xl text-charcoal md:text-5xl">{n}</p>
-            <p className="mt-2 text-xs font-semibold uppercase tracking-[0.2em] text-gold-dark">{l}</p>
-          </Reveal>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-/* ---------------- HOW IT WORKS (5 steps) ---------------- */
-function HowItWorks() {
-  return (
-    <section className="mx-auto max-w-7xl px-5 py-24 md:px-8">
-      <Reveal>
-        <SectionHeading
-          eyebrow="The DIKOR process"
-          title={<>From photo to keepsake, <em className="text-rosegold-dark">in five steps</em></>}
-          sub="Transparent at every stage — you approve the video demo before anything ships."
+              <div className="mt-5 border-t border-charcoal/10 pt-4">
+                <p className="text-sm font-semibold text-charcoal">{r.context}</p>
+                <p className="mt-0.5 text-xs text-charcoal-muted">{r.source}</p>
+              </div>
+            </div>
+          )}
         />
-      </Reveal>
-      <div className="relative grid gap-6 md:grid-cols-5">
-        <div className="absolute left-0 right-0 top-10 hidden h-px bg-gradient-to-r from-transparent via-gold/60 to-transparent md:block" />
-        {PIPELINE_STEPS.map((s, i) => (
-          <Reveal key={s.key} delay={i * 0.1}>
-            <div className="relative rounded-3xl border border-gold/25 bg-white/70 p-6 backdrop-blur transition-all duration-500 hover:-translate-y-1.5 hover:shadow-soft">
-              <span className="relative z-10 grid h-14 w-14 place-items-center rounded-full bg-gradient-to-br from-gold-light to-gold-dark font-display text-2xl text-charcoal shadow-gold">
-                {i + 1}
-              </span>
-              <h3 className="mt-5 font-display text-xl leading-snug text-charcoal">{s.label}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-charcoal-muted">{s.blurb}</p>
-            </div>
-          </Reveal>
-        ))}
+        <Reveal className="mt-10 text-center">
+          <a href="https://www.instagram.com/dikor_in/" target="_blank" rel="noreferrer" className="text-sm font-semibold text-rosegold-dark underline">
+            See more on {INSTAGRAM_HANDLE} — including our Reviews highlight
+          </a>
+        </Reveal>
       </div>
-      <Reveal className="mt-10 text-center">
-        <Link href="/how-it-works" className="inline-flex items-center gap-2 text-sm font-semibold uppercase tracking-[0.18em] text-rosegold-dark hover:text-rosegold">
-          Full details <span aria-hidden>→</span>
-        </Link>
-      </Reveal>
     </section>
   );
 }
 
-/* ---------------- TESTIMONIALS ---------------- */
-const REVIEWS = [
-  { name: "Priya S.", city: "Mumbai", text: "The replica of my Bruno looks so real I teared up. The video demo before shipping gave me total confidence.", item: "Pet replica" },
-  { name: "Rohan & Ananya", city: "Delhi", text: "Ordered couple miniatures for our first anniversary. Guests couldn't stop asking where we got them!", item: "Couple miniature" },
-  { name: "Kavitha R.", city: "Chennai", text: "The Radha Krishna idol is the centrepiece of our pooja room now. Finish quality is genuinely premium.", item: "Idol" },
-];
-
-function Testimonials() {
+/* ---------- makers ---------- */
+function Makers() {
   return (
-    <section className="bg-charcoal py-24 text-cream">
-      <div className="mx-auto max-w-7xl px-5 md:px-8">
+    <section className="mx-auto max-w-7xl px-5 py-20 md:px-8 md:py-28">
+      <div className="grid items-center gap-10 md:grid-cols-2 md:gap-16">
         <Reveal>
-          <div className="mb-12 text-center">
-            <p className="mb-4 flex items-center justify-center gap-2 text-xs font-semibold uppercase tracking-[0.28em] text-gold-light">
-              <Sparkle className="h-3.5 w-3.5" /> Loved across India <Sparkle className="h-3.5 w-3.5" />
-            </p>
-            <h2 className="font-display text-4xl md:text-5xl">Stories from happy homes</h2>
+          <div className="overflow-hidden rounded-[2.5rem] shadow-soft">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/images/process-painting.webp" alt="DIKOR artists hand-painting a 3D-printed figurine" className="aspect-[4/3] w-full object-cover" loading="lazy" />
           </div>
         </Reveal>
-        <div className="grid gap-6 md:grid-cols-3">
-          {REVIEWS.map((r, i) => (
-            <Reveal key={r.name} delay={i * 0.1}>
-              <figure className="flex h-full flex-col rounded-3xl border border-gold/25 bg-white/5 p-7 backdrop-blur transition-all duration-500 hover:-translate-y-1.5 hover:border-gold/50">
-                <div className="mb-4 flex gap-1 text-gold-light" aria-label="5 star rating">
-                  {"★★★★★".split("").map((s, j) => <span key={j}>{s}</span>)}
-                </div>
-                <blockquote className="flex-1 font-display text-xl italic leading-relaxed text-cream/90">“{r.text}”</blockquote>
-                <figcaption className="mt-6 border-t border-cream/10 pt-4">
-                  <p className="text-sm font-semibold text-gold-light">{r.name} · {r.city}</p>
-                  <p className="text-xs uppercase tracking-[0.18em] text-cream/50">{r.item}</p>
-                </figcaption>
-              </figure>
-            </Reveal>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ---------------- AUDIENCES ---------------- */
-const AUDIENCES = [
-  { t: "Pet parents", d: "Immortalise your furry family member in miniature." },
-  { t: "Weddings & anniversaries", d: "Couple keepsakes guests will remember." },
-  { t: "Festive gifting", d: "Diwali, housewarmings, birthdays — thoughtful & personal." },
-  { t: "Devotees & decor lovers", d: "Idols and showpieces for warm, sacred spaces." },
-];
-
-function Audiences() {
-  return (
-    <section className="mx-auto max-w-7xl px-5 py-24 md:px-8">
-      <Reveal>
-        <SectionHeading eyebrow="Who it's for" title={<>Made for <em className="text-rosegold-dark">your people</em></>} />
-      </Reveal>
-      <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-        {AUDIENCES.map((a, i) => (
-          <Reveal key={a.t} delay={i * 0.08}>
-            <div className="h-full rounded-3xl bg-gradient-to-br from-blush to-cream-dark p-7 transition-all duration-500 hover:-translate-y-1.5 hover:shadow-soft">
-              <Sparkle className="h-5 w-5 text-gold-dark" />
-              <h3 className="mt-4 font-display text-2xl text-charcoal">{a.t}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-charcoal-muted">{a.d}</p>
-            </div>
-          </Reveal>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-/* ---------------- PRICING HINT ---------------- */
-function PricingHint() {
-  return (
-    <section className="mx-auto max-w-5xl px-5 pb-24 md:px-8">
-      <Reveal>
-        <div className="relative overflow-hidden rounded-[2.5rem] bg-gradient-to-br from-rosegold-dark via-rosegold to-gold-dark p-10 text-center text-cream shadow-soft md:p-14">
-          <Sparkle className="mx-auto h-6 w-6 text-gold-light" />
-          <h2 className="mt-4 font-display text-4xl md:text-5xl">Custom keepsakes from ₹1,499</h2>
-          <p className="mx-auto mt-4 max-w-xl text-cream/85">
-            Every piece is quoted individually — you always see a clear price and timeline before paying anything.
-            Advance is just 40% to begin.
+        <Reveal delay={0.1}>
+          <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.28em] text-rosegold-dark">
+            <Sparkle className="h-3.5 w-3.5 text-gold" /> The makers
           </p>
-          <Link href="/auth" className="mt-8 inline-block">
-            <span className="inline-flex items-center gap-2 rounded-full bg-cream px-8 py-4 text-sm font-bold uppercase tracking-[0.14em] text-charcoal shadow-gold transition-transform hover:scale-105">
-              Get my free quote
-            </span>
-          </Link>
-        </div>
-      </Reveal>
-    </section>
-  );
-}
-
-/* ---------------- FAQ ---------------- */
-const FAQS = [
-  { q: "How is the price decided?", a: "Share your photos and tell us the size and finish you want. Our studio replies with a clear quotation — price plus delivery timeline — before you pay anything. Custom keepsakes start at ₹1,499; most pet replicas are ₹1,999–₹3,499." },
-  { q: "How do payments work?", a: "A 40% advance green-lights your order. We craft your piece and share a video demo. Only after you approve do we finish production — the remaining 60% is paid when your keepsake is ready to ship." },
-  { q: "What if I don't like the demo video?", a: "Revisions are included. Tell us what to tweak and we'll rework the piece and share a fresh demo. We ship only when you love it." },
-  { q: "How long does it take?", a: "Most orders deliver in 10–15 days from advance payment, depending on size and finish. Your quotation always includes an exact timeline." },
-  { q: "Do you ship across India?", a: "Yes — pan-India shipping with careful, gift-ready packaging. Shipping cost is included in your quote." },
-  { q: "What photos should I share?", a: "Clear, well-lit photos from a couple of angles work best. The more detail we can see — markings, colours, expressions — the more lifelike your keepsake." },
-];
-
-function Faq() {
-  const [open, setOpen] = useState<number | null>(0);
-  return (
-    <section className="mx-auto max-w-3xl px-5 pb-24 md:px-8">
-      <Reveal>
-        <SectionHeading eyebrow="Good to know" title={<>Questions, <em className="text-rosegold-dark">answered</em></>} />
-      </Reveal>
-      <div className="space-y-3">
-        {FAQS.map((f, i) => (
-          <Reveal key={f.q} delay={i * 0.05}>
-            <div className={`overflow-hidden rounded-2xl border transition-colors ${open === i ? "border-gold/50 bg-white shadow-card" : "border-charcoal/10 bg-white/60"}`}>
-              <button onClick={() => setOpen(open === i ? null : i)} className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left">
-                <span className="font-display text-xl text-charcoal">{f.q}</span>
-                <span className={`grid h-8 w-8 shrink-0 place-items-center rounded-full border border-gold/40 text-gold-dark transition-transform duration-300 ${open === i ? "rotate-45" : ""}`}>+</span>
-              </button>
-              <div className={`grid transition-all duration-300 ${open === i ? "grid-rows-[1fr] opacity-100" : "grid-rows-[0fr] opacity-0"}`}>
-                <div className="overflow-hidden">
-                  <p className="px-6 pb-6 text-charcoal-muted leading-relaxed">{f.a}</p>
-                </div>
-              </div>
-            </div>
-          </Reveal>
-        ))}
+          <h2 className="mt-3 font-display text-4xl text-charcoal md:text-5xl">
+            A small studio with <em className="text-rosegold-dark">big love</em> for detail.
+          </h2>
+          <p className="mt-4 leading-relaxed text-charcoal-muted">
+            DIKOR is run by <strong className="text-charcoal">@sainirajatrs</strong> and <strong className="text-charcoal">@sheetal__83</strong> —
+            two makers who believe a gift should feel like the person it&apos;s for. Every piece is printed,
+            painted and packed by hand, and a share of early orders went to Rahaat Foundation for strays.
+          </p>
+          <a href={WHATSAPP_LINK} target="_blank" rel="noreferrer" className="mt-6 inline-block">
+            <GhostButton>Say hello on WhatsApp</GhostButton>
+          </a>
+        </Reveal>
       </div>
     </section>
   );
 }
 
-/* ---------------- CONTACT CTA ---------------- */
-function ContactCta() {
+/* ---------- sticky mobile buy bar ---------- */
+function StickyBuyBar({ summary }: { summary: BuilderSummary }) {
+  const [show, setShow] = useState(false);
+  useEffect(() => {
+    const fn = () => setShow(window.scrollY > 750);
+    window.addEventListener("scroll", fn, { passive: true });
+    return () => window.removeEventListener("scroll", fn);
+  }, []);
+  if (!show) return null;
   return (
-    <section className="mx-auto max-w-7xl px-5 pb-28 md:px-8">
-      <Reveal>
-        <div className="grid gap-8 rounded-[2.5rem] bg-cream-dark p-10 md:grid-cols-2 md:p-14">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-rosegold-dark">Say hello</p>
-            <h2 className="mt-3 font-display text-4xl text-charcoal md:text-5xl">Let&apos;s make something <em className="text-rosegold-dark">unforgettable</em>.</h2>
-            <p className="mt-4 text-charcoal-muted">Prefer chatting first? Message us — we reply within studio hours.</p>
-            <div className="mt-6 flex flex-wrap gap-4">
-              <a href={WHATSAPP_URL} target="_blank" rel="noreferrer">
-                <GoldButton>💬 WhatsApp us</GoldButton>
-              </a>
-              <a href={INSTAGRAM_URL} target="_blank" rel="noreferrer">
-                <GhostButton>Instagram @dikor_in</GhostButton>
-              </a>
-            </div>
-          </div>
-          <div className="flex flex-col justify-center rounded-3xl bg-white/70 p-8 shadow-card">
-            <h3 className="font-display text-2xl text-charcoal">Start online instead</h3>
-            <p className="mt-2 text-sm text-charcoal-muted">Create an account, upload photos, and track your keepsake from demo to doorstep.</p>
-            <Link href="/auth" className="mt-5 inline-flex items-center gap-2 text-sm font-bold uppercase tracking-[0.18em] text-rosegold-dark hover:text-rosegold">
-              Create free account <span aria-hidden>→</span>
-            </Link>
-          </div>
+    <div className="fixed inset-x-0 bottom-0 z-40 px-4 md:hidden" style={{ paddingBottom: "max(0.75rem, env(safe-area-inset-bottom))" }}>
+      <div className="flex items-center justify-between gap-3 rounded-full border border-gold/40 bg-cream/95 py-2.5 pl-5 pr-2.5 shadow-soft backdrop-blur">
+        <div className="min-w-0">
+          <p className="truncate text-sm font-semibold text-charcoal">{summary.category} · {summary.size}</p>
+          <p className="text-xs text-gold-dark font-bold">{summary.price}</p>
         </div>
-      </Reveal>
-    </section>
+        <a href="#order" className="shrink-0 rounded-full bg-gradient-to-r from-gold-dark via-gold to-gold-light px-6 py-3 text-xs font-bold uppercase tracking-[0.14em] text-charcoal shadow-gold">
+          Start order
+        </a>
+      </div>
+    </div>
   );
 }
 
-export default function Home() {
+const TRUST_ITEMS = [
+  "✓ Verified Instagram — @dikor_in",
+  "Pet reels up to 5.9M views",
+  "Personalised name tag included",
+  "Shipping across India included",
+  "75% advance · 25% before shipping",
+  "Approval photos before dispatch",
+];
+
+export default function HomePage() {
+  const [summary, setSummary] = useState<BuilderSummary>({ category: "Pets", size: '5" · Slim breeds', price: "₹1,500" });
+
   return (
     <>
       <Hero />
-      <Marquee items={["Pet replicas", "Couple miniatures", "Sacred idols", "Kid keepsakes", "Home decor", "Made with precision"]} />
-      <Categories />
-      <FeaturedWork />
-      <StatsBand />
-      <HowItWorks />
-      <Testimonials />
-      <Audiences />
-      <PricingHint />
-      <Faq />
-      <ContactCta />
+      <Marquee items={TRUST_ITEMS} />
+
+      <CategoryRows />
+
+      {/* order builder */}
+      <section id="order" className="scroll-mt-24 bg-cream-dark/50 py-20 md:py-28">
+        <div className="mx-auto max-w-4xl px-5 md:px-8">
+          <Reveal>
+            <SectionHeading
+              eyebrow="Your custom order"
+              title={<>Build your <em className="text-rosegold-dark">keepsake</em> in 2 minutes</>}
+              sub="Five short steps. You always see the total and the 75/25 split before paying anything."
+            />
+          </Reveal>
+          <Reveal delay={0.1}>
+            <OrderBuilder onConfig={setSummary} />
+          </Reveal>
+          <div className="mx-auto mt-8 max-w-3xl rounded-2xl bg-white/70 px-6 py-5">
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-gold-dark">Always included</p>
+            <ul className="mt-2 grid gap-1.5 text-sm text-charcoal-soft sm:grid-cols-2">
+              {INCLUDED_ALWAYS.map((t) => <li key={t} className="flex gap-2"><span className="text-gold">✦</span>{t}</li>)}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* proof: before / after */}
+      <section className="mx-auto max-w-5xl px-5 py-20 md:px-8 md:py-28">
+        <Reveal>
+          <SectionHeading
+            eyebrow="The proof"
+            title={<>From photo <em className="text-rosegold-dark">to figurine</em></>}
+            sub="One clear photo is all it takes. Drag the handle to compare."
+          />
+        </Reveal>
+        <Reveal delay={0.1}>
+          <BeforeAfter />
+        </Reveal>
+      </section>
+
+      <HowItWorksSection />
+
+      <Reviews />
+
+      <Makers />
+
+      {/* FAQ */}
+      <section className="mx-auto max-w-7xl px-5 py-20 md:px-8 md:py-28">
+        <Reveal>
+          <SectionHeading
+            eyebrow="Questions"
+            title={<>Everything you&apos;re <em className="text-rosegold-dark">wondering</em></>}
+            sub="Straight answers — no fine print."
+          />
+        </Reveal>
+        <Reveal delay={0.1}>
+          <FaqAccordion />
+        </Reveal>
+      </section>
+
+      {/* final CTA */}
+      <section className="bg-charcoal py-20 md:py-24">
+        <div className="mx-auto max-w-3xl px-5 text-center md:px-8">
+          <Reveal>
+            <p className="flex items-center justify-center gap-2 text-xs font-semibold uppercase tracking-[0.28em] text-gold-light">
+              <Sparkle className="h-3.5 w-3.5" /> Ready when you are <Sparkle className="h-3.5 w-3.5" />
+            </p>
+            <h2 className="mt-4 font-display text-4xl text-cream md:text-5xl">Your memories, <em className="text-shimmer not-italic">held forever</em>.</h2>
+            <p className="mx-auto mt-4 max-w-xl text-cream/60">4–5 photos. 75% advance. An approval video before anything ships. That&apos;s the whole process.</p>
+            <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
+              <a href="#order"><GoldButton className="w-full sm:w-auto">Start your order</GoldButton></a>
+              <a href={WHATSAPP_LINK} target="_blank" rel="noreferrer" className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-cream/25 px-7 py-3.5 text-sm font-semibold uppercase tracking-[0.14em] text-cream transition hover:border-gold-light sm:w-auto">
+                💬 WhatsApp us
+              </a>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+
+      <StickyBuyBar summary={summary} />
     </>
   );
 }
