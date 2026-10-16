@@ -6,7 +6,7 @@ import { GoldButton, GhostButton, Field, inputCls, Sparkle, DemoBadge } from "@/
 import { api, fileToDataURL } from "@/lib/client";
 import { CATEGORIES, type Category } from "@/lib/store";
 
-const SIZES = ["3 inch", "4 inch", "6 inch", "8 inch"];
+const SIZES = ["5 inch", "7 inch", "Custom"]; 
 const MATERIALS = ["PLA + hand-painted finish", "Resin + matte finish", "Resin + antique gold finish"];
 
 export default function NewOrderPage() {
@@ -57,7 +57,7 @@ export default function NewOrderPage() {
           <Sparkle className="h-3.5 w-3.5 text-gold" /> New keepsake <DemoBadge />
         </p>
         <h1 className="mt-2 font-display text-4xl text-charcoal md:text-5xl">Tell us what you dream of.</h1>
-        <p className="mt-3 text-charcoal-muted">Share reference photos — our studio replies with a clear quote and timeline.</p>
+        <p className="mt-3 text-charcoal-muted">Share 4–5 clear photos — pay the 75% advance and track every stage, from printing to your doorstep.</p>
       </Reveal>
 
       <Reveal delay={0.1}>
