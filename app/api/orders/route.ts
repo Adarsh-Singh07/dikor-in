@@ -26,14 +26,16 @@ export async function POST(req: NextRequest) {
   if (!title || !String(title).trim()) return err("Give your keepsake a title");
   if (!CATS.includes(category)) return err("Pick a category");
   if (!Array.isArray(photos) || photos.length === 0) return err("Upload at least one reference photo");
-  if (photos.length > 6) return err("Max 6 photos for the demo");
+  if (photos.length > 8) return err("Max 8 photos for the demo");
+  const priceNum = Number(body.price);
   const order = db.createOrder({
     userId: me.id,
     title: String(title).trim().slice(0, 80),
     category,
     description: String(description || "").slice(0, 2000),
-    photos: photos.map(String).slice(0, 6),
-    size: String(size || "4 inch"),
+    photos: photos.map(String).slice(0, 8),
+    price: Number.isFinite(priceNum) && priceNum >= 100 ? Math.round(priceNum) : null,
+    size: String(size || "5 inch"),
     material: String(material || "PLA + hand-painted finish"),
     city: String(city || "").slice(0, 60),
   });
