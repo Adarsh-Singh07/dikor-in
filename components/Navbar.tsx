@@ -6,6 +6,7 @@ import { Logo } from "./ui";
 import { useAuth, api } from "@/lib/client";
 
 const LINKS = [
+  { href: "/order", label: "Order" },
   { href: "/gallery", label: "Gallery" },
   { href: "/how-it-works", label: "How it works" },
 ];

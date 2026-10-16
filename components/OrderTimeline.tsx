@@ -1,7 +1,7 @@
 "use client";
 import { STATUS_LABELS, type OrderStatus } from "@/lib/store";
 
-const ORDER: OrderStatus[] = ["submitted", "quoted", "advance_paid", "demo_shared", "approved", "in_production", "ready_for_balance", "completed"];
+const ORDER: OrderStatus[] = ["photos_received", "advance_paid", "in_production", "approval_shared", "approved", "balance_paid", "shipped", "delivered"];
 
 export default function OrderTimeline({ status, compact = false }: { status: OrderStatus; compact?: boolean }) {
   const idx = ORDER.indexOf(status);

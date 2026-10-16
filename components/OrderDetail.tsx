@@ -138,32 +138,34 @@ export default function OrderDetail({ id, backHref }: { id: string; backHref: st
             </Card>
           </Reveal>
 
-          {/* Quotation */}
+          {/* Price & payment */}
           <Reveal>
             <Card>
-              <CardTitle>Quotation</CardTitle>
+              <CardTitle>Price & payment</CardTitle>
               {order.price ? (
                 <div className="grid gap-4 sm:grid-cols-3">
                   <div className="rounded-2xl bg-cream p-5">
                     <p className="text-xs uppercase tracking-[0.18em] text-charcoal-muted">Total price</p>
                     <p className="mt-1 font-display text-3xl text-charcoal">{inr(order.price)}</p>
+                    <p className="mt-1 text-xs text-charcoal-muted">Name tag + shipping included</p>
                   </div>
                   <div className="rounded-2xl bg-cream p-5">
                     <p className="text-xs uppercase tracking-[0.18em] text-charcoal-muted">Advance ({order.advancePct}%)</p>
                     <p className="mt-1 font-display text-3xl text-charcoal">{inr(adv)}</p>
-                    <p className="mt-1 text-xs text-charcoal-muted">{order.advancePaid ? "✓ Paid" : "Due to begin"}</p>
+                    <p className="mt-1 text-xs text-charcoal-muted">{order.advancePaid ? "✓ Paid" : "Due now to begin"}</p>
                   </div>
                   <div className="rounded-2xl bg-cream p-5">
-                    <p className="text-xs uppercase tracking-[0.18em] text-charcoal-muted">Timeline</p>
-                    <p className="mt-1 font-display text-3xl text-charcoal">{order.timelineDays ?? "—"} days</p>
+                    <p className="text-xs uppercase tracking-[0.18em] text-charcoal-muted">Balance (25%)</p>
+                    <p className="mt-1 font-display text-3xl text-charcoal">{inr(bal)}</p>
+                    <p className="mt-1 text-xs text-charcoal-muted">Due after you approve the piece</p>
                   </div>
                 </div>
               ) : (
                 <p className="rounded-2xl bg-cream-dark px-5 py-4 text-sm text-charcoal-muted">
-                  Our studio is preparing your clear quotation — you&apos;ll see price and timeline here soon.
+                  Our studio is confirming your price — you&apos;ll see it here soon.
                 </p>
               )}
-              {order.status === "quoted" && !order.advancePaid && (
+              {order.status === "photos_received" && !order.advancePaid && order.price && (
                 <div className="mt-6">
                   <GoldButton disabled={busy} onClick={() => setPayType("advance")}>Pay advance {inr(adv)} to begin</GoldButton>
                   <p className="mt-2 text-xs text-charcoal-muted">Demo payment — no real charge.</p>
@@ -173,7 +175,7 @@ export default function OrderDetail({ id, backHref }: { id: string; backHref: st
           </Reveal>
 
           {/* Demo video + approval */}
-          {(order.status === "demo_shared" || order.demoVideo || order.demoNote || ["approved", "in_production", "ready_for_balance", "completed"].includes(order.status)) && (
+          {(order.status === "approval_shared" || order.demoVideo || order.demoNote || ["approved", "in_production", "balance_paid", "shipped", "delivered"].includes(order.status)) && (
             <Reveal>
               <Card className="border border-gold/30">
                 <CardTitle>Video demo — review before it ships</CardTitle>
@@ -189,7 +191,7 @@ export default function OrderDetail({ id, backHref }: { id: string; backHref: st
                   </div>
                 )}
                 {order.demoNote && <p className="mt-3 text-sm italic text-charcoal-muted">“{order.demoNote}”</p>}
-                {order.status === "demo_shared" && (
+                {order.status === "approval_shared" && (
                   <div className="mt-6">
                     {!showRev ? (
                       <div className="flex flex-wrap gap-3">
@@ -222,7 +224,7 @@ export default function OrderDetail({ id, backHref }: { id: string; backHref: st
           )}
 
           {/* Production + balance */}
-          {(["in_production", "ready_for_balance", "completed"].includes(order.status)) && (
+          {(["approved", "in_production", "balance_paid", "shipped", "delivered"].includes(order.status)) && (
             <Reveal>
               <Card>
                 <CardTitle>Production & delivery</CardTitle>
@@ -231,15 +233,15 @@ export default function OrderDetail({ id, backHref }: { id: string; backHref: st
                     Current stage: <strong>{order.productionStage}</strong>
                   </p>
                 )}
-                {order.status === "ready_for_balance" && !order.balancePaid && (
+                {order.status === "approved" && !order.balancePaid && (
                   <div className="mt-5">
-                    <p className="text-sm text-charcoal-muted">Your keepsake is ready! Clear the balance to ship it.</p>
+                    <p className="text-sm text-charcoal-muted">You approved your keepsake! Clear the balance (25%) and we ship it.</p>
                     <GoldButton disabled={busy} className="mt-3" onClick={() => setPayType("balance")}>Pay balance {inr(bal)}</GoldButton>
                   </div>
                 )}
-                {order.status === "completed" && (
-                  <p className="mt-2 rounded-2xl bg-charcoal px-5 py-4 text-sm text-cream">
-                    ✦ Delivered — thank you for trusting DIKOR with your memories.
+                {["shipped", "delivered"].includes(order.status) && (
+                  <p className="mt-5 rounded-2xl bg-charcoal px-5 py-4 text-sm text-cream">
+                    ✦ {order.status === "delivered" ? "Delivered — thank you for trusting DIKOR with your memories." : "Shipped! Your keepsake is on its way."}
                   </p>
                 )}
               </Card>

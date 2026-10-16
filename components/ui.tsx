@@ -68,14 +68,14 @@ export function SectionHeading({ eyebrow, title, sub, align = "center" }: { eyeb
 
 /* ---------- Status pill ---------- */
 const PILL: Record<OrderStatus, string> = {
-  submitted: "bg-blush text-rosegold-dark border-rosegold/30",
-  quoted: "bg-cream-dark text-gold-dark border-gold/40",
+  photos_received: "bg-blush text-rosegold-dark border-rosegold/30",
   advance_paid: "bg-cream-dark text-charcoal border-charcoal/20",
-  demo_shared: "bg-rosegold/10 text-rosegold-dark border-rosegold/40",
-  approved: "bg-green-50 text-green-800 border-green-300",
   in_production: "bg-amber-50 text-amber-800 border-amber-300",
-  ready_for_balance: "bg-gold/15 text-gold-dark border-gold/50",
-  completed: "bg-charcoal text-cream border-charcoal",
+  approval_shared: "bg-rosegold/10 text-rosegold-dark border-rosegold/40",
+  approved: "bg-green-50 text-green-800 border-green-300",
+  balance_paid: "bg-gold/15 text-gold-dark border-gold/50",
+  shipped: "bg-sky-50 text-sky-800 border-sky-300",
+  delivered: "bg-charcoal text-cream border-charcoal",
 };
 
 export function StatusPill({ status }: { status: OrderStatus }) {

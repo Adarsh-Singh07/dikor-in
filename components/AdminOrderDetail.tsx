@@ -8,9 +8,9 @@ import { api, fileToDataURL } from "@/lib/client";
 import { inr, type Order, type OrderStatus } from "@/lib/store";
 
 const NEXT: { from: OrderStatus[]; to: OrderStatus; label: string; note: string }[] = [
-  { from: ["advance_paid"], to: "in_production", label: "Start production", note: "Production started" },
-  { from: ["in_production", "approved"], to: "ready_for_balance", label: "Mark ready — request balance", note: "Piece finished, balance requested" },
-  { from: ["ready_for_balance"], to: "completed", label: "Mark delivered", note: "Delivered to customer" },
+  { from: ["advance_paid"], to: "in_production", label: "Start printing & painting", note: "Printing & painting started" },
+  { from: ["balance_paid"], to: "shipped", label: "Mark shipped", note: "Order shipped" },
+  { from: ["shipped"], to: "delivered", label: "Mark delivered", note: "Delivered to customer" },
 ];
 
 const STAGES = ["Designing", "Printing", "Painting", "Finishing", "Quality check", "Packing"];
@@ -64,7 +64,7 @@ export default function AdminOrderDetail({ id }: { id: string }) {
     try {
       const url = await fileToDataURL(f, 20 * 1024 * 1024);
       await patch(
-        { demoVideo: url, demoNote: demoNote || "Fresh from the studio — turn your sound on!", status: "demo_shared", note: "Demo video shared for review" },
+        { demoVideo: url, demoNote: demoNote || "Fresh from the studio — turn your sound on!", status: "approval_shared", note: "Approval video shared for review" },
         "Demo video shared with the customer."
       );
     } catch (e) {
@@ -107,26 +107,26 @@ export default function AdminOrderDetail({ id }: { id: string }) {
             </div>
           </Reveal>
 
-          {/* Quotation */}
+          {/* Price & timeline */}
           <Reveal>
             <div className="rounded-3xl bg-white p-6 shadow-card md:p-8">
-              <h2 className="mb-4 flex items-center gap-2 font-display text-2xl text-charcoal"><Sparkle className="h-4 w-4 text-gold" />Quotation</h2>
+              <h2 className="mb-4 flex items-center gap-2 font-display text-2xl text-charcoal"><Sparkle className="h-4 w-4 text-gold" />Price & timeline</h2>
               <div className="grid gap-4 sm:grid-cols-2">
                 <Field label="Price (₹)">
-                  <input type="number" min={100} className={inputCls} value={price} onChange={(e) => setPrice(e.target.value)} placeholder="2499" />
+                  <input type="number" min={100} className={inputCls} value={price} onChange={(e) => setPrice(e.target.value)} placeholder="1500" />
                 </Field>
                 <Field label="Timeline (days)">
                   <input type="number" min={1} max={90} className={inputCls} value={timeline} onChange={(e) => setTimeline(e.target.value)} />
                 </Field>
               </div>
               <GoldButton
-                disabled={busy || order.status !== "submitted"}
+                disabled={busy}
                 className="mt-5"
-                onClick={() => patch({ price: Number(price), timelineDays: Number(timeline), status: "quoted", note: `Quote shared: ₹${Number(price).toLocaleString("en-IN")} · ${timeline} days` }, "Quote sent to customer.")}
+                onClick={() => patch({ price: Number(price), timelineDays: Number(timeline), note: `Price updated: ₹${Number(price).toLocaleString("en-IN")} · ${timeline} days` }, "Price & timeline saved.")}
               >
-                Send quote {price ? `· ${inr(Number(price) || 0)}` : ""}
+                Save price & timeline {price ? `· ${inr(Number(price) || 0)}` : ""}
               </GoldButton>
-              {order.status !== "submitted" && <p className="mt-2 text-xs text-charcoal-muted">Quote already sent — editing price updates it live.</p>}
+              <p className="mt-2 text-xs text-charcoal-muted">Customer pays 75% advance on this total; 25% before shipping.</p>
             </div>
           </Reveal>
 
@@ -181,7 +181,7 @@ export default function AdminOrderDetail({ id }: { id: string }) {
                 ))}
                 {NEXT.every((n) => !n.from.includes(order.status)) && (
                   <p className="text-sm text-charcoal-muted">
-                    {order.status === "completed" ? "This order is complete. ✦" : "Waiting on the customer for the next step."}
+                    {order.status === "delivered" ? "This order is complete. ✦" : "Waiting on the customer for the next step."}
                   </p>
                 )}
               </div>
