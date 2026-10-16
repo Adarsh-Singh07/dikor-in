@@ -12,7 +12,7 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
   const { type } = await req.json().catch(() => ({}));
 
   if (type === "advance") {
-    if (order.status !== "quoted") return err("Advance can only be paid once the quote is ready", 400);
+    if (order.status !== "photos_received") return err("Advance is due right after you place the order", 400);
     if (order.advancePaid) return err("Advance already paid", 400);
     const updated = db.updateOrder(
       params.id,
@@ -23,12 +23,12 @@ export async function POST(req: NextRequest, { params }: { params: { id: string 
     return json({ order: updated });
   }
   if (type === "balance") {
-    if (order.status !== "ready_for_balance") return err("Balance is due only when the piece is ready", 400);
+    if (order.status !== "approved") return err("Balance is due only after you approve the finished piece", 400);
     if (order.balancePaid) return err("Balance already paid", 400);
     const updated = db.updateOrder(
       params.id,
-      { status: "completed", balancePaid: true },
-      `Demo balance of ₹${balanceAmount(order).toLocaleString("en-IN")} received — order complete`,
+      { status: "balance_paid", balancePaid: true },
+      `Demo balance of ₹${balanceAmount(order).toLocaleString("en-IN")} received — no real charge`,
       "customer"
     );
     return json({ order: updated });
