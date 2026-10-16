@@ -1,29 +1,25 @@
 "use client";
 import { useState } from "react";
-import Artwork from "@/components/Artwork";
 import { Reveal } from "@/components/Reveal";
 import { SectionHeading, Sparkle } from "@/components/ui";
-import type { Category } from "@/lib/store";
 
-const ALL: Category[] = ["Pets", "Couples", "Kids", "Idols", "Decor"];
+const FILTERS = ["All", "Pets", "Couples", "Kids", "Religious", "Decor"] as const;
 
-const PIECES: { category: Category; title: string; note: string }[] = [
-  { category: "Pets", title: "Gappu — Golden Retriever", note: "4\" hand-painted replica" },
-  { category: "Pets", title: "Casper — Indie Pup", note: "Sitting pose, name base" },
-  { category: "Pets", title: "Dido — Beagle", note: "Beside his framed photo" },
-  { category: "Couples", title: "Aarav & Meera", note: "First-anniversary miniature" },
-  { category: "Couples", title: "Wedding Day Duo", note: "Bride & groom keepsake" },
-  { category: "Kids", title: "Little Aarush", note: "First-birthday keepsake" },
-  { category: "Kids", title: "Saanvi's Giggle", note: "Playful pose miniature" },
-  { category: "Idols", title: "Radha Krishna", note: "6\" antique gold finish" },
-  { category: "Idols", title: "Blessing Ganesha", note: "Festive centrepiece" },
-  { category: "Decor", title: "Bloom Vase Set", note: "Custom showpiece trio" },
-  { category: "Decor", title: "Nameplate — Sharma Villa", note: "Hand-finished entryway piece" },
-  { category: "Decor", title: "Milestone '10 Orders'", note: "Studio celebration piece" },
+interface Piece { category: (typeof FILTERS)[number]; title: string; note: string; image: string; }
+
+/** Real pieces — images from the DIKOR studio; captions echo @dikor_in's public posts. */
+const PIECES: Piece[] = [
+  { category: "Pets", title: "Hand-painted pet miniature", note: "5\" · with personalised name tag · from ₹1,500", image: "/images/hero-dog.webp" },
+  { category: "Pets", title: "Pet minis, every breed", note: "Custom miniatures, delivered across India", image: "/images/pets-group.webp" },
+  { category: "Couples", title: "A love in 3D", note: "Anniversary & wedding keepsakes", image: "/images/couple.webp" },
+  { category: "Kids", title: "Mother & son keepsake", note: "Little moments, kept forever", image: "/images/kid.webp" },
+  { category: "Religious", title: "Ganesha idol", note: "Hand-finished, devotional detail", image: "/images/ganesha.webp" },
+  { category: "Decor", title: "Sculptural 3D vase", note: "Designed to elevate your space", image: "/images/decor.webp" },
+  { category: "Decor", title: "Stackable jewelry tray", note: "Organize. Stack. Display.", image: "/images/decor.webp" },
 ];
 
 export default function GalleryPage() {
-  const [filter, setFilter] = useState<Category | "All">("All");
+  const [filter, setFilter] = useState<(typeof FILTERS)[number]>("All");
   const shown = filter === "All" ? PIECES : PIECES.filter((p) => p.category === filter);
   return (
     <div className="mx-auto max-w-7xl px-5 pb-28 pt-32 md:px-8">
@@ -31,15 +27,15 @@ export default function GalleryPage() {
         <SectionHeading
           eyebrow="The gallery"
           title={<>Keepsakes with <em className="text-rosegold-dark">a heartbeat</em></>}
-          sub="Every piece below began as a customer's photograph. Yours could be next."
+          sub="Every piece below began as a customer's photograph — pets like Chivas (Mumbai) and Daisy (New Delhi), a Radha Krishna shipped to Assam, a custom piece all the way to Kanpur. Yours could be next."
         />
       </Reveal>
       <Reveal className="mb-10 flex flex-wrap justify-center gap-3">
-        {(["All", ...ALL] as const).map((c) => (
+        {FILTERS.map((c) => (
           <button
             key={c}
             onClick={() => setFilter(c)}
-            className={`rounded-full px-6 py-2.5 text-xs font-bold uppercase tracking-[0.16em] transition-all duration-300 ${
+            className={`min-h-[2.75rem] rounded-full px-6 py-2.5 text-xs font-bold uppercase tracking-[0.16em] transition-all duration-300 ${
               filter === c
                 ? "bg-gradient-to-r from-gold-dark via-gold to-gold-light text-charcoal shadow-gold"
                 : "border border-charcoal/15 bg-white/60 text-charcoal-soft hover:border-rosegold hover:text-rosegold-dark"
@@ -51,10 +47,11 @@ export default function GalleryPage() {
       </Reveal>
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {shown.map((p, i) => (
-          <Reveal key={p.title} delay={(i % 3) * 0.08}>
-            <div className="group overflow-hidden rounded-3xl bg-white shadow-card transition-all duration-500 hover:-translate-y-2 hover:shadow-soft">
+          <Reveal key={`${p.title}-${i}`} delay={(i % 3) * 0.08}>
+            <div className="group h-full overflow-hidden rounded-3xl bg-white shadow-card transition-all duration-500 hover:-translate-y-2 hover:shadow-soft">
               <div className="relative overflow-hidden">
-                <Artwork category={p.category} title={p.title} className="aspect-[4/3] w-full transition-transform duration-700 group-hover:scale-105" />
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={p.image} alt={p.title} className="aspect-[4/3] w-full object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy" />
                 <span className="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-charcoal/80 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-gold-light backdrop-blur">
                   <Sparkle className="h-3 w-3" /> {p.category}
                 </span>
@@ -68,7 +65,7 @@ export default function GalleryPage() {
         ))}
       </div>
       <p className="mt-10 text-center text-xs uppercase tracking-[0.2em] text-charcoal-muted">
-        Artwork shown is illustrative — real pieces are crafted from your photos
+        From @dikor_in — see the full collection on Instagram
       </p>
     </div>
   );
