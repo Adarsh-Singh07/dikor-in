@@ -2,7 +2,7 @@ import { NextRequest } from "next/server";
 import { db, type OrderStatus } from "@/lib/store";
 import { getSessionUser, json, err } from "@/lib/api-lib";
 
-const STATUSES: OrderStatus[] = ["submitted", "quoted", "advance_paid", "demo_shared", "approved", "in_production", "ready_for_balance", "completed"];
+const STATUSES: OrderStatus[] = ["photos_received", "advance_paid", "in_production", "approval_shared", "approved", "balance_paid", "shipped", "delivered"];
 
 type Ctx = { params: { id: string } };
 
