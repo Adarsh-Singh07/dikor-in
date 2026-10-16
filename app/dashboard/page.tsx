@@ -60,17 +60,17 @@ export default async function DashboardPage() {
                   {o.price ? (
                     <span className="font-display text-xl text-charcoal">{inr(o.price)}</span>
                   ) : (
-                    <span className="text-xs uppercase tracking-[0.16em] text-charcoal-muted">Awaiting quote</span>
+                    <span className="text-xs uppercase tracking-[0.16em] text-charcoal-muted">Price being confirmed</span>
                   )}
                 </div>
-                {o.status === "demo_shared" && (
+                {o.status === "approval_shared" && (
                   <p className="mt-4 rounded-2xl bg-blush px-4 py-2.5 text-xs font-semibold text-rosegold-dark">
-                    ✦ Your video demo is ready — tap to review
+                    ✦ Your approval video is ready — tap to review
                   </p>
                 )}
-                {o.status === "quoted" && !o.advancePaid && (
+                {o.status === "photos_received" && !o.advancePaid && o.price && (
                   <p className="mt-4 rounded-2xl bg-cream-dark px-4 py-2.5 text-xs font-semibold text-gold-dark">
-                    Quote ready: {inr(o.price!)} · advance {inr(advanceAmount(o))} to begin
+                    Price: {inr(o.price)} · pay advance {inr(advanceAmount(o))} (75%) to begin
                   </p>
                 )}
               </Link>
