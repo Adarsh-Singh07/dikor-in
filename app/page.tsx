@@ -169,7 +169,7 @@ function CategoryRows() {
   );
 }
 
-/* ---------- reviews: 3D cylinder + aggregate header ---------- */
+/* ---------- reviews: 3D cylinder + real highlight reviews ---------- */
 function Reviews() {
   return (
     <section className="bg-blush/50 py-20 md:py-28">
@@ -178,26 +178,34 @@ function Reviews() {
           <SectionHeading
             eyebrow="Customer love"
             title={<>Real keepsakes, <em className="text-rosegold-dark">real reactions</em></>}
-            sub={`${AGGREGATE.rating}★ ${AGGREGATE.ratingNote}. Delivered to ${AGGREGATE.deliveredCities.join(", ")} — and counting.`}
+            sub={`${REVIEWS.length} ${AGGREGATE.reviewNote}. Delivered to ${AGGREGATE.deliveredCities.join(", ")} — and counting.`}
           />
         </Reveal>
         <Cylinder
           items={REVIEWS}
           itemWidth={300}
-          itemHeight={360}
+          itemHeight={400}
           ariaLabel="Customer reviews"
-          render={(r, i, active) => (
-            <div className="flex h-full w-full flex-col justify-between rounded-[2rem] border border-gold/30 bg-white p-7 shadow-card">
-              <div>
-                <p className="text-lg tracking-wider text-gold" aria-label="5 star review">★★★★★</p>
-                <p className="mt-3 font-display text-xl leading-snug text-charcoal">“{r.quote}”</p>
+          render={(r, i, active) => {
+            // Longer verbatim quotes get smaller type so every card fits its frame.
+            const quoteSize = r.quote.length > 220 ? "text-base" : r.quote.length > 140 ? "text-lg" : "text-xl";
+            return (
+              <div className="flex h-full w-full flex-col justify-between rounded-[2rem] border border-gold/30 bg-white p-7 shadow-card">
+                <div>
+                  {r.stars && (
+                    <p className="text-lg tracking-wider text-gold" aria-label="5 star review">★★★★★</p>
+                  )}
+                  <p className={`mt-3 font-display ${quoteSize} leading-snug text-charcoal`}>“{r.quote}”</p>
+                </div>
+                <div className="mt-5 border-t border-charcoal/10 pt-4">
+                  <p className="text-sm font-semibold text-charcoal">{r.context}</p>
+                  <p className="mt-0.5 text-xs text-charcoal-muted">
+                    {r.handle ? `@${r.handle} · ${r.date}` : `Reviews highlight · ${r.date}`}
+                  </p>
+                </div>
               </div>
-              <div className="mt-5 border-t border-charcoal/10 pt-4">
-                <p className="text-sm font-semibold text-charcoal">{r.context}</p>
-                <p className="mt-0.5 text-xs text-charcoal-muted">{r.source}</p>
-              </div>
-            </div>
-          )}
+            );
+          }}
         />
         <Reveal className="mt-10 text-center">
           <a href="https://www.instagram.com/dikor_in/" target="_blank" rel="noreferrer" className="text-sm font-semibold text-rosegold-dark underline">
