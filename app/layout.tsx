@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     "DIKOR crafts custom 3D-printed figurines from your photos — pet replicas, couple miniatures, idols & decor. Made with precision, shipped pan-India.",
   manifest: "/manifest.webmanifest",
   appleWebApp: { capable: true, statusBarStyle: "default", title: "DIKOR" },
-  icons: { icon: "/icon", apple: "/apple-icon" },
+  icons: { icon: "/favicon.svg", apple: "/favicon.svg" },
   openGraph: {
     title: "DIKOR · Custom 3D-Printed Keepsakes",
     description: "Turn your favourite photo into a hand-finished keepsake. Made with precision.",

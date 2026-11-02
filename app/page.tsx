@@ -45,10 +45,10 @@ function TiltCard() {
           <img src="/images/hero-dog.webp" alt="Hand-painted DIKOR dog miniature on a wooden base" className="aspect-[4/5] w-full object-cover" fetchPriority="high" />
           <div className="flex items-center justify-between bg-cream/90 px-6 py-4 backdrop-blur">
             <div>
-              <p className="font-display text-xl text-charcoal">Pet miniature · 5 inch</p>
-              <p className="text-xs uppercase tracking-[0.18em] text-charcoal-muted">Hand-painted · name tag included</p>
+              <p className="font-display text-xl text-charcoal">Pet miniature &bull; 5 inch</p>
+              <p className="text-xs uppercase tracking-[0.18em] text-charcoal-muted">Hand-painted &bull; name tag included</p>
             </div>
-            <p className="font-display text-2xl text-gold-dark">₹1,500</p>
+            <p className="font-display text-2xl text-gold-dark font-bold">₹1,500</p>
           </div>
         </div>
         {/* floating chips */}
@@ -56,7 +56,7 @@ function TiltCard() {
           ✦ Made from your photos
         </div>
         <div className="absolute -right-3 bottom-24 rounded-full bg-white/90 px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-gold-dark shadow-card backdrop-blur" style={{ transform: "translateZ(60px)" }}>
-          ✦ 75% advance · 25% later
+          ✦ 75% advance &bull; 25% later
         </div>
       </motion.div>
     </div>
@@ -79,16 +79,16 @@ function Hero() {
           <motion.h1
             initial={{ opacity: 0, y: 36 }} animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.9, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
-            className="font-display text-5xl leading-[1.04] text-charcoal md:text-7xl"
+            className="font-display text-5xl leading-[1.04] text-charcoal md:text-7xl font-bold"
           >
-            Your pet, turned into a <em className="text-shimmer not-italic font-semibold">mini statue</em>.
+            Your pet, turned into a <em className="text-shimmer not-italic font-bold">mini statue</em>.
           </motion.h1>
           <motion.p
             initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.26 }}
             className="mt-6 max-w-md text-lg leading-relaxed text-charcoal-muted"
           >
             Send 4–5 clear photos — we 3D-print and hand-paint a figurine that looks just like them,
-            then share photos or a video for your approval before it ships.
+            then share photos or a 360° video for your approval before it ships.
           </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.4 }}
@@ -101,7 +101,7 @@ function Hero() {
             initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.6 }}
             className="mt-5 text-sm font-medium text-charcoal-muted"
           >
-            From ₹1,500 · personalised name tag & shipping included · pan-India
+            From ₹1,500 &bull; personalised name tag &amp; pan-India shipping included
           </motion.p>
         </div>
         <TiltCard />
@@ -128,7 +128,7 @@ function Hero() {
   );
 }
 
-/* ---------- category editorial rows (NOT a card grid, NOT bento) ---------- */
+/* ---------- category editorial rows ---------- */
 function CategoryRows() {
   return (
     <section className="mx-auto max-w-7xl px-5 py-20 md:px-8 md:py-28">
@@ -151,11 +151,11 @@ function CategoryRows() {
                 <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.28em] text-rosegold-dark">
                   <Sparkle className="h-3.5 w-3.5 text-gold" /> {c.key}
                 </p>
-                <h3 className="mt-3 font-display text-4xl text-charcoal md:text-5xl">{c.tagline}</h3>
+                <h3 className="mt-3 font-display text-4xl text-charcoal md:text-5xl font-bold">{c.tagline}</h3>
                 <p className="mt-4 max-w-md leading-relaxed text-charcoal-muted">{c.copy}</p>
                 <p className="mt-4 text-sm">
-                  <span className="font-display text-2xl text-gold-dark">{c.fromPrice}</span>
-                  {!c.priceConfirmed && <span className="ml-2 text-xs text-charcoal-muted">· exact price confirmed on WhatsApp</span>}
+                  <span className="font-display text-2xl text-gold-dark font-bold">{c.fromPrice}</span>
+                  {!c.priceConfirmed && <span className="ml-2 text-xs text-charcoal-muted">&bull; confirmed on WhatsApp</span>}
                 </p>
                 <Link href="/order" className="mt-6 inline-block">
                   <GoldButton>{c.cta}</GoldButton>
@@ -169,7 +169,7 @@ function CategoryRows() {
   );
 }
 
-/* ---------- reviews: 3D cylinder + real highlight reviews ---------- */
+/* ---------- reviews ---------- */
 function Reviews() {
   return (
     <section className="bg-blush/50 py-20 md:py-28">
@@ -187,7 +187,6 @@ function Reviews() {
           itemHeight={400}
           ariaLabel="Customer reviews"
           render={(r, i, active) => {
-            // Longer verbatim quotes get smaller type so every card fits its frame.
             const quoteSize = r.quote.length > 220 ? "text-base" : r.quote.length > 140 ? "text-lg" : "text-xl";
             return (
               <div className="flex h-full w-full flex-col justify-between rounded-[2rem] border border-gold/30 bg-white p-7 shadow-card">
@@ -200,7 +199,7 @@ function Reviews() {
                 <div className="mt-5 border-t border-charcoal/10 pt-4">
                   <p className="text-sm font-semibold text-charcoal">{r.context}</p>
                   <p className="mt-0.5 text-xs text-charcoal-muted">
-                    {r.handle ? `@${r.handle} · ${r.date}` : `Reviews highlight · ${r.date}`}
+                    {r.handle ? `@${r.handle} &bull; ${r.date}` : `Reviews highlight &bull; ${r.date}`}
                   </p>
                 </div>
               </div>
@@ -232,13 +231,13 @@ function Makers() {
           <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.28em] text-rosegold-dark">
             <Sparkle className="h-3.5 w-3.5 text-gold" /> The makers
           </p>
-          <h2 className="mt-3 font-display text-4xl text-charcoal md:text-5xl">
+          <h2 className="mt-3 font-display text-4xl text-charcoal md:text-5xl font-bold">
             A small studio with <em className="text-rosegold-dark">big love</em> for detail.
           </h2>
           <p className="mt-4 leading-relaxed text-charcoal-muted">
             DIKOR is run by <strong className="text-charcoal">@sainirajatrs</strong> and <strong className="text-charcoal">@sheetal__83</strong> —
             two makers who believe a gift should feel like the person it&apos;s for. Every piece is printed,
-            painted and packed by hand, and a share of early orders went to Rahaat Foundation for strays.
+            painted and packed by hand in our Jalandhar studio, and shipped insured across India.
           </p>
           <a href={WHATSAPP_LINK} target="_blank" rel="noreferrer" className="mt-6 inline-block">
             <GhostButton>Say hello on WhatsApp</GhostButton>
@@ -262,7 +261,7 @@ function StickyBuyBar({ summary }: { summary: BuilderSummary }) {
     <div className="fixed inset-x-0 bottom-0 z-40 px-4 md:hidden" style={{ paddingBottom: "max(0.75rem, env(safe-area-inset-bottom))" }}>
       <div className="flex items-center justify-between gap-3 rounded-full border border-gold/40 bg-cream/95 py-2.5 pl-5 pr-2.5 shadow-soft backdrop-blur">
         <div className="min-w-0">
-          <p className="truncate text-sm font-semibold text-charcoal">{summary.category} · {summary.size}</p>
+          <p className="truncate text-sm font-semibold text-charcoal">{summary.category} &bull; {summary.size}</p>
           <p className="text-xs text-gold-dark font-bold">{summary.price}</p>
         </div>
         <a href="#order" className="shrink-0 rounded-full bg-gradient-to-r from-gold-dark via-gold to-gold-light px-6 py-3 text-xs font-bold uppercase tracking-[0.14em] text-charcoal shadow-gold">
@@ -274,12 +273,12 @@ function StickyBuyBar({ summary }: { summary: BuilderSummary }) {
 }
 
 const TRUST_ITEMS = [
-  "✓ Verified Instagram — @dikor_in",
+  "Official Instagram — @dikor_in",
   "Pet reels up to 5.9M views",
-  "Personalised name tag included",
-  "Shipping across India included",
-  "75% advance · 25% before shipping",
-  "Approval photos before dispatch",
+  "Personalised brass name tag included",
+  "Free insured pan-India shipping",
+  "75% advance &bull; 25% balance on approval",
+  "360° approval video before dispatch",
 ];
 
 export default function HomePage() {
@@ -299,7 +298,7 @@ export default function HomePage() {
             <SectionHeading
               eyebrow="Your custom order"
               title={<>Build your <em className="text-rosegold-dark">keepsake</em> in 2 minutes</>}
-              sub="Five short steps. You always see the total and the 75/25 split before paying anything."
+              sub="Five short steps with live 3D preview. You always see the total and the 75/25 split before paying anything."
             />
           </Reveal>
           <Reveal delay={0.1}>
@@ -355,7 +354,7 @@ export default function HomePage() {
             <p className="flex items-center justify-center gap-2 text-xs font-semibold uppercase tracking-[0.28em] text-gold-light">
               <Sparkle className="h-3.5 w-3.5" /> Ready when you are <Sparkle className="h-3.5 w-3.5" />
             </p>
-            <h2 className="mt-4 font-display text-4xl text-cream md:text-5xl">Your memories, <em className="text-shimmer not-italic">held forever</em>.</h2>
+            <h2 className="mt-4 font-display text-4xl text-cream md:text-5xl font-bold">Your memories, <em className="text-shimmer not-italic">held forever</em>.</h2>
             <p className="mx-auto mt-4 max-w-xl text-cream/60">4–5 photos. 75% advance. An approval video before anything ships. That&apos;s the whole process.</p>
             <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
               <a href="#order"><GoldButton className="w-full sm:w-auto">Start your order</GoldButton></a>

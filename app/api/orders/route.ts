@@ -4,40 +4,65 @@ import { getSessionUser, json, err } from "@/lib/api-lib";
 
 const CATS: Category[] = ["Pets", "Couples", "Kids", "Idols", "Decor"];
 
-// GET /api/orders — customer: own orders · admin: all (with customer names)
+// GET /api/orders — customer: own orders · admin: all
 export async function GET(req: NextRequest) {
   const me = await getSessionUser(req);
   if (!me) return err("Not signed in", 401);
-  const orders = me.role === "admin" ? db.getOrders() : db.getOrdersByUser(me.id);
-  const out = orders.map((o) => ({
-    ...o,
-    customer: me.role === "admin" ? db.getUser(o.userId) && { name: db.getUser(o.userId)!.name, email: db.getUser(o.userId)!.email } : undefined,
-  }));
-  return json({ orders: out });
+
+  const orders = me.role === "admin" ? await db.getOrders() : await db.getOrdersByUser(me.id, me.email);
+  return json({ orders });
 }
 
-// POST /api/orders — customer creates an order
+// POST /api/orders — customer or guest creates an order, or admin creates manual order
 export async function POST(req: NextRequest) {
   const me = await getSessionUser(req);
-  if (!me) return err("Not signed in", 401);
-  if (me.role !== "customer") return err("Only customers can place orders", 403);
   const body = await req.json().catch(() => ({}));
-  const { title, category, description, photos, size, material, city } = body;
-  if (!title || !String(title).trim()) return err("Give your keepsake a title");
-  if (!CATS.includes(category)) return err("Pick a category");
-  if (!Array.isArray(photos) || photos.length === 0) return err("Upload at least one reference photo");
-  if (photos.length > 8) return err("Max 8 photos for the demo");
-  const priceNum = Number(body.price);
-  const order = db.createOrder({
-    userId: me.id,
-    title: String(title).trim().slice(0, 80),
+
+  const {
+    title,
     category,
-    description: String(description || "").slice(0, 2000),
-    photos: photos.map(String).slice(0, 8),
-    price: Number.isFinite(priceNum) && priceNum >= 100 ? Math.round(priceNum) : null,
-    size: String(size || "5 inch"),
-    material: String(material || "PLA + hand-painted finish"),
-    city: String(city || "").slice(0, 60),
+    description,
+    photos,
+    size,
+    price,
+    city,
+    customerName,
+    customerEmail,
+    customerPhone,
+    source,
+    subjectName,
+    tagText,
+    advancePct,
+  } = body;
+
+  if (!title || !String(title).trim()) return err("Give your keepsake a title", 400);
+  if (!CATS.includes(category)) return err("Pick a valid category", 400);
+
+  const priceNum = Number(price);
+  const validPrice = Number.isFinite(priceNum) && priceNum >= 500 ? Math.round(priceNum) : 1500;
+
+  // Determine owner details
+  const name = customerName || (me ? me.name : "Guest Customer");
+  const email = customerEmail || (me ? me.email : null);
+  const phone = customerPhone || (me ? me.phone : null);
+  const orderSource = source || (me?.role === "admin" ? "manual_admin" : "web");
+
+  const order = await db.createOrder({
+    userId: me ? me.id : null,
+    customerName: String(name).trim(),
+    customerEmail: email ? String(email).trim().toLowerCase() : null,
+    customerPhone: phone ? String(phone).trim() : null,
+    source: orderSource,
+    title: String(title).trim().slice(0, 100),
+    category,
+    subjectName: subjectName ? String(subjectName).trim() : "",
+    tagText: tagText ? String(tagText).trim() : "",
+    description: String(description || "").slice(0, 3000),
+    photos: Array.isArray(photos) ? photos.slice(0, 8) : [],
+    size: String(size || '5" Standard'),
+    price: validPrice,
+    city: String(city || "Pan India").slice(0, 80),
   });
+
   return json({ order }, 201);
 }

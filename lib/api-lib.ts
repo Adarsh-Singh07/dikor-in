@@ -6,9 +6,9 @@ export async function getSessionUser(req: NextRequest) {
   const token = req.cookies.get(COOKIE_NAME)?.value;
   const sess = await verifySession(token);
   if (!sess) return null;
-  const user = db.getUser(sess.userId);
+  const user = await db.getUser(sess.userId);
   if (!user) return null;
-  return { ...publicUser(user), role: user.role as "customer" | "admin" };
+  return { ...publicUser(user), role: (sess.role || user.role) as "customer" | "admin" };
 }
 
 export function json(data: unknown, status = 200) {

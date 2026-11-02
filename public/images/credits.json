@@ -1,0 +1,62 @@
+[
+  {
+    "id": "dog-figurine",
+    "query": "dog miniature sculpture pet figurine",
+    "status": "ok",
+    "provider": "pexels",
+    "path": "assets/stock/dog-figurine.jpg",
+    "alt": "Close-up of a fluffy Pomeranian dog resting on wooden flooring indoors. Perfect for pet lovers.",
+    "author": "Dave Redfearn",
+    "authorUrl": "https://www.pexels.com/@dave-redfearn-5305394",
+    "sourceUrl": "https://www.pexels.com/photo/dog-on-floor-15528732/",
+    "license": "Pexels License (https://www.pexels.com/license/)"
+  },
+  {
+    "id": "cat-figurine",
+    "query": "cat miniature ceramic figurine",
+    "status": "ok",
+    "provider": "pexels",
+    "path": "assets/stock/cat-figurine.jpg",
+    "alt": "Charming cat and cow figurines sitting on a wooden shelf, captured with selective focus and bright colors.",
+    "author": "Alexas Fotos",
+    "authorUrl": "https://www.pexels.com/@alexasfotos",
+    "sourceUrl": "https://www.pexels.com/photo/figurines-of-a-cow-and-a-cat-7473044/",
+    "license": "Pexels License (https://www.pexels.com/license/)"
+  },
+  {
+    "id": "couple-figurine",
+    "query": "miniature figurine couple statue",
+    "status": "ok",
+    "provider": "pexels",
+    "path": "assets/stock/couple-figurine.jpg",
+    "alt": "Newlywed couple in a tender moment at a wedding in Đồng Tháp, Vietnam.",
+    "author": "Đặng Thanh Tú",
+    "authorUrl": "https://www.pexels.com/@d-ng-thanh-tu-2922122",
+    "sourceUrl": "https://www.pexels.com/photo/newlyweds-sitting-by-table-and-holding-hands-19270831/",
+    "license": "Pexels License (https://www.pexels.com/license/)"
+  },
+  {
+    "id": "artisan-painting",
+    "query": "artist painting miniature sculpture workshop",
+    "status": "ok",
+    "provider": "pixabay",
+    "path": "assets/stock/artisan-painting.jpg",
+    "alt": "artist, studio, art, sculpture, workshop, old man, tools, sculptor, creation, exhibit, working, professional, artwork, artist, artist, artist, artist, artist, studio, sculpture, workshop, old man, sculptor, sculptor, creation",
+    "author": "ottawagraphics",
+    "authorUrl": "https://pixabay.com/users/ottawagraphics-3815775/",
+    "sourceUrl": "https://pixabay.com/photos/artist-studio-art-sculpture-4622221/",
+    "license": "Pixabay Content License (https://pixabay.com/service/license-summary/)"
+  },
+  {
+    "id": "pet-portrait",
+    "query": "golden retriever dog happy portrait",
+    "status": "ok",
+    "provider": "pixabay",
+    "path": "assets/stock/pet-portrait.jpg",
+    "alt": "dog, pet, animal, cute, golden retriever, grass, meadow, nature, tongue out, happy dog, portrait, dog portrait, dog, dog, dog, golden retriever, golden retriever, golden retriever, golden retriever, golden retriever, happy dog, happy dog, happy dog, happy dog",
+    "author": "Pexels",
+    "authorUrl": "https://pixabay.com/users/Pexels-2286921/",
+    "sourceUrl": "https://pixabay.com/photos/dog-pet-animal-cute-1839808/",
+    "license": "Pixabay Content License (https://pixabay.com/service/license-summary/)"
+  }
+]

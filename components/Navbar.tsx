@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { Logo } from "./ui";
+import BrandLogo from "./BrandLogo";
 import { useAuth, api } from "@/lib/client";
 
 const LINKS = [
@@ -38,7 +38,7 @@ export default function Navbar() {
       }`}
     >
       <nav className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 md:px-8">
-        <Logo />
+        <BrandLogo size="md" />
         <div className="hidden items-center gap-8 md:flex">
           {LINKS.map((l) => (
             <Link
@@ -72,7 +72,7 @@ export default function Navbar() {
                 Sign in
               </Link>
               <Link
-                href="/auth"
+                href="/order"
                 className="rounded-full bg-gradient-to-r from-gold-dark via-gold to-gold-light px-6 py-2.5 text-xs font-bold uppercase tracking-[0.14em] text-charcoal shadow-gold transition-transform hover:scale-105"
               >
                 Start your order
@@ -107,7 +107,7 @@ export default function Navbar() {
               <>
                 <Link href="/auth" onClick={() => setOpen(false)} className="py-1 text-charcoal-soft">Sign in</Link>
                 <Link
-                  href="/auth"
+                  href="/order"
                   onClick={() => setOpen(false)}
                   className="mt-2 rounded-full bg-gradient-to-r from-gold-dark via-gold to-gold-light px-6 py-3 text-center text-xs font-bold uppercase tracking-[0.14em] text-charcoal"
                 >

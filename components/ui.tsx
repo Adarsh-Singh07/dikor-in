@@ -69,20 +69,24 @@ export function SectionHeading({ eyebrow, title, sub, align = "center" }: { eyeb
 /* ---------- Status pill ---------- */
 const PILL: Record<OrderStatus, string> = {
   photos_received: "bg-blush text-rosegold-dark border-rosegold/30",
+  advance_pending: "bg-amber-50 text-amber-800 border-amber-300",
   advance_paid: "bg-cream-dark text-charcoal border-charcoal/20",
   in_production: "bg-amber-50 text-amber-800 border-amber-300",
   approval_shared: "bg-rosegold/10 text-rosegold-dark border-rosegold/40",
+  changes_requested: "bg-purple-50 text-purple-800 border-purple-300",
   approved: "bg-green-50 text-green-800 border-green-300",
+  balance_pending: "bg-amber-50 text-amber-800 border-amber-300",
   balance_paid: "bg-gold/15 text-gold-dark border-gold/50",
   shipped: "bg-sky-50 text-sky-800 border-sky-300",
   delivered: "bg-charcoal text-cream border-charcoal",
+  cancelled: "bg-red-50 text-red-800 border-red-300",
 };
 
 export function StatusPill({ status }: { status: OrderStatus }) {
   return (
-    <span className={`inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-xs font-semibold uppercase tracking-wider ${PILL[status]}`}>
+    <span className={`inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 text-xs font-semibold uppercase tracking-wider ${PILL[status] || "bg-cream text-charcoal"}`}>
       <span className="w-1.5 h-1.5 rounded-full bg-current" />
-      {STATUS_LABELS[status]}
+      {STATUS_LABELS[status] || status}
     </span>
   );
 }
@@ -104,14 +108,15 @@ export function Marquee({ items }: { items: string[] }) {
   );
 }
 
-/* ---------- Demo badge ---------- */
-export function DemoBadge() {
+/* ---------- Official Studio badge ---------- */
+export function StudioBadge() {
   return (
     <span className="inline-flex items-center rounded-full bg-charcoal px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-gold-light">
-      Demo
+      Official Store
     </span>
   );
 }
+export const DemoBadge = StudioBadge;
 
 /* ---------- Field ---------- */
 export function Field({ label, children, hint }: { label: string; children: ReactNode; hint?: string }) {
