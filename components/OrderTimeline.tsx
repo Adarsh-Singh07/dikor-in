@@ -1,5 +1,5 @@
 "use client";
-import { STATUS_LABELS, type OrderStatus } from "@/lib/store";
+import { STATUS_LABELS, type OrderStatus } from "@/lib/types";
 
 const ORDER: OrderStatus[] = ["photos_received", "advance_paid", "in_production", "approval_shared", "approved", "balance_paid", "shipped", "delivered"];
 

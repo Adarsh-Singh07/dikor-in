@@ -6,7 +6,7 @@ import { Reveal } from "@/components/Reveal";
 import OrderTimeline from "@/components/OrderTimeline";
 import { StatusPill, Sparkle, GoldButton, GhostButton, Field, inputCls } from "@/components/ui";
 import { api, fileToDataURL } from "@/lib/client";
-import { inr, type Order, type OrderStatus } from "@/lib/store";
+import { inr, type Order, type OrderStatus } from "@/lib/types";
 
 const NEXT: { from: OrderStatus[]; to: OrderStatus; label: string; note: string }[] = [
   { from: ["photos_received", "advance_pending"], to: "advance_paid", label: "Mark Advance Paid (75%)", note: "Advance received" },

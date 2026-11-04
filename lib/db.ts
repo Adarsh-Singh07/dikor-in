@@ -1,4 +1,4 @@
-import { supabase, isSupabaseConfigured } from "./supabase";
+import { query } from "./pg";
 
 export type Role = "customer" | "admin";
 export type Category = "Pets" | "Couples" | "Kids" | "Idols" | "Decor";
@@ -153,48 +153,6 @@ function seedFallbackData() {
   };
   localCache.users.set(admin.id, admin);
   localCache.users.set(demoCustomer.id, demoCustomer);
-
-  const o1: DBOrder = {
-    id: "DKR-2026-1001",
-    trackingToken: "tk_gappu_demo_982",
-    userId: demoCustomer.id,
-    customerName: "Demo Customer",
-    customerEmail: "customer@demo.in",
-    customerPhone: "9876543210",
-    source: "web",
-    title: "Gappu — Golden Retriever replica",
-    category: "Pets",
-    subjectName: "Gappu",
-    tagText: "Gappu 2026",
-    description: "5-inch hand-painted replica of my golden retriever Gappu, sitting pose, with name base.",
-    photos: ["/images/hero-dog.webp"],
-    size: '5" · Bulky breeds',
-    material: "High-precision resin + acrylic hand-paint",
-    city: "Bengaluru",
-    status: "approval_shared",
-    totalPrice: 2000,
-    advancePct: 75,
-    advanceAmount: 1500,
-    balanceAmount: 500,
-    advancePaid: true,
-    balancePaid: false,
-    timelineDays: 12,
-    approvalVideoUrl: null,
-    approvalPhotos: ["/images/hero-dog.webp"],
-    studioNotes: "Finished paint booth inspection. Ready for customer approval video.",
-    revisionCount: 0,
-    trackingNumber: null,
-    courierPartner: "BlueDart Express",
-    events: [
-      { at: new Date(Date.now() - 4 * 864e5).toISOString(), status: "photos_received", note: "Order placed with reference photos", by: "customer" },
-      { at: new Date(Date.now() - 3 * 864e5).toISOString(), status: "advance_paid", note: "75% Advance (₹1,500) received via Easebuzz", by: "customer" },
-      { at: new Date(Date.now() - 2 * 864e5).toISOString(), status: "in_production", note: "3D CAD modeling completed, SLA printing in progress", by: "admin" },
-      { at: new Date(Date.now() - 1 * 864e5).toISOString(), status: "approval_shared", note: "360° craft video uploaded for client review", by: "admin" },
-    ],
-    createdAt: new Date(Date.now() - 4 * 864e5).toISOString(),
-    updatedAt: new Date(Date.now() - 1 * 864e5).toISOString(),
-  };
-  localCache.orders.set(o1.id, o1);
 }
 
 seedFallbackData();
@@ -202,51 +160,46 @@ seedFallbackData();
 export const dikorDB = {
   // ---- PRODUCTS ----
   async getProducts(): Promise<DBProduct[]> {
-    if (isSupabaseConfigured()) {
-      try {
-        const { data, error } = await supabase.from("dikor_products").select("*").eq("is_active", true);
-        if (!error && data && data.length > 0) {
-          return data.map((r) => ({
-            id: r.id,
-            title: r.title,
-            category: r.category,
-            tagline: r.tagline,
-            description: r.description,
-            imageUrl: r.image_url,
-            basePrice: r.base_price,
-            advancePct: r.advance_pct,
-            isActive: r.is_active,
-            sizes: r.sizes_json || [],
-            craftingDays: r.crafting_days,
-            shippingDays: r.shipping_days,
-          }));
-        }
-      } catch (err) {
-        console.warn("Supabase products fetch fallback:", err);
-      }
+    const res = await query(
+      `SELECT id, slug, name, category, tagline, description, image, price, sizes, photo_hint, active 
+       FROM products 
+       WHERE active = true 
+       ORDER BY sort ASC, created_at ASC`
+    );
+    if (res && res.rows.length > 0) {
+      return res.rows.map(mapRowToProduct);
     }
     return Array.from(localCache.products.values());
   },
 
   async updateProduct(id: string, patch: Partial<DBProduct>): Promise<boolean> {
-    if (isSupabaseConfigured()) {
-      try {
-        const updateData: Record<string, unknown> = {};
-        if (patch.title !== undefined) updateData.title = patch.title;
-        if (patch.basePrice !== undefined) updateData.base_price = patch.basePrice;
-        if (patch.advancePct !== undefined) updateData.advance_pct = patch.advancePct;
-        if (patch.sizes !== undefined) updateData.sizes_json = patch.sizes;
-        if (patch.isActive !== undefined) updateData.is_active = patch.isActive;
-        if (patch.craftingDays !== undefined) updateData.crafting_days = patch.craftingDays;
-        if (patch.shippingDays !== undefined) updateData.shipping_days = patch.shippingDays;
-        updateData.updated_at = new Date().toISOString();
+    const sets: string[] = [];
+    const vals: any[] = [];
+    let idx = 1;
 
-        const { error } = await supabase.from("dikor_products").update(updateData).eq("id", id);
-        return !error;
-      } catch (err) {
-        console.error("Error updating product in Supabase:", err);
-      }
+    if (patch.title !== undefined) {
+      sets.push(`name = $${idx++}`);
+      vals.push(patch.title);
     }
+    if (patch.basePrice !== undefined) {
+      sets.push(`price = $${idx++}`);
+      vals.push(patch.basePrice);
+    }
+    if (patch.sizes !== undefined) {
+      sets.push(`sizes = $${idx++}`);
+      vals.push(JSON.stringify(patch.sizes));
+    }
+    if (patch.isActive !== undefined) {
+      sets.push(`active = $${idx++}`);
+      vals.push(patch.isActive);
+    }
+
+    if (sets.length > 0) {
+      vals.push(id);
+      const res = await query(`UPDATE products SET ${sets.join(", ")} WHERE id = $${idx}`, vals);
+      if (res && res.rowCount && res.rowCount > 0) return true;
+    }
+
     const p = localCache.products.get(id);
     if (p) Object.assign(p, patch);
     return true;
@@ -255,24 +208,17 @@ export const dikorDB = {
   // ---- USERS ----
   async findUserByEmail(email: string): Promise<DBUser | null> {
     const clean = email.trim().toLowerCase();
-    if (isSupabaseConfigured()) {
-      try {
-        const { data, error } = await supabase.from("dikor_users").select("*").ilike("email", clean).maybeSingle();
-        if (!error && data) {
-          return {
-            id: data.id,
-            name: data.name,
-            email: data.email,
-            phone: data.phone,
-            password: data.password_hash,
-            role: data.role as Role,
-            createdAt: data.created_at,
-          };
-        }
-      } catch (err) {
-        console.warn("Supabase user email lookup fallback:", err);
-      }
+    const res = await query(
+      `SELECT id, name, email, phone, role, password_hash, created_at 
+       FROM users 
+       WHERE email ILIKE $1 
+       LIMIT 1`,
+      [clean]
+    );
+    if (res && res.rows.length > 0) {
+      return mapRowToUser(res.rows[0]);
     }
+
     for (const u of localCache.users.values()) {
       if (u.email && u.email.toLowerCase() === clean) return u;
     }
@@ -281,114 +227,121 @@ export const dikorDB = {
 
   async findUserByPhone(phone: string): Promise<DBUser | null> {
     const clean = phone.replace(/\D/g, "");
-    if (isSupabaseConfigured()) {
-      try {
-        const { data, error } = await supabase.from("dikor_users").select("*").eq("phone", clean).maybeSingle();
-        if (!error && data) {
-          return {
-            id: data.id,
-            name: data.name,
-            email: data.email,
-            phone: data.phone,
-            password: data.password_hash,
-            role: data.role as Role,
-            createdAt: data.created_at,
-          };
-        }
-      } catch (err) {
-        console.warn("Supabase user phone lookup fallback:", err);
-      }
+    const res = await query(
+      `SELECT id, name, email, phone, role, password_hash, created_at 
+       FROM users 
+       WHERE phone = $1 
+       LIMIT 1`,
+      [clean]
+    );
+    if (res && res.rows.length > 0) {
+      return mapRowToUser(res.rows[0]);
     }
+
     for (const u of localCache.users.values()) {
       if (u.phone && u.phone.replace(/\D/g, "") === clean) return u;
     }
     return null;
   },
 
-  async createUser(user: { name: string; email?: string; phone?: string; password?: string; role?: Role }): Promise<DBUser> {
+  async getUser(id: string): Promise<DBUser | null> {
+    const res = await query(
+      `SELECT id, name, email, phone, role, password_hash, created_at 
+       FROM users 
+       WHERE id = $1 
+       LIMIT 1`,
+      [id]
+    );
+    if (res && res.rows.length > 0) {
+      return mapRowToUser(res.rows[0]);
+    }
+    for (const u of localCache.users.values()) {
+      if (u.id === id) return u;
+    }
+    return null;
+  },
+
+  async createUser(
+    arg: string | { name: string; email?: string; phone?: string; password?: string; role?: Role },
+    emailArg?: string,
+    passwordArg?: string,
+    phoneArg?: string
+  ): Promise<DBUser> {
+    const user =
+      typeof arg === "string"
+        ? { name: arg, email: emailArg, password: passwordArg, phone: phoneArg, role: "customer" as Role }
+        : arg;
+
     const id = `usr_${Date.now().toString(36)}_${Math.random().toString(36).substring(2, 6)}`;
+    const email = user.email ? user.email.toLowerCase() : null;
+    const phone = user.phone || null;
+    const password = user.password || "";
+    const role = user.role || "customer";
+
+    const res = await query(
+      `INSERT INTO users (id, name, email, phone, password_hash, role, created_at)
+       VALUES ($1, $2, $3, $4, $5, $6, NOW())
+       RETURNING id, name, email, phone, role, password_hash, created_at`,
+      [id, user.name, email, phone, password, role]
+    );
+
+    if (res && res.rows.length > 0) {
+      return mapRowToUser(res.rows[0]);
+    }
+
     const newUser: DBUser = {
       id,
       name: user.name,
-      email: user.email ? user.email.toLowerCase() : null,
-      phone: user.phone || null,
-      password: user.password || "",
-      role: user.role || "customer",
+      email,
+      phone,
+      password,
+      role,
       createdAt: new Date().toISOString(),
     };
-
-    if (isSupabaseConfigured()) {
-      try {
-        await supabase.from("dikor_users").insert({
-          id: newUser.id,
-          name: newUser.name,
-          email: newUser.email,
-          phone: newUser.phone,
-          password_hash: newUser.password,
-          role: newUser.role,
-        });
-      } catch (err) {
-        console.error("Supabase createUser error:", err);
-      }
-    }
     localCache.users.set(newUser.id, newUser);
     return newUser;
   },
 
   // ---- ORDERS ----
   async getOrders(): Promise<DBOrder[]> {
-    if (isSupabaseConfigured()) {
-      try {
-        const { data, error } = await supabase.from("dikor_orders").select("*").order("created_at", { ascending: false });
-        if (!error && data) {
-          return data.map(mapRowToOrder);
-        }
-      } catch (err) {
-        console.warn("Supabase getOrders error, using local fallback:", err);
-      }
+    const res = await query(`SELECT * FROM orders ORDER BY created_at DESC`);
+    if (res && res.rows.length > 0) {
+      return res.rows.map(mapRowToOrder);
     }
     return Array.from(localCache.orders.values()).sort((a, b) => b.createdAt.localeCompare(a.createdAt));
   },
 
   async getOrdersByUser(userId: string, email?: string | null, phone?: string | null): Promise<DBOrder[]> {
-    if (isSupabaseConfigured()) {
-      try {
-        let query = supabase.from("dikor_orders").select("*");
-        if (email && phone) {
-          query = query.or(`user_id.eq.${userId},customer_email.ilike.${email},customer_phone.eq.${phone}`);
-        } else if (email) {
-          query = query.or(`user_id.eq.${userId},customer_email.ilike.${email}`);
-        } else {
-          query = query.eq("user_id", userId);
-        }
-        const { data, error } = await query.order("created_at", { ascending: false });
-        if (!error && data) {
-          return data.map(mapRowToOrder);
-        }
-      } catch (err) {
-        console.warn("Supabase getOrdersByUser error:", err);
-      }
+    const cleanEmail = email ? email.trim().toLowerCase() : null;
+    const cleanPhone = phone ? phone.replace(/\D/g, "") : null;
+
+    const res = await query(
+      `SELECT * FROM orders 
+       WHERE user_id = $1 
+          OR ($2::text IS NOT NULL AND (customer_email ILIKE $2 OR user_id IN (SELECT id FROM users WHERE email ILIKE $2)))
+          OR ($3::text IS NOT NULL AND (phone = $3 OR user_id IN (SELECT id FROM users WHERE phone = $3)))
+       ORDER BY created_at DESC`,
+      [userId, cleanEmail, cleanPhone]
+    );
+
+    if (res && res.rows.length > 0) {
+      return res.rows.map(mapRowToOrder);
     }
+
     return Array.from(localCache.orders.values())
-      .filter((o) => o.userId === userId || (email && o.customerEmail?.toLowerCase() === email.toLowerCase()))
+      .filter((o) => o.userId === userId || (cleanEmail && o.customerEmail?.toLowerCase() === cleanEmail))
       .sort((a, b) => b.createdAt.localeCompare(a.createdAt));
   },
 
   async getOrder(idOrToken: string): Promise<DBOrder | null> {
-    if (isSupabaseConfigured()) {
-      try {
-        const { data, error } = await supabase
-          .from("dikor_orders")
-          .select("*")
-          .or(`id.eq.${idOrToken},tracking_token.eq.${idOrToken}`)
-          .maybeSingle();
-        if (!error && data) {
-          return mapRowToOrder(data);
-        }
-      } catch (err) {
-        console.warn("Supabase getOrder error:", err);
-      }
+    const res = await query(
+      `SELECT * FROM orders WHERE id = $1 OR tracking_token = $1 LIMIT 1`,
+      [idOrToken]
+    );
+    if (res && res.rows.length > 0) {
+      return mapRowToOrder(res.rows[0]);
     }
+
     for (const o of localCache.orders.values()) {
       if (o.id === idOrToken || o.trackingToken === idOrToken) return o;
     }
@@ -408,17 +361,77 @@ export const dikorDB = {
     description?: string;
     photos?: string[];
     size: string;
-    totalPrice: number;
+    price?: number | null;
+    totalPrice?: number;
     advancePct?: number;
     city?: string;
   }): Promise<DBOrder> {
     const timestamp = Date.now().toString().slice(-4);
     const orderId = `DKR-${new Date().getFullYear()}-${timestamp}${Math.floor(Math.random() * 90 + 10)}`;
     const trackingToken = `tk_${Math.random().toString(36).substring(2, 10)}`;
+    const finalPrice = data.totalPrice || data.price || 1500;
     const advancePct = data.advancePct || 75;
-    const advanceAmount = Math.round((data.totalPrice * advancePct) / 100);
-    const balanceAmount = data.totalPrice - advanceAmount;
+    const advanceAmount = Math.round((finalPrice * advancePct) / 100);
+    const balanceAmount = finalPrice - advanceAmount;
     const now = new Date().toISOString();
+
+    const initialEvent: DBOrderEvent = {
+      at: now,
+      status: "photos_received",
+      note: `Order ${orderId} initiated (${data.source || "web"}). Reference photos registered.`,
+      by: data.customerName,
+    };
+
+    const res = await query(
+      `INSERT INTO orders (
+        id, user_id, title, category, description, photos, size, material, city, 
+        pincode, address, phone, source, status, price, advance_pct, timeline_days, 
+        demo_video, demo_note, revision_count, production_stage, advance_paid, balance_paid, 
+        courier, tracking_id, invoice_no, events, tracking_token, customer_name, customer_email, 
+        subject_name, tag_text, created_at, updated_at
+      ) VALUES (
+        $1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16, $17, 
+        $18, $19, $20, $21, $22, $23, $24, $25, $26, $27, $28, $29, $30, $31, $32, NOW(), NOW()
+      ) RETURNING *`,
+      [
+        orderId,
+        data.userId || "u_guest",
+        data.title,
+        data.category,
+        data.description || "",
+        JSON.stringify(data.photos || []),
+        data.size,
+        "Precision SLA Resin + Hand-Paint",
+        data.city || "Pan India",
+        "",
+        "",
+        data.customerPhone || "",
+        data.source || "web",
+        "photos_received",
+        finalPrice,
+        advancePct,
+        12,
+        null,
+        "",
+        0,
+        "Pending Advance",
+        false,
+        false,
+        "BlueDart Express",
+        "",
+        null,
+        JSON.stringify([initialEvent]),
+        trackingToken,
+        data.customerName,
+        data.customerEmail || null,
+        data.subjectName || "",
+        data.tagText || "",
+      ]
+    );
+
+    if (res && res.rows.length > 0) {
+      return mapRowToOrder(res.rows[0]);
+    }
 
     const order: DBOrder = {
       id: orderId,
@@ -435,10 +448,10 @@ export const dikorDB = {
       description: data.description || "",
       photos: data.photos || [],
       size: data.size,
-      material: "Precision SLA Resin + Studio Hand-Paint",
+      material: "Precision SLA Resin + Hand-Paint",
       city: data.city || "Pan India",
       status: "photos_received",
-      totalPrice: data.totalPrice,
+      totalPrice: finalPrice,
       advancePct,
       advanceAmount,
       balanceAmount,
@@ -451,55 +464,10 @@ export const dikorDB = {
       revisionCount: 0,
       trackingNumber: null,
       courierPartner: "BlueDart Express",
-      events: [
-        {
-          at: now,
-          status: "photos_received",
-          note: `Order ${orderId} initiated (${data.source || "web"}). 4-5 reference photos registered.`,
-          by: data.customerName,
-        },
-      ],
+      events: [initialEvent],
       createdAt: now,
       updatedAt: now,
     };
-
-    if (isSupabaseConfigured()) {
-      try {
-        await supabase.from("dikor_orders").insert({
-          id: order.id,
-          tracking_token: order.trackingToken,
-          user_id: order.userId,
-          customer_name: order.customerName,
-          customer_email: order.customerEmail,
-          customer_phone: order.customerPhone,
-          source: order.source,
-          category: order.category,
-          title: order.title,
-          subject_name: order.subjectName,
-          tag_text: order.tagText,
-          size: order.size,
-          notes: order.description,
-          photos: order.photos,
-          status: order.status,
-          total_price: order.totalPrice,
-          advance_pct: order.advancePct,
-          advance_amount: order.advanceAmount,
-          balance_amount: order.balanceAmount,
-          advance_paid: order.advancePaid,
-          balance_paid: order.balancePaid,
-          city: order.city,
-        });
-
-        await supabase.from("dikor_order_events").insert({
-          order_id: order.id,
-          status: order.status,
-          note: order.events[0].note,
-          by: order.events[0].by,
-        });
-      } catch (err) {
-        console.error("Supabase createOrder error:", err);
-      }
-    }
 
     localCache.orders.set(order.id, order);
     return order;
@@ -515,14 +483,7 @@ export const dikorDB = {
     if (!existing) return null;
 
     const now = new Date().toISOString();
-    const updated = { ...existing, ...patch, updatedAt: now };
-
-    if (patch.totalPrice !== undefined || patch.advancePct !== undefined) {
-      const tot = updated.totalPrice;
-      const advPct = updated.advancePct;
-      updated.advanceAmount = Math.round((tot * advPct) / 100);
-      updated.balanceAmount = tot - updated.advanceAmount;
-    }
+    let events = existing.events || [];
 
     if (patch.status && patch.status !== existing.status) {
       const ev: DBOrderEvent = {
@@ -531,43 +492,67 @@ export const dikorDB = {
         note: eventNote || `Status updated to ${patch.status}`,
         by: by || "admin",
       };
-      updated.events = [...(existing.events || []), ev];
-
-      if (isSupabaseConfigured()) {
-        try {
-          await supabase.from("dikor_order_events").insert({
-            order_id: id,
-            status: patch.status,
-            note: ev.note,
-            by: ev.by,
-          });
-        } catch (err) {
-          console.error("Error logging order event:", err);
-        }
-      }
+      events = [...events, ev];
     }
 
-    if (isSupabaseConfigured()) {
-      try {
-        const dbPatch: Record<string, unknown> = { updated_at: now };
-        if (patch.status !== undefined) dbPatch.status = patch.status;
-        if (patch.totalPrice !== undefined) dbPatch.total_price = patch.totalPrice;
-        if (patch.advancePct !== undefined) dbPatch.advance_pct = patch.advancePct;
-        if (patch.advancePaid !== undefined) dbPatch.advance_paid = patch.advancePaid;
-        if (patch.balancePaid !== undefined) dbPatch.balance_paid = patch.balancePaid;
-        if (patch.trackingNumber !== undefined) dbPatch.tracking_number = patch.trackingNumber;
-        if (patch.courierPartner !== undefined) dbPatch.courier_partner = patch.courierPartner;
-        if (patch.approvalVideoUrl !== undefined) dbPatch.approval_video_url = patch.approvalVideoUrl;
-        if (patch.studioNotes !== undefined) dbPatch.studio_notes = patch.studioNotes;
-        if (patch.photos !== undefined) dbPatch.photos = patch.photos;
-        if (patch.userId !== undefined) dbPatch.user_id = patch.userId;
+    const sets: string[] = ["updated_at = NOW()"];
+    const vals: any[] = [];
+    let idx = 1;
 
-        await supabase.from("dikor_orders").update(dbPatch).eq("id", id);
-      } catch (err) {
-        console.error("Supabase updateOrder error:", err);
-      }
+    if (patch.status !== undefined) {
+      sets.push(`status = $${idx++}`);
+      vals.push(patch.status);
+      sets.push(`events = $${idx++}`);
+      vals.push(JSON.stringify(events));
+    }
+    if (patch.totalPrice !== undefined) {
+      sets.push(`price = $${idx++}`);
+      vals.push(patch.totalPrice);
+    }
+    if (patch.advancePct !== undefined) {
+      sets.push(`advance_pct = $${idx++}`);
+      vals.push(patch.advancePct);
+    }
+    if (patch.advancePaid !== undefined) {
+      sets.push(`advance_paid = $${idx++}`);
+      vals.push(patch.advancePaid);
+    }
+    if (patch.balancePaid !== undefined) {
+      sets.push(`balance_paid = $${idx++}`);
+      vals.push(patch.balancePaid);
+    }
+    if (patch.trackingNumber !== undefined) {
+      sets.push(`tracking_id = $${idx++}`);
+      vals.push(patch.trackingNumber);
+    }
+    if (patch.courierPartner !== undefined) {
+      sets.push(`courier = $${idx++}`);
+      vals.push(patch.courierPartner);
+    }
+    if (patch.approvalVideoUrl !== undefined) {
+      sets.push(`demo_video = $${idx++}`);
+      vals.push(patch.approvalVideoUrl);
+    }
+    if (patch.studioNotes !== undefined) {
+      sets.push(`demo_note = $${idx++}`);
+      vals.push(patch.studioNotes);
+    }
+    if (patch.userId !== undefined) {
+      sets.push(`user_id = $${idx++}`);
+      vals.push(patch.userId);
     }
 
+    vals.push(id);
+    const res = await query(
+      `UPDATE orders SET ${sets.join(", ")} WHERE id = $${idx} RETURNING *`,
+      vals
+    );
+
+    if (res && res.rows.length > 0) {
+      return mapRowToOrder(res.rows[0]);
+    }
+
+    const updated = { ...existing, ...patch, events, updatedAt: now };
     localCache.orders.set(id, updated);
     return updated;
   },
@@ -575,37 +560,25 @@ export const dikorDB = {
   // ---- CLAIM GUEST ORDERS ----
   async claimGuestOrders(userId: string, email?: string | null, phone?: string | null): Promise<number> {
     if (!email && !phone) return 0;
-    let claimed = 0;
+    const cleanEmail = email ? email.trim().toLowerCase() : null;
+    const cleanPhone = phone ? phone.replace(/\D/g, "") : null;
 
-    if (isSupabaseConfigured()) {
-      try {
-        let query = supabase.from("dikor_orders").update({ user_id: userId }).is("user_id", null);
-        if (email && phone) {
-          query = query.or(`customer_email.ilike.${email},customer_phone.eq.${phone}`);
-        } else if (email) {
-          query = query.ilike("customer_email", email);
-        } else if (phone) {
-          query = query.eq("customer_phone", phone);
-        }
-        const { data, error } = await query.select("id");
-        if (!error && data) claimed = data.length;
-      } catch (err) {
-        console.warn("Supabase claimGuestOrders error:", err);
-      }
-    }
+    const res = await query(
+      `UPDATE orders 
+       SET user_id = $1 
+       WHERE (user_id IS NULL OR user_id = 'u_guest' OR user_id LIKE 'usr_%') 
+         AND (
+           ($2::text IS NOT NULL AND customer_email ILIKE $2) 
+           OR ($3::text IS NOT NULL AND phone = $3)
+         )
+       RETURNING id`,
+      [userId, cleanEmail, cleanPhone]
+    );
 
-    for (const [id, o] of localCache.orders.entries()) {
-      if (!o.userId) {
-        const emailMatch = email && o.customerEmail?.toLowerCase() === email.toLowerCase();
-        const phoneMatch = phone && o.customerPhone === phone;
-        if (emailMatch || phoneMatch) {
-          o.userId = userId;
-          localCache.orders.set(id, o);
-          claimed++;
-        }
-      }
+    if (res && res.rowCount !== null) {
+      return res.rowCount;
     }
-    return claimed;
+    return 0;
   },
 
   // ---- PAYMENTS ----
@@ -617,32 +590,26 @@ export const dikorDB = {
     transactionId?: string;
   }): Promise<DBPayment> {
     const payId = `PAY-${Date.now().toString(36).toUpperCase()}`;
+    const txn = p.transactionId || `EBZ_${Date.now()}`;
+    const gateway = p.gateway || "easebuzz";
+
+    await query(
+      `INSERT INTO payments (txnid, order_id, part, amount, status, mode, easepayid, created_at, updated_at)
+       VALUES ($1, $2, $3, $4, $5, $6, $7, NOW(), NOW())
+       ON CONFLICT (txnid) DO UPDATE SET status = EXCLUDED.status, updated_at = NOW()`,
+      [txn, p.orderId, p.paymentType, String(p.amount), "success", gateway, txn]
+    );
+
     const payment: DBPayment = {
       id: payId,
       orderId: p.orderId,
       paymentType: p.paymentType,
       amount: p.amount,
-      gateway: p.gateway || "easebuzz",
+      gateway,
       status: "success",
-      transactionId: p.transactionId || `EBZ_${Date.now()}`,
+      transactionId: txn,
       createdAt: new Date().toISOString(),
     };
-
-    if (isSupabaseConfigured()) {
-      try {
-        await supabase.from("dikor_payments").insert({
-          id: payment.id,
-          order_id: payment.orderId,
-          payment_type: payment.paymentType,
-          amount: payment.amount,
-          gateway: payment.gateway,
-          status: payment.status,
-          transaction_id: payment.transactionId,
-        });
-      } catch (err) {
-        console.error("Supabase recordPayment error:", err);
-      }
-    }
     localCache.payments.set(payment.id, payment);
     return payment;
   },
@@ -652,6 +619,33 @@ export const dikorDB = {
     const invNumber = `INV-${new Date().getFullYear()}-${order.id.slice(-4)}`;
     const invId = `inv_${order.id}`;
     const now = new Date().toISOString();
+
+    await query(
+      `INSERT INTO invoices (
+        id, order_id, invoice_number, amount, advance_paid, balance_paid, 
+        customer_name, customer_email, customer_phone, html_content, sent_to_email, sent_at, created_at
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, NOW(), NOW())
+      ON CONFLICT (id) DO UPDATE SET 
+        amount = EXCLUDED.amount, 
+        advance_paid = EXCLUDED.advance_paid, 
+        balance_paid = EXCLUDED.balance_paid`,
+      [
+        invId,
+        order.id,
+        invNumber,
+        order.totalPrice,
+        order.advanceAmount,
+        order.balanceAmount,
+        order.customerName,
+        order.customerEmail,
+        order.customerPhone,
+        "",
+        order.customerEmail,
+      ]
+    );
+
+    // Also update invoice_no on orders table
+    await query(`UPDATE orders SET invoice_no = $1 WHERE id = $2`, [invNumber, order.id]);
 
     const invoice: DBInvoice = {
       id: invId,
@@ -668,54 +662,14 @@ export const dikorDB = {
       sentAt: now,
       createdAt: now,
     };
-
-    if (isSupabaseConfigured()) {
-      try {
-        await supabase.from("dikor_invoices").upsert({
-          id: invoice.id,
-          order_id: invoice.orderId,
-          invoice_number: invoice.invoiceNumber,
-          amount: invoice.amount,
-          advance_paid: invoice.advancePaid,
-          balance_paid: invoice.balancePaid,
-          customer_name: invoice.customerName,
-          customer_email: invoice.customerEmail,
-          customer_phone: invoice.customerPhone,
-          sent_to_email: invoice.sentToEmail,
-          sent_at: invoice.sentAt,
-        });
-      } catch (err) {
-        console.error("Supabase createInvoice error:", err);
-      }
-    }
     localCache.invoices.set(invoice.id, invoice);
     return invoice;
   },
 
   async getInvoiceByOrder(orderId: string): Promise<DBInvoice | null> {
-    if (isSupabaseConfigured()) {
-      try {
-        const { data, error } = await supabase.from("dikor_invoices").select("*").eq("order_id", orderId).maybeSingle();
-        if (!error && data) {
-          return {
-            id: data.id,
-            orderId: data.order_id,
-            invoiceNumber: data.invoice_number,
-            amount: data.amount,
-            advancePaid: data.advance_paid,
-            balancePaid: data.balance_paid,
-            customerName: data.customer_name,
-            customerEmail: data.customer_email,
-            customerPhone: data.customer_phone,
-            htmlContent: data.html_content || "",
-            sentToEmail: data.sent_to_email,
-            sentAt: data.sent_at,
-            createdAt: data.created_at,
-          };
-        }
-      } catch (err) {
-        console.warn("Supabase getInvoice error:", err);
-      }
+    const res = await query(`SELECT * FROM invoices WHERE order_id = $1 LIMIT 1`, [orderId]);
+    if (res && res.rows.length > 0) {
+      return mapRowToInvoice(res.rows[0]);
     }
     for (const inv of localCache.invoices.values()) {
       if (inv.orderId === orderId) return inv;
@@ -724,40 +678,130 @@ export const dikorDB = {
   },
 };
 
+function mapRowToProduct(r: Record<string, any>): DBProduct {
+  const basePrice = Number(r.price) || 1500;
+  let parsedSizes: DBProductSize[] = [];
+  try {
+    if (typeof r.sizes === "string") {
+      parsedSizes = JSON.parse(r.sizes);
+    } else if (Array.isArray(r.sizes)) {
+      parsedSizes = r.sizes;
+    }
+  } catch {
+    parsedSizes = [];
+  }
+
+  if (parsedSizes.length === 0) {
+    parsedSizes = [
+      { id: "4in", label: "4 inch · Compact Keepsake", price: basePrice },
+      { id: "5in", label: "5 inch · Studio Favorite", price: Math.round(basePrice * 1.3), popular: true },
+      { id: "6in", label: "6 inch · Premium Atelier", price: Math.round(basePrice * 1.6) },
+      { id: "7in", label: "7 inch · Centerpiece Heirloom", price: Math.round(basePrice * 2.1) },
+      { id: "8in", label: "8 inch · Grand Monumental", price: Math.round(basePrice * 2.7) },
+    ];
+  }
+
+  return {
+    id: r.id,
+    title: r.name || r.title || "Custom 3D Figurine",
+    category: r.category || "Pets",
+    tagline: r.tagline || "",
+    description: r.description || "",
+    imageUrl: r.image || "/images/cat-figurine.jpg",
+    basePrice,
+    advancePct: 75,
+    isActive: r.active !== false,
+    sizes: parsedSizes,
+    craftingDays: 5,
+    shippingDays: 3,
+  };
+}
+
 function mapRowToOrder(r: Record<string, any>): DBOrder {
+  const tot = Number(r.price) || Number(r.total_price) || 1500;
+  const advPct = Number(r.advance_pct) || 75;
+  const advAmt = Math.round((tot * advPct) / 100);
+  const balAmt = tot - advAmt;
+
+  let parsedPhotos: string[] = [];
+  try {
+    if (typeof r.photos === "string") parsedPhotos = JSON.parse(r.photos);
+    else if (Array.isArray(r.photos)) parsedPhotos = r.photos;
+  } catch {
+    parsedPhotos = [];
+  }
+
+  let parsedEvents: DBOrderEvent[] = [];
+  try {
+    if (typeof r.events === "string") parsedEvents = JSON.parse(r.events);
+    else if (Array.isArray(r.events)) parsedEvents = r.events;
+  } catch {
+    parsedEvents = [];
+  }
+
   return {
     id: r.id,
     trackingToken: r.tracking_token || r.id,
     userId: r.user_id,
     customerName: r.customer_name || "Customer",
-    customerEmail: r.customer_email,
-    customerPhone: r.customer_phone,
+    customerEmail: r.customer_email || null,
+    customerPhone: r.phone || r.customer_phone || null,
     source: r.source || "web",
     title: r.title || "Custom 3D Figurine",
     category: r.category as Category,
     subjectName: r.subject_name || "",
     tagText: r.tag_text || "",
-    description: r.notes || "",
-    photos: Array.isArray(r.photos) ? r.photos : [],
+    description: r.description || r.notes || "",
+    photos: parsedPhotos,
     size: r.size || "Standard",
-    material: "Precision SLA Resin + Hand-Paint",
+    material: r.material || "Precision SLA Resin + Hand-Paint",
     city: r.city || "Pan India",
-    status: r.status as OrderStatus,
-    totalPrice: r.total_price || 0,
-    advancePct: r.advance_pct || 75,
-    advanceAmount: r.advance_amount || 0,
-    balanceAmount: r.balance_amount || 0,
+    status: (r.status as OrderStatus) || "photos_received",
+    totalPrice: tot,
+    advancePct: advPct,
+    advanceAmount: advAmt,
+    balanceAmount: balAmt,
     advancePaid: Boolean(r.advance_paid),
     balancePaid: Boolean(r.balance_paid),
-    timelineDays: 12,
-    approvalVideoUrl: r.approval_video_url || null,
+    timelineDays: Number(r.timeline_days) || 12,
+    approvalVideoUrl: r.demo_video || null,
     approvalPhotos: Array.isArray(r.approval_photos) ? r.approval_photos : [],
-    studioNotes: r.studio_notes || "",
-    revisionCount: 0,
-    trackingNumber: r.tracking_number,
-    courierPartner: r.courier_partner || "BlueDart Express",
-    events: [],
-    createdAt: r.created_at,
-    updatedAt: r.updated_at,
+    studioNotes: r.demo_note || r.studio_notes || "",
+    revisionCount: Number(r.revision_count) || 0,
+    trackingNumber: r.tracking_id || null,
+    courierPartner: r.courier || "BlueDart Express",
+    events: parsedEvents,
+    createdAt: r.created_at ? new Date(r.created_at).toISOString() : new Date().toISOString(),
+    updatedAt: r.updated_at ? new Date(r.updated_at).toISOString() : new Date().toISOString(),
+  };
+}
+
+function mapRowToUser(r: Record<string, any>): DBUser {
+  return {
+    id: r.id,
+    name: r.name || "Customer",
+    email: r.email || null,
+    phone: r.phone || null,
+    password: r.password_hash || r.password || "",
+    role: (r.role as Role) || "customer",
+    createdAt: r.created_at ? new Date(r.created_at).toISOString() : new Date().toISOString(),
+  };
+}
+
+function mapRowToInvoice(r: Record<string, any>): DBInvoice {
+  return {
+    id: r.id,
+    orderId: r.order_id,
+    invoiceNumber: r.invoice_number,
+    amount: Number(r.amount) || 0,
+    advancePaid: Number(r.advance_paid) || 0,
+    balancePaid: Number(r.balance_paid) || 0,
+    customerName: r.customer_name || "Customer",
+    customerEmail: r.customer_email || null,
+    customerPhone: r.customer_phone || null,
+    htmlContent: r.html_content || "",
+    sentToEmail: r.sent_to_email || null,
+    sentAt: r.sent_at ? new Date(r.sent_at).toISOString() : null,
+    createdAt: r.created_at ? new Date(r.created_at).toISOString() : new Date().toISOString(),
   };
 }

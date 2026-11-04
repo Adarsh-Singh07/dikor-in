@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { STATUS_LABELS, type OrderStatus } from "@/lib/store";
+import { STATUS_LABELS, type OrderStatus } from "@/lib/types";
 
 /* ---------- Brand logo: cream badge, rose-gold "Dikor" ---------- */
 export function Logo({ compact = false }: { compact?: boolean }) {

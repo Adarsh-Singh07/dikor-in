@@ -7,7 +7,7 @@ import { Reveal } from "@/components/Reveal";
 import OrderTimeline from "@/components/OrderTimeline";
 import { StatusPill, Sparkle, GoldButton, GhostButton, Field, inputCls } from "@/components/ui";
 import { api } from "@/lib/client";
-import { inr, advanceAmount, balanceAmount, type Order } from "@/lib/store";
+import { inr, advanceAmount, balanceAmount, type Order } from "@/lib/types";
 
 function Card({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return <div className={`rounded-3xl bg-white p-6 shadow-card md:p-8 ${className}`}>{children}</div>;

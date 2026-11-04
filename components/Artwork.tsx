@@ -1,5 +1,5 @@
 "use client";
-import type { Category } from "@/lib/store";
+import type { Category } from "@/lib/types";
 
 /** Elegant SVG placeholder artwork per category — warm gradients + line motifs. */
 const ART: Record<Category, { bg: [string, string]; motif: JSX.Element; label: string }> = {
