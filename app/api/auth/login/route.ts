@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { signSession, sessionCookie } from "@/lib/auth";
 import { db, publicUser } from "@/lib/store";
 import { err } from "@/lib/api-lib";
+import { verifyPassword } from "@/lib/crypto-auth";
 
 export async function POST(req: NextRequest) {
   const { email, password, phone } = await req.json().catch(() => ({}));
@@ -17,7 +18,7 @@ export async function POST(req: NextRequest) {
     user = await db.findUserByPhone(String(phone).trim());
   }
 
-  if (!user || user.password !== String(password)) {
+  if (!user || !verifyPassword(String(password), user.password)) {
     return err("Invalid credentials. For demo: admin@demo.in / admin123 or customer@demo.in / demo123", 401);
   }
 

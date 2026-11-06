@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { signSession, sessionCookie } from "@/lib/auth";
 import { db, publicUser } from "@/lib/store";
 import { err } from "@/lib/api-lib";
+import { hashPassword } from "@/lib/crypto-auth";
 
 export async function POST(req: NextRequest) {
   const { name, email, phone, password } = await req.json().catch(() => ({}));
@@ -17,10 +18,12 @@ export async function POST(req: NextRequest) {
     if (existing) return err("An account with this email already exists", 409);
   }
 
+  const hashedPassword = hashPassword(String(password));
+
   const user = await db.createUser(
     String(name).trim(),
     email ? String(email).trim() : undefined,
-    String(password),
+    hashedPassword,
     phone ? String(phone).trim() : undefined
   );
 
