@@ -206,13 +206,13 @@ export default function OrderDetail({ id, backHref }: { id: string; backHref: st
           {(order.status === "approval_shared" || order.approvalVideoUrl || ["approved", "balance_paid", "shipped", "delivered"].includes(order.status)) && (
             <Reveal>
               <Card className="border border-gold/40">
-                <CardTitle>360° Craft Proof — Inspect Before It Ships</CardTitle>
+                <CardTitle>360° Craft Proof: Inspect Before It Ships</CardTitle>
                 {order.approvalVideoUrl ? (
                   <video src={order.approvalVideoUrl} controls className="aspect-video w-full rounded-2xl bg-charcoal" />
                 ) : (
                   <div className="grid aspect-video w-full place-items-center rounded-2xl bg-gradient-to-br from-cream-dark to-blush">
                     <div className="text-center p-6">
-                      <Sparkle className="mx-auto h-8 w-8 text-gold" />
+                      <div className="mx-auto w-12 h-12 rounded-full bg-rosegold/10 text-rosegold-dark grid place-items-center text-xl">🎬</div>
                       <p className="mt-2 text-sm font-semibold text-charcoal">Studio Craft Video Proof Ready</p>
                       <p className="text-xs text-charcoal-muted mt-1">Our artists have finished 3D printing & hand-painting.</p>
                     </div>
@@ -228,7 +228,7 @@ export default function OrderDetail({ id, backHref }: { id: string; backHref: st
                           disabled={busy}
                           onClick={() => act(() => api(`/api/orders/${id}/approve`, { method: "POST" }), "Craft Approved! You can now clear the balance for shipping.")}
                         >
-                          ✓ Approve — Looks Perfect!
+                          ✓ Approve: Looks Perfect!
                         </GoldButton>
                         <GhostButton disabled={busy} onClick={() => setShowRev(true)}>
                           Request Tweaks / Adjustments

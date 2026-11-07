@@ -268,12 +268,12 @@ export default function OrderBuilder({
       <div className="mb-8 flex items-center justify-between border-b border-charcoal/10 pb-5">
         <div>
           <span className="text-[11px] uppercase tracking-[0.22em] text-rosegold-dark font-bold">
-            MakeDoppel-Inspired 3D Atelier
+            Bespoke 3D Atelier Studio
           </span>
           <h2 className="font-serif text-2xl md:text-3xl text-charcoal font-bold">
             {step === 1 && "1. Choose Your Subject & Style"}
             {step === 2 && "2. Scale, Dimensions & 3D Preview"}
-            {step === 3 && "3. Upload 4–5 Reference Photos"}
+            {step === 3 && "3. Upload 4-5 Reference Photos"}
             {step === 4 && "4. Personalisation & Delivery Details"}
             {step === 5 && "5. Review & Split Payment Checkout"}
           </h2>
@@ -410,7 +410,7 @@ export default function OrderBuilder({
               <Sparkle className="w-6 h-6 text-gold" />
             </div>
             <h4 className="font-semibold text-charcoal text-base">Drag & drop your reference photos</h4>
-            <p className="text-xs text-charcoal-muted mt-1">4–5 clear photos are best &bull; Front face, sides, and full body</p>
+            <p className="text-xs text-charcoal-muted mt-1">4-5 clear photos are best &bull; Front face, sides, and full body</p>
             <input
               ref={photoInputRef}
               type="file"

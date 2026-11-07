@@ -2,7 +2,7 @@ import { NextRequest } from "next/server";
 import { db } from "@/lib/store";
 import { getSessionUser, json, err } from "@/lib/api-lib";
 
-// POST /api/orders/[id]/approve — customer approves the finished craft proof
+// POST /api/orders/[id]/approve :  customer approves the finished craft proof
 export async function POST(req: NextRequest, { params }: { params: { id: string } }) {
   const me = await getSessionUser(req);
   const token = req.nextUrl.searchParams.get("token");

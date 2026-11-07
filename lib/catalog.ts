@@ -1,6 +1,6 @@
-// DIKOR v2 — single source of truth for the public site.
+// DIKOR v2: single source of truth for the public site.
 // Pricing facts come from DIKOR's Instagram Q&A (2026-10-16). Values flagged
-// PENDING_ADARSH are placeholders Adarsh will confirm — do not present them as
+// PENDING_ADARSH are placeholders Adarsh will confirm: do not present them as
 // DIKOR's real prices in any quote/checkout until confirmed.
 
 export const WHATSAPP_NUMBER = "919878070123";
@@ -21,7 +21,7 @@ export const PET_SIZES: PetSizeOption[] = [
   { id: "5-slim", label: '5" · Slim breeds', build: "slim", price: 1500 },
   { id: "5-bulky", label: '5" · Bulky breeds', build: "bulky", price: 2000 },
   { id: "7-slim", label: '7" · Slim breeds', build: "slim", price: 1700 },
-  // 7-inch bulky price was cut off in DIKOR's IG Q&A screenshot — Adarsh to confirm.
+  // 7-inch bulky price was cut off in DIKOR's IG Q&A screenshot: Adarsh to confirm.
   { id: "7-bulky", label: '7" · Bulky breeds', build: "bulky", price: null },
 ];
 
@@ -44,7 +44,7 @@ export const CATEGORIES: Category[] = [
     fromPrice: "₹1,500",
     priceConfirmed: true,
     image: "/images/hero-dog.webp",
-    copy: "Hand-painted replicas of your dog or cat from 4–5 clear photos. Lifelike enough that friends will do a double take.",
+    copy: "Hand-painted replicas of your dog or cat from 4-5 clear photos. Lifelike enough that friends will do a double take.",
     cta: "Start a pet figurine",
   },
   {
@@ -53,7 +53,7 @@ export const CATEGORIES: Category[] = [
     fromPrice: "From ₹1,999",
     priceConfirmed: false, // PENDING_ADARSH
     image: "/images/couple.webp",
-    copy: "Anniversary, wedding, or just-because — a miniature of the two of you, finished by hand.",
+    copy: "Anniversary, wedding, or just-because: a miniature of the two of you, finished by hand.",
     cta: "Start a couple figurine",
   },
   {
@@ -80,12 +80,12 @@ export const CATEGORIES: Category[] = [
     fromPrice: "From ₹1,499",
     priceConfirmed: false, // PENDING_ADARSH
     image: "/images/decor.webp",
-    copy: "Sculptural vases, stackable trays and custom decor — designed for your space, printed to order.",
+    copy: "Sculptural vases, stackable trays and custom decor: designed for your space, printed to order.",
     cta: "Browse decor",
   },
 ];
 
-/** What's always included — from the IG Q&A: name tag + shipping included. */
+/** What's always included: from the IG Q&A: name tag + shipping included. */
 export const INCLUDED_ALWAYS = [
   "Personalised name tag on every figurine",
   "Shipping across India included in the price",
@@ -102,7 +102,7 @@ export interface Faq {
 export const FAQS: Faq[] = [
   {
     q: "What is the price and size of a custom pet miniature?",
-    a: "Our custom 3D pet miniatures come with a personalised name tag, and shipping is included. A 5-inch miniature is ₹1,500 for slim breeds and ₹2,000 for bulky breeds. A 7-inch miniature starts at ₹1,700 for slim breeds — the 7-inch bulky price is confirmed with you personally on WhatsApp.",
+    a: "Our custom 3D pet miniatures come with a personalised name tag, and shipping is included. A 5-inch miniature is ₹1,500 for slim breeds and ₹2,000 for bulky breeds. A 7-inch miniature starts at ₹1,700 for slim breeds: the 7-inch bulky price is confirmed with you personally on WhatsApp.",
   },
   {
     q: "How does payment work?",
@@ -110,15 +110,15 @@ export const FAQS: Faq[] = [
   },
   {
     q: "How do I place an order?",
-    a: "It's simple: send us 4–5 clear photos of your pet (or the person/subject), and we'll guide you through the rest — size, name tag text, pose and colour details.",
+    a: "It's simple: send us 4-5 clear photos of your pet (or the person/subject), and we'll guide you through the rest: size, name tag text, pose and colour details.",
   },
   {
     q: "How long does delivery take?",
-    a: "Printing and hand-painting take 4–5 days. Delivery usually takes 6–8 days after that, depending on your location. We ship across India.",
+    a: "Printing and hand-painting take 4-5 days. Delivery usually takes 6-8 days after that, depending on your location. We ship across India.",
   },
   {
     q: "What kind of photos should I send?",
-    a: "Clear, well-lit photos work best — show the face from the front and the full body so we can match markings, colours and proportions. The more angles, the better the likeness.",
+    a: "Clear, well-lit photos work best: show the face from the front and the full body so we can match markings, colours and proportions. The more angles, the better the likeness.",
   },
   {
     q: "Will I see the figurine before it ships?",
@@ -130,11 +130,11 @@ export const FAQS: Faq[] = [
   },
   {
     q: "What is a DIKOR figurine made of?",
-    a: "Your piece is 3D-printed layer by layer and then hand-painted by our studio artists — a display keepsake, not a toy. Keep it dry and handle it with care.",
+    a: "Your piece is 3D-printed layer by layer and then hand-painted by our studio artists: a display keepsake, not a toy. Keep it dry and handle it with care.",
   },
 ];
 
-/** Customer-facing journey, in plain language — mirrors the real order states. */
+/** Customer-facing journey, in plain language: mirrors the real order states. */
 export interface FlowStep {
   n: number;
   title: string;
@@ -142,11 +142,11 @@ export interface FlowStep {
   eta?: string;
 }
 export const FLOW_STEPS: FlowStep[] = [
-  { n: 1, title: "Send 4–5 clear photos", copy: "Start here — share photos of your pet or subject. We'll guide you on size, pose and the name tag text." },
+  { n: 1, title: "Send 4-5 clear photos", copy: "Start here: share photos of your pet or subject. We'll guide you on size, pose and the name tag text." },
   { n: 2, title: "Pay 75% advance", copy: "A 75% advance confirms your order and reserves your production slot. The rest is only due before shipping." },
-  { n: 3, title: "We print & hand-paint", copy: "Your piece is 3D-printed layer by layer, then hand-painted by our artists.", eta: "4–5 days" },
+  { n: 3, title: "We print & hand-paint", copy: "Your piece is 3D-printed layer by layer, then hand-painted by our artists.", eta: "4-5 days" },
   { n: 4, title: "Approve your video", copy: "We send photos or a video of the finished piece. We only ship it when you say it's perfect." },
-  { n: 5, title: "Pay 25% & we ship", copy: "Clear the remaining 25% and your keepsake ships to your doorstep, packed with care.", eta: "6–8 days delivery" },
+  { n: 5, title: "Pay 25% & we ship", copy: "Clear the remaining 25% and your keepsake ships to your doorstep, packed with care.", eta: "6-8 days delivery" },
 ];
 
 /** Map public catalogue keys to the demo store categories. */

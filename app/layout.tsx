@@ -24,7 +24,7 @@ const body = Inter({
 export const metadata: Metadata = {
   title: { default: "DIKOR · Custom 3D-Printed Keepsakes", template: "%s · DIKOR" },
   description:
-    "DIKOR crafts custom 3D-printed figurines from your photos — pet replicas, couple miniatures, idols & decor. Made with precision, shipped pan-India.",
+    "DIKOR crafts custom 3D-printed figurines from your photos :  pet replicas, couple miniatures, idols & decor. Made with precision, shipped pan-India.",
   manifest: "/manifest.webmanifest",
   appleWebApp: { capable: true, statusBarStyle: "default", title: "DIKOR" },
   icons: { icon: "/favicon.svg", apple: "/favicon.svg" },

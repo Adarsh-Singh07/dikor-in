@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { FAQS } from "@/lib/catalog";
 
-/** Accessible accordion — a direct answer to Doppel's 12-card wall. */
+/** Accessible accordion :  a direct answer to Doppel's 12-card wall. */
 export default function FaqAccordion() {
   const [open, setOpen] = useState<number | null>(0);
   return (

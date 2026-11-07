@@ -4,7 +4,7 @@ import { getSessionUser, json, err } from "@/lib/api-lib";
 
 const CATS: Category[] = ["Pets", "Couples", "Kids", "Idols", "Decor"];
 
-// GET /api/orders — customer: own orders · admin: all
+// GET /api/orders :  customer: own orders · admin: all
 export async function GET(req: NextRequest) {
   const me = await getSessionUser(req);
   if (!me) return err("Not signed in", 401);
@@ -13,7 +13,7 @@ export async function GET(req: NextRequest) {
   return json({ orders });
 }
 
-// POST /api/orders — customer or guest creates an order, or admin creates manual order
+// POST /api/orders :  customer or guest creates an order, or admin creates manual order
 export async function POST(req: NextRequest) {
   const me = await getSessionUser(req);
   const body = await req.json().catch(() => ({}));

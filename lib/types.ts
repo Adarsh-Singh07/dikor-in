@@ -73,7 +73,7 @@ export const PIPELINE_STEPS: { key: string; label: string; statuses: OrderStatus
     key: "photos",
     label: "Photos received",
     statuses: ["photos_received", "advance_pending"],
-    blurb: "Your 4–5 reference photos are in — our studio studies every detail.",
+    blurb: "Your 4-5 reference photos are in: our studio studies every detail.",
   },
   {
     key: "advance",
@@ -85,19 +85,19 @@ export const PIPELINE_STEPS: { key: string; label: string; statuses: OrderStatus
     key: "production",
     label: "Printing & painting",
     statuses: ["in_production"],
-    blurb: "Your piece is 3D-printed layer by layer, then hand-painted by our artists. Takes 4–5 days.",
+    blurb: "Your piece is 3D-printed layer by layer, then hand-painted by our artists. Takes 4-5 days.",
   },
   {
     key: "approval",
     label: "Approval video shared",
     statuses: ["approval_shared", "changes_requested"],
-    blurb: "We send photos or a video of the finished piece — you approve it before anything ships.",
+    blurb: "We send photos or a video of the finished piece: you approve it before anything ships.",
   },
   {
     key: "approved",
     label: "You approved it",
     statuses: ["approved", "balance_pending"],
-    blurb: "Perfect — you love it. Just the balance and we're off to shipping.",
+    blurb: "Perfect: you love it. Just the balance and we are off to shipping.",
   },
   {
     key: "balance",
@@ -115,7 +115,7 @@ export const PIPELINE_STEPS: { key: string; label: string; statuses: OrderStatus
     key: "delivered",
     label: "Delivered",
     statuses: ["delivered"],
-    blurb: "Delivered — enjoy your keepsake!",
+    blurb: "Delivered: enjoy your keepsake!",
   },
 ];
 

@@ -77,7 +77,7 @@ export default function AuthPage() {
             <div className="mt-6 p-4 rounded-2xl bg-white/5 border border-white/10 text-xs text-cream/80">
               <p className="font-semibold text-gold">Placed a Guest WhatsApp Order?</p>
               <p className="text-[11px] text-cream/60 mt-1">
-                Enter the same mobile number or email you used on WhatsApp — all your orders will be instantly linked to your account!
+                Enter the same mobile number or email you used on WhatsApp :  all your orders will be instantly linked to your account!
               </p>
             </div>
           </div>

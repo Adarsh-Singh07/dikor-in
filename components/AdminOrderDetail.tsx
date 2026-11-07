@@ -78,7 +78,7 @@ export default function AdminOrderDetail({ id }: { id: string }) {
       await patch(
         {
           approvalVideoUrl: url,
-          studioNotes: studioNotes || "Fresh from the paint booth — inspect your 3D likeness!",
+          studioNotes: studioNotes || "Fresh from the paint booth, inspect your 3D likeness!",
           status: "approval_shared",
           note: "360° approval video uploaded for customer review",
         },

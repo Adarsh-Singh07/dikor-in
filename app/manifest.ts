@@ -4,7 +4,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: "DIKOR · Custom 3D-Printed Keepsakes Atelier",
     short_name: "DIKOR",
-    description: "Custom decor, gifts & 3D creations — made with precision.",
+    description: "Custom decor, gifts & 3D creations :  made with precision.",
     start_url: "/",
     display: "standalone",
     background_color: "#FAF5EC",

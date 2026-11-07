@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { Reveal } from "@/components/Reveal";
-import { SectionHeading, Sparkle } from "@/components/ui";
+import { SectionHeading } from "@/components/ui";
 
 const FILTERS = ["All", "Pets", "Couples", "Kids", "Religious", "Decor"] as const;
 
@@ -12,7 +12,7 @@ interface Piece {
   image: string;
 }
 
-/** Real pieces — images from the DIKOR studio and curated showcases */
+/** Real pieces: images from the DIKOR studio and curated showcases */
 const PIECES: Piece[] = [
   { category: "Pets", title: "Hand-Painted Golden Miniature", note: "5\" · with personalised brass plaque · from ₹1,500", image: "/images/hero-dog.webp" },
   { category: "Pets", title: "Sculpted Pet Silhouette", note: "Handcrafted likeness with natural markings", image: "/images/dog-figurine.jpg" },
@@ -34,19 +34,20 @@ export default function GalleryPage() {
       <Reveal>
         <SectionHeading
           eyebrow="The DIKOR Gallery"
-          title={<>Keepsakes with <em className="text-rosegold-dark">a heartbeat</em></>}
-          sub="Every piece below began as a customer's photograph — pets like Chivas (Mumbai), Dido and Babu, a Radha Krishna shipped to Assam, custom couples across India. Yours could be next."
+          title={<>Keepsakes with <span className="text-rosegold-dark italic font-normal">a heartbeat</span></>}
+          sub="Every piece below began as a customer's photograph: pets like Chivas (Mumbai), Dido and Babu, a Radha Krishna shipped to Assam, custom couples across India. Yours could be next."
         />
       </Reveal>
       <Reveal className="mb-10 flex flex-wrap justify-center gap-3">
         {FILTERS.map((c) => (
           <button
             key={c}
+            type="button"
             onClick={() => setFilter(c)}
-            className={`min-h-[2.75rem] rounded-full px-6 py-2.5 text-xs font-bold uppercase tracking-[0.16em] transition-all duration-300 ${
+            className={`min-h-[44px] rounded-full px-6 py-2.5 text-xs font-bold uppercase tracking-[0.16em] transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rosegold-dark ${
               filter === c
-                ? "bg-gradient-to-r from-gold-dark via-gold to-gold-light text-charcoal shadow-gold"
-                : "border border-charcoal/15 bg-white/60 text-charcoal-soft hover:border-rosegold hover:text-rosegold-dark"
+                ? "bg-gradient-to-r from-[#D4AF37] via-[#C5A059] to-[#E2CA76] text-charcoal shadow-gold"
+                : "border border-charcoal/20 bg-white/80 text-charcoal-soft hover:border-rosegold hover:text-rosegold-dark"
             }`}
           >
             {c}
@@ -56,12 +57,17 @@ export default function GalleryPage() {
       <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {shown.map((p, i) => (
           <Reveal key={`${p.title}-${i}`} delay={(i % 3) * 0.08}>
-            <div className="group h-full overflow-hidden rounded-3xl bg-white shadow-card border border-charcoal/10 transition-all duration-500 hover:-translate-y-2 hover:shadow-soft">
+            <div className="group h-full overflow-hidden rounded-3xl bg-white shadow-card border border-charcoal/10 transition-all duration-500 hover:-translate-y-1.5 hover:shadow-soft">
               <div className="relative overflow-hidden">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={p.image} alt={p.title} className="aspect-[4/3] w-full object-cover transition-transform duration-700 group-hover:scale-105" loading="lazy" />
-                <span className="absolute left-4 top-4 inline-flex items-center gap-1.5 rounded-full bg-charcoal/80 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-gold-light backdrop-blur">
-                  <Sparkle className="h-3 w-3" /> {p.category}
+                <img
+                  src={p.image}
+                  alt={p.title}
+                  className="aspect-[4/3] w-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  loading="lazy"
+                />
+                <span className="absolute left-4 top-4 rounded-full bg-charcoal/90 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.2em] text-cream">
+                  {p.category}
                 </span>
               </div>
               <div className="p-5">

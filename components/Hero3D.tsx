@@ -141,7 +141,7 @@ export default function Hero3D() {
 
   return (
     <div className="hero-canvas absolute inset-0" aria-hidden>
-      {/* graceful loading state — brand-coloured glow where the sculpture appears */}
+      {/* graceful loading state :  brand-coloured glow where the sculpture appears */}
       <div
         className={`absolute inset-0 transition-opacity duration-1000 ${ready ? "opacity-0" : "opacity-100"}`}
       >

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Reveal } from "@/components/Reveal";
-import { SectionHeading, Marquee, Sparkle, GoldButton, GhostButton } from "@/components/ui";
+import { SectionHeading, Marquee, GoldButton, GhostButton } from "@/components/ui";
 import Cylinder from "@/components/Cylinder";
 import OrderBuilder, { type BuilderSummary } from "@/components/OrderBuilder";
 import HowItWorksSection from "@/components/HowItWorksSection";
@@ -21,103 +21,153 @@ const RING_IMAGES = [
   { src: "/images/pets-group.webp", label: "Pet minis" },
 ];
 
-/* ---------- pointer-tilting 3D pedestal card ---------- */
-function TiltCard() {
+/* ---------- Tactile Atelier Showcase Plinth ---------- */
+function StudioPlinthCard() {
   const [t, setT] = useState({ x: 0, y: 0 });
   return (
     <div style={{ perspective: 1200 }}>
       <motion.div
-        initial={{ opacity: 0, y: 40 }}
+        initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 1, delay: 0.35, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ duration: 0.9, delay: 0.25, ease: [0.22, 1, 0.36, 1] }}
         className="relative mx-auto w-full max-w-md"
-        style={{ transformStyle: "preserve-3d", transform: `rotateX(${-t.y * 8}deg) rotateY(${t.x * 10}deg)` }}
+        style={{
+          transformStyle: "preserve-3d",
+          transform: `rotateX(${-t.y * 6}deg) rotateY(${t.x * 8}deg)`,
+        }}
         onMouseMove={(e) => {
           const r = e.currentTarget.getBoundingClientRect();
           setT({ x: (e.clientX - r.left) / r.width - 0.5, y: (e.clientY - r.top) / r.height - 0.5 });
         }}
         onMouseLeave={() => setT({ x: 0, y: 0 })}
       >
-        {/* pedestal glow */}
-        <div className="absolute -inset-6 rounded-[3rem] bg-[radial-gradient(circle_at_50%_60%,rgba(201,162,39,0.28),rgba(183,110,121,0.14)_55%,transparent_75%)]" aria-hidden />
-        <div className="relative overflow-hidden rounded-[2.5rem] border border-gold/30 bg-white shadow-soft">
+        {/* Physical Drop Shadow Base */}
+        <div className="relative overflow-hidden rounded-3xl border border-charcoal/15 bg-white shadow-[0_20px_50px_rgba(28,25,23,0.12)]">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/images/hero-dog.webp" alt="Hand-painted DIKOR dog miniature on a wooden base" className="aspect-[4/5] w-full object-cover" fetchPriority="high" />
-          <div className="flex items-center justify-between bg-cream/90 px-6 py-4 backdrop-blur">
-            <div>
-              <p className="font-display text-xl text-charcoal">Pet miniature &bull; 5 inch</p>
-              <p className="text-xs uppercase tracking-[0.18em] text-charcoal-muted">Hand-painted &bull; name tag included</p>
+          <img
+            src="/images/hero-dog.webp"
+            alt="Hand-painted DIKOR custom 3D pet figurine on wood plinth"
+            className="aspect-[4/5] w-full object-cover"
+            fetchPriority="high"
+          />
+          <div className="border-t border-charcoal/10 bg-[#FAF7F2] p-5">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="font-serif text-xl font-bold text-charcoal">Pet Miniature &bull; 5 Inch</p>
+                <p className="text-xs text-charcoal-muted mt-0.5">
+                  Hand-painted acrylic &bull; personalised brass plaque included
+                </p>
+              </div>
+              <div className="text-right shrink-0">
+                <span className="font-serif text-2xl font-bold text-charcoal">₹1,500</span>
+                <span className="block text-[10px] uppercase tracking-wider text-rosegold-dark font-semibold">
+                  All-Inclusive
+                </span>
+              </div>
             </div>
-            <p className="font-display text-2xl text-gold-dark font-bold">₹1,500</p>
+
+            {/* Atelier Craft Highlights */}
+            <div className="mt-4 grid grid-cols-2 gap-2 border-t border-charcoal/10 pt-3 text-[11px] font-medium text-charcoal-soft">
+              <span className="flex items-center gap-1.5">
+                <span className="text-gold-dark">✓</span> Precision 3D resin print
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="text-gold-dark">✓</span> 360° approval video proof
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="text-gold-dark">✓</span> 75% advance reservation
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="text-gold-dark">✓</span> Free insured pan-India delivery
+              </span>
+            </div>
           </div>
-        </div>
-        {/* floating chips */}
-        <div className="absolute -left-4 top-8 rounded-full bg-white/90 px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-rosegold-dark shadow-card backdrop-blur" style={{ transform: "translateZ(60px)" }}>
-          ✦ Made from your photos
-        </div>
-        <div className="absolute -right-3 bottom-24 rounded-full bg-white/90 px-4 py-2 text-xs font-bold uppercase tracking-[0.14em] text-gold-dark shadow-card backdrop-blur" style={{ transform: "translateZ(60px)" }}>
-          ✦ 75% advance &bull; 25% later
         </div>
       </motion.div>
     </div>
   );
 }
 
-/* ---------- hero ---------- */
+/* ---------- Hero Section ---------- */
 function Hero() {
   return (
-    <section className="relative overflow-hidden pt-28 md:pt-32">
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_90%_60%_at_70%_20%,#F7E8E4_0%,#FAF5EC_55%,#F3EAD9_100%)]" aria-hidden />
-      <div className="relative z-10 mx-auto grid w-full max-w-7xl items-center gap-12 px-5 pb-10 md:grid-cols-2 md:px-8">
+    <section className="relative overflow-hidden pt-28 md:pt-36 bg-[#FAF7F2]">
+      <div className="relative z-10 mx-auto grid w-full max-w-7xl items-center gap-12 px-5 pb-12 md:grid-cols-2 md:px-8">
         <div>
-          <motion.p
-            initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.7 }}
-            className="mb-5 inline-flex w-fit items-center gap-2 rounded-full border border-gold/40 bg-white/60 px-4 py-1.5 text-[11px] font-semibold uppercase tracking-[0.24em] text-gold-dark backdrop-blur"
-          >
-            <Sparkle className="h-3 w-3" /> Custom 3D-printed gifting studio
-          </motion.p>
-          <motion.h1
-            initial={{ opacity: 0, y: 36 }} animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.9, delay: 0.12, ease: [0.22, 1, 0.36, 1] }}
-            className="font-display text-5xl leading-[1.04] text-charcoal md:text-7xl font-bold"
-          >
-            Your pet, turned into a <em className="text-shimmer not-italic font-bold">mini statue</em>.
-          </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.26 }}
-            className="mt-6 max-w-md text-lg leading-relaxed text-charcoal-muted"
-          >
-            Send 4–5 clear photos — we 3D-print and hand-paint a figurine that looks just like them,
-            then share photos or a 360° video for your approval before it ships.
-          </motion.p>
           <motion.div
-            initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.9, delay: 0.4 }}
-            className="mt-8 flex flex-col gap-3 sm:flex-row"
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="mb-4 inline-flex items-center gap-2 rounded-full border border-charcoal/15 bg-white/80 px-4 py-1.5 text-[11px] font-bold uppercase tracking-[0.24em] text-rosegold-dark"
           >
-            <a href="#order"><GoldButton className="w-full sm:w-auto">Start your order</GoldButton></a>
-            <a href="#how-it-works"><GhostButton className="w-full sm:w-auto">See how it works</GhostButton></a>
+            Atelier Jalandhar &bull; Bespoke 3D Sculpting
           </motion.div>
-          <motion.p
-            initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 1, delay: 0.6 }}
-            className="mt-5 text-sm font-medium text-charcoal-muted"
+
+          <motion.h1
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+            className="font-serif text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold leading-[1.08] text-charcoal"
           >
-            From ₹1,500 &bull; personalised name tag &amp; pan-India shipping included
+            Your pet, sculpted into a <span className="text-rosegold-dark italic font-normal">heirloom</span> 3D miniature.
+          </motion.h1>
+
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.22 }}
+            className="mt-6 max-w-xl text-base sm:text-lg leading-relaxed text-charcoal-muted"
+          >
+            Send 4-5 photos of your pet. Our studio artists precision 3D-sculpt each unique contour,
+            hand-paint every fur marking with fine acrylic glazes, and share a 360° craft video proof
+            for your approval before dispatch.
+          </motion.p>
+
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.35 }}
+            className="mt-8 flex flex-col gap-3.5 sm:flex-row"
+          >
+            <a href="#order" className="w-full sm:w-auto">
+              <GoldButton className="w-full sm:w-auto">Start Your Order</GoldButton>
+            </a>
+            <a href="#how-it-works" className="w-full sm:w-auto">
+              <GhostButton className="w-full sm:w-auto">Explore Craft Process</GhostButton>
+            </a>
+          </motion.div>
+
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.9, delay: 0.5 }}
+            className="mt-5 text-xs sm:text-sm font-medium text-charcoal-muted"
+          >
+            From ₹1,500 &bull; Personalised brass plaque &amp; pan-India courier included
           </motion.p>
         </div>
-        <TiltCard />
+
+        <StudioPlinthCard />
       </div>
-      {/* 3D ring of the collection — ThreeUI Volta-style */}
-      <div className="relative z-10 pb-16 pt-4">
+
+      {/* 3D Ring of the Collection */}
+      <div className="relative z-10 pb-16 pt-6">
         <Cylinder
           items={RING_IMAGES}
           itemWidth={180}
           itemHeight={210}
-          ariaLabel="DIKOR collection preview"
-          render={(it, i, active) => (
-            <div className="h-full w-full overflow-hidden rounded-3xl border border-gold/30 bg-white shadow-card">
+          ariaLabel="DIKOR handcrafted collection preview"
+          render={(it) => (
+            <div className="h-full w-full overflow-hidden rounded-3xl border border-charcoal/15 bg-white shadow-card">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={it.src} alt={it.label} className="h-full w-full object-cover" loading="lazy" draggable={false} />
-              <span className="absolute bottom-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-charcoal/80 px-3 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-gold-light backdrop-blur">
+              <img
+                src={it.src}
+                alt={it.label}
+                className="h-full w-full object-cover"
+                loading="lazy"
+                draggable={false}
+              />
+              <span className="absolute bottom-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full bg-charcoal/90 px-3.5 py-1 text-[10px] font-bold uppercase tracking-[0.18em] text-cream">
                 {it.label}
               </span>
             </div>
@@ -128,34 +178,46 @@ function Hero() {
   );
 }
 
-/* ---------- category editorial rows ---------- */
+/* ---------- Category Editorial Rows ---------- */
 function CategoryRows() {
+  const NUMBERS = ["01", "02", "03", "04", "05"];
   return (
     <section className="mx-auto max-w-7xl px-5 py-20 md:px-8 md:py-28">
       <Reveal>
         <SectionHeading
-          eyebrow="What we craft"
-          title={<>Made for the moments <em className="text-rosegold-dark">you treasure</em></>}
-          sub="Five keepsake families, one promise: hand-finished from your photos, approved by you before dispatch."
+          eyebrow="Atelier Collections"
+          title={<>Made for the moments <span className="text-rosegold-dark italic font-normal">you treasure</span></>}
+          sub="Five bespoke keepsake families, one promise: hand-finished from your photos, approved by you before dispatch."
         />
       </Reveal>
       <div className="space-y-16 md:space-y-24">
         {CATEGORIES.map((c, i) => (
           <Reveal key={c.key}>
-            <div className={`grid items-center gap-8 md:grid-cols-2 md:gap-14 ${i % 2 ? "md:[&>*:first-child]:order-2" : ""}`}>
-              <div className={`overflow-hidden rounded-[2.5rem] shadow-soft ${i % 2 ? "md:order-2" : ""}`}>
+            <div
+              className={`grid items-center gap-8 md:grid-cols-2 md:gap-14 ${
+                i % 2 ? "md:[&>*:first-child]:order-2" : ""
+              }`}
+            >
+              <div className={`overflow-hidden rounded-3xl border border-charcoal/10 shadow-soft ${i % 2 ? "md:order-2" : ""}`}>
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={c.image} alt={`${c.key} figurine by DIKOR`} className="aspect-[4/3] w-full object-cover transition-transform duration-700 hover:scale-105" loading="lazy" />
+                <img
+                  src={c.image}
+                  alt={`${c.key} miniature by DIKOR Atelier`}
+                  className="aspect-[4/3] w-full object-cover transition-transform duration-700 hover:scale-105"
+                  loading="lazy"
+                />
               </div>
               <div className={i % 2 ? "md:order-1" : ""}>
-                <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.28em] text-rosegold-dark">
-                  <Sparkle className="h-3.5 w-3.5 text-gold" /> {c.key}
+                <p className="text-xs font-bold uppercase tracking-[0.26em] text-rosegold-dark">
+                  {NUMBERS[i]} / {c.key.toUpperCase()}
                 </p>
-                <h3 className="mt-3 font-display text-4xl text-charcoal md:text-5xl font-bold">{c.tagline}</h3>
-                <p className="mt-4 max-w-md leading-relaxed text-charcoal-muted">{c.copy}</p>
+                <h3 className="mt-3 font-serif text-3xl md:text-4xl text-charcoal font-bold">{c.tagline}</h3>
+                <p className="mt-4 max-w-md text-sm md:text-base leading-relaxed text-charcoal-muted">{c.copy}</p>
                 <p className="mt-4 text-sm">
-                  <span className="font-display text-2xl text-gold-dark font-bold">{c.fromPrice}</span>
-                  {!c.priceConfirmed && <span className="ml-2 text-xs text-charcoal-muted">&bull; confirmed on WhatsApp</span>}
+                  <span className="font-serif text-2xl text-charcoal font-bold">{c.fromPrice}</span>
+                  {!c.priceConfirmed && (
+                    <span className="ml-2 text-xs text-charcoal-muted">&bull; confirmed on WhatsApp</span>
+                  )}
                 </p>
                 <Link href="/order" className="mt-6 inline-block">
                   <GoldButton>{c.cta}</GoldButton>
@@ -169,16 +231,16 @@ function CategoryRows() {
   );
 }
 
-/* ---------- reviews ---------- */
+/* ---------- Verified Customer Reviews ---------- */
 function Reviews() {
   return (
-    <section className="bg-blush/50 py-20 md:py-28">
+    <section className="bg-blush/40 py-20 md:py-28 border-y border-rosegold/20">
       <div className="mx-auto max-w-7xl px-5 md:px-8">
         <Reveal>
           <SectionHeading
-            eyebrow="Customer love"
-            title={<>Real keepsakes, <em className="text-rosegold-dark">real reactions</em></>}
-            sub={`${REVIEWS.length} ${AGGREGATE.reviewNote}. Delivered to ${AGGREGATE.deliveredCities.join(", ")} — and counting.`}
+            eyebrow="Verified Client Proof"
+            title={<>Real keepsakes, <span className="text-rosegold-dark italic font-normal">real reactions</span></>}
+            sub={`${REVIEWS.length} verbatim client reviews from our official Instagram archive (@dikor_in). Shipped to pet parents across ${AGGREGATE.deliveredCities.slice(0, 5).join(", ")} and beyond.`}
           />
         </Reveal>
         <Cylinder
@@ -186,15 +248,19 @@ function Reviews() {
           itemWidth={300}
           itemHeight={400}
           ariaLabel="Customer reviews"
-          render={(r, i, active) => {
+          render={(r) => {
             const quoteSize = r.quote.length > 220 ? "text-base" : r.quote.length > 140 ? "text-lg" : "text-xl";
             return (
-              <div className="flex h-full w-full flex-col justify-between rounded-[2rem] border border-gold/30 bg-white p-7 shadow-card">
+              <div className="flex h-full w-full flex-col justify-between rounded-3xl border border-charcoal/15 bg-white p-7 shadow-card">
                 <div>
                   {r.stars && (
-                    <p className="text-lg tracking-wider text-gold" aria-label="5 star review">★★★★★</p>
+                    <p className="text-base tracking-widest text-[#D4AF37]" aria-label="5 star review">
+                      ★★★★★
+                    </p>
                   )}
-                  <p className={`mt-3 font-display ${quoteSize} leading-snug text-charcoal`}>“{r.quote}”</p>
+                  <p className={`mt-3 font-serif ${quoteSize} leading-snug text-charcoal italic`}>
+                    &ldquo;{r.quote}&rdquo;
+                  </p>
                 </div>
                 <div className="mt-5 border-t border-charcoal/10 pt-4">
                   <p className="text-sm font-semibold text-charcoal">{r.context}</p>
@@ -207,8 +273,13 @@ function Reviews() {
           }}
         />
         <Reveal className="mt-10 text-center">
-          <a href="https://www.instagram.com/dikor_in/" target="_blank" rel="noreferrer" className="text-sm font-semibold text-rosegold-dark underline">
-            See more on {INSTAGRAM_HANDLE} — including our Reviews highlight
+          <a
+            href="https://www.instagram.com/dikor_in/"
+            target="_blank"
+            rel="noreferrer"
+            className="text-xs font-bold uppercase tracking-[0.16em] text-rosegold-dark hover:underline"
+          >
+            View More on {INSTAGRAM_HANDLE} &bull; Reviews Story Highlight →
           </a>
         </Reveal>
       </div>
@@ -216,31 +287,37 @@ function Reviews() {
   );
 }
 
-/* ---------- makers ---------- */
+/* ---------- The Makers: Jalandhar Studio ---------- */
 function Makers() {
   return (
     <section className="mx-auto max-w-7xl px-5 py-20 md:px-8 md:py-28">
       <div className="grid items-center gap-10 md:grid-cols-2 md:gap-16">
         <Reveal>
-          <div className="overflow-hidden rounded-[2.5rem] shadow-soft">
+          <div className="overflow-hidden rounded-3xl border border-charcoal/10 shadow-soft">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/images/process-painting.webp" alt="DIKOR artists hand-painting a 3D-printed figurine" className="aspect-[4/3] w-full object-cover" loading="lazy" />
+            <img
+              src="/images/process-painting.webp"
+              alt="DIKOR artists hand-painting a 3D-printed miniature in Jalandhar studio"
+              className="aspect-[4/3] w-full object-cover"
+              loading="lazy"
+            />
           </div>
         </Reveal>
         <Reveal delay={0.1}>
-          <p className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.28em] text-rosegold-dark">
-            <Sparkle className="h-3.5 w-3.5 text-gold" /> The makers
+          <p className="text-xs font-bold uppercase tracking-[0.26em] text-rosegold-dark">
+            Atelier Founders
           </p>
-          <h2 className="mt-3 font-display text-4xl text-charcoal md:text-5xl font-bold">
-            A small studio with <em className="text-rosegold-dark">big love</em> for detail.
+          <h2 className="mt-3 font-serif text-3xl sm:text-4xl md:text-5xl text-charcoal font-bold leading-tight">
+            A boutique studio with <span className="text-rosegold-dark italic font-normal">reverence</span> for every detail.
           </h2>
-          <p className="mt-4 leading-relaxed text-charcoal-muted">
-            DIKOR is run by <strong className="text-charcoal">@sainirajatrs</strong> and <strong className="text-charcoal">@sheetal__83</strong> —
-            two makers who believe a gift should feel like the person it&apos;s for. Every piece is printed,
-            painted and packed by hand in our Jalandhar studio, and shipped insured across India.
+          <p className="mt-4 leading-relaxed text-charcoal-muted text-sm sm:text-base">
+            DIKOR is founded and operated by <strong className="text-charcoal font-semibold">@sainirajatrs</strong> and <strong className="text-charcoal font-semibold">@sheetal__83</strong> in Jalandhar, Punjab. We believe keepsakes should carry the true spirit of the pet or loved one they honor.
+          </p>
+          <p className="mt-3 leading-relaxed text-charcoal-muted text-sm sm:text-base">
+            Every piece is 3D-sculpted, precision-printed in premium resin, individually hand-painted with acrylic pigments, and packaged in a gift-ready wooden box before insured courier dispatch across India.
           </p>
           <a href={WHATSAPP_LINK} target="_blank" rel="noreferrer" className="mt-6 inline-block">
-            <GhostButton>Say hello on WhatsApp</GhostButton>
+            <GhostButton>Connect With Our Artists</GhostButton>
           </a>
         </Reveal>
       </div>
@@ -248,7 +325,7 @@ function Makers() {
   );
 }
 
-/* ---------- sticky mobile buy bar ---------- */
+/* ---------- Sticky Mobile Buy Bar ---------- */
 function StickyBuyBar({ summary }: { summary: BuilderSummary }) {
   const [show, setShow] = useState(false);
   useEffect(() => {
@@ -258,14 +335,20 @@ function StickyBuyBar({ summary }: { summary: BuilderSummary }) {
   }, []);
   if (!show) return null;
   return (
-    <div className="fixed inset-x-0 bottom-0 z-40 px-4 md:hidden" style={{ paddingBottom: "max(0.75rem, env(safe-area-inset-bottom))" }}>
-      <div className="flex items-center justify-between gap-3 rounded-full border border-gold/40 bg-cream/95 py-2.5 pl-5 pr-2.5 shadow-soft backdrop-blur">
+    <div
+      className="fixed inset-x-0 bottom-0 z-40 px-4 md:hidden"
+      style={{ paddingBottom: "max(0.75rem, env(safe-area-inset-bottom))" }}
+    >
+      <div className="flex items-center justify-between gap-3 rounded-full border border-charcoal/20 bg-[#FAF7F2]/95 py-2.5 pl-5 pr-2.5 shadow-lg backdrop-blur-md">
         <div className="min-w-0">
-          <p className="truncate text-sm font-semibold text-charcoal">{summary.category} &bull; {summary.size}</p>
-          <p className="text-xs text-gold-dark font-bold">{summary.price}</p>
+          <p className="truncate text-xs font-bold text-charcoal">{summary.category} &bull; {summary.size}</p>
+          <p className="text-xs font-bold text-rosegold-dark">{summary.price}</p>
         </div>
-        <a href="#order" className="shrink-0 rounded-full bg-gradient-to-r from-gold-dark via-gold to-gold-light px-6 py-3 text-xs font-bold uppercase tracking-[0.14em] text-charcoal shadow-gold">
-          Start order
+        <a
+          href="#order"
+          className="shrink-0 flex min-h-[44px] items-center rounded-full bg-gradient-to-r from-[#D4AF37] via-[#C5A059] to-[#E2CA76] px-5 text-xs font-bold uppercase tracking-[0.12em] text-charcoal shadow-gold"
+        >
+          Start Order
         </a>
       </div>
     </div>
@@ -273,16 +356,21 @@ function StickyBuyBar({ summary }: { summary: BuilderSummary }) {
 }
 
 const TRUST_ITEMS = [
-  "Official Instagram — @dikor_in",
-  "Pet reels up to 5.9M views",
-  "Personalised brass name tag included",
-  "Free insured pan-India shipping",
-  "75% advance &bull; 25% balance on approval",
-  "360° approval video before dispatch",
+  "Official Instagram: @dikor_in",
+  "Precision 3D Resin Sculpting",
+  "Hand-Painted By Studio Artists in Jalandhar",
+  "Personalised Engraved Brass Plaque Included",
+  "Free Insured Pan-India Courier Delivery",
+  "75% Advance Reservation : 25% Balance Post-Approval",
+  "360° Craft Video Review Before Dispatch",
 ];
 
 export default function HomePage() {
-  const [summary, setSummary] = useState<BuilderSummary>({ category: "Pets", size: '5" · Slim breeds', price: "₹1,500" });
+  const [summary, setSummary] = useState<BuilderSummary>({
+    category: "Pets",
+    size: '5" · Slim breeds',
+    price: "₹1,500",
+  });
 
   return (
     <>
@@ -291,35 +379,40 @@ export default function HomePage() {
 
       <CategoryRows />
 
-      {/* order builder */}
-      <section id="order" className="scroll-mt-24 bg-cream-dark/50 py-20 md:py-28">
+      {/* Order Builder */}
+      <section id="order" className="scroll-mt-24 bg-[#F5EFEB] py-20 md:py-28 border-y border-charcoal/10">
         <div className="mx-auto max-w-4xl px-5 md:px-8">
           <Reveal>
             <SectionHeading
-              eyebrow="Your custom order"
-              title={<>Build your <em className="text-rosegold-dark">keepsake</em> in 2 minutes</>}
-              sub="Five short steps with live 3D preview. You always see the total and the 75/25 split before paying anything."
+              eyebrow="Custom Studio Builder"
+              title={<>Design your <span className="text-rosegold-dark italic font-normal">3D keepsake</span></>}
+              sub="Five clear steps with live 3D preview. You always see the total and the 75/25 split before paying anything."
             />
           </Reveal>
           <Reveal delay={0.1}>
             <OrderBuilder onConfig={setSummary} />
           </Reveal>
-          <div className="mx-auto mt-8 max-w-3xl rounded-2xl bg-white/70 px-6 py-5">
-            <p className="text-xs font-bold uppercase tracking-[0.2em] text-gold-dark">Always included</p>
-            <ul className="mt-2 grid gap-1.5 text-sm text-charcoal-soft sm:grid-cols-2">
-              {INCLUDED_ALWAYS.map((t) => <li key={t} className="flex gap-2"><span className="text-gold">✦</span>{t}</li>)}
+          <div className="mx-auto mt-8 max-w-3xl rounded-2xl bg-white p-6 border border-charcoal/10 shadow-card">
+            <p className="text-xs font-bold uppercase tracking-[0.2em] text-rosegold-dark">Always Included With Every Order</p>
+            <ul className="mt-3 grid gap-2 text-sm text-charcoal-soft sm:grid-cols-2">
+              {INCLUDED_ALWAYS.map((t) => (
+                <li key={t} className="flex items-center gap-2">
+                  <span className="text-gold-dark font-bold">✓</span>
+                  <span>{t}</span>
+                </li>
+              ))}
             </ul>
           </div>
         </div>
       </section>
 
-      {/* proof: before / after */}
+      {/* Proof: Before / After */}
       <section className="mx-auto max-w-5xl px-5 py-20 md:px-8 md:py-28">
         <Reveal>
           <SectionHeading
-            eyebrow="The proof"
-            title={<>From photo <em className="text-rosegold-dark">to figurine</em></>}
-            sub="One clear photo is all it takes. Drag the handle to compare."
+            eyebrow="Artisan Fidelity"
+            title={<>From photograph <span className="text-rosegold-dark italic font-normal">to physical figurine</span></>}
+            sub="One clear reference photo is all it takes. Drag the handle to inspect the studio likeness."
           />
         </Reveal>
         <Reveal delay={0.1}>
@@ -337,9 +430,9 @@ export default function HomePage() {
       <section className="mx-auto max-w-7xl px-5 py-20 md:px-8 md:py-28">
         <Reveal>
           <SectionHeading
-            eyebrow="Questions"
-            title={<>Everything you&apos;re <em className="text-rosegold-dark">wondering</em></>}
-            sub="Straight answers — no fine print."
+            eyebrow="Atelier Answers"
+            title={<>Frequently Asked <span className="text-rosegold-dark italic font-normal">Questions</span></>}
+            sub="Straightforward details about sizing, pricing, craft timelines, and delivery."
           />
         </Reveal>
         <Reveal delay={0.1}>
@@ -347,19 +440,30 @@ export default function HomePage() {
         </Reveal>
       </section>
 
-      {/* final CTA */}
-      <section className="bg-charcoal py-20 md:py-24">
+      {/* Final Call to Action */}
+      <section className="bg-charcoal py-20 md:py-24 border-t border-charcoal">
         <div className="mx-auto max-w-3xl px-5 text-center md:px-8">
           <Reveal>
-            <p className="flex items-center justify-center gap-2 text-xs font-semibold uppercase tracking-[0.28em] text-gold-light">
-              <Sparkle className="h-3.5 w-3.5" /> Ready when you are <Sparkle className="h-3.5 w-3.5" />
+            <p className="text-xs font-bold uppercase tracking-[0.28em] text-gold-light mb-3">
+              Crafted To Order
             </p>
-            <h2 className="mt-4 font-display text-4xl text-cream md:text-5xl font-bold">Your memories, <em className="text-shimmer not-italic">held forever</em>.</h2>
-            <p className="mx-auto mt-4 max-w-xl text-cream/60">4–5 photos. 75% advance. An approval video before anything ships. That&apos;s the whole process.</p>
-            <div className="mt-8 flex flex-col justify-center gap-3 sm:flex-row">
-              <a href="#order"><GoldButton className="w-full sm:w-auto">Start your order</GoldButton></a>
-              <a href={WHATSAPP_LINK} target="_blank" rel="noreferrer" className="inline-flex w-full items-center justify-center gap-2 rounded-full border border-cream/25 px-7 py-3.5 text-sm font-semibold uppercase tracking-[0.14em] text-cream transition hover:border-gold-light sm:w-auto">
-                💬 WhatsApp us
+            <h2 className="font-serif text-3xl sm:text-4xl md:text-5xl text-cream font-bold leading-tight">
+              Your cherished memories, <span className="text-rosegold-dark italic font-normal">preserved in 3D</span>.
+            </h2>
+            <p className="mx-auto mt-4 max-w-xl text-cream/70 text-sm sm:text-base leading-relaxed">
+              4-5 reference photos. 75% advance reservation. A 360° craft video proof before anything ships. That is our entire process.
+            </p>
+            <div className="mt-8 flex flex-col justify-center gap-3.5 sm:flex-row">
+              <a href="#order" className="w-full sm:w-auto">
+                <GoldButton className="w-full sm:w-auto">Start Your Order</GoldButton>
+              </a>
+              <a
+                href={WHATSAPP_LINK}
+                target="_blank"
+                rel="noreferrer"
+                className="inline-flex min-h-[44px] w-full items-center justify-center gap-2 rounded-full border border-cream/30 px-7 py-3 text-xs font-bold uppercase tracking-[0.14em] text-cream transition hover:border-gold-light hover:text-white sm:w-auto"
+              >
+                <span>💬</span> WhatsApp Atelier
               </a>
             </div>
           </Reveal>

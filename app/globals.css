@@ -14,13 +14,16 @@ html.lenis, html.lenis body {
 }
 
 body {
-  background: #faf5ec;
+  background: #FAF7F2;
+  color: #1C1917;
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 ::selection {
-  background: #e9ce7a;
-  color: #2a2320;
+  background: #B76E79;
+  color: #FFFFFF;
 }
 
 /* allow vertical page scroll over the 3D canvas on touch devices */
@@ -29,13 +32,21 @@ body {
 }
 
 /* elegant thin scrollbar */
-::-webkit-scrollbar { width: 10px; }
-::-webkit-scrollbar-track { background: #f3ead9; }
-::-webkit-scrollbar-thumb { background: #c9a227; border-radius: 8px; border: 2px solid #f3ead9; }
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #F3EAD9;
+}
+::-webkit-scrollbar-thumb {
+  background: #C9A227;
+  border-radius: 8px;
+  border: 2px solid #F3EAD9;
+}
 
 /* shimmering gold text */
 .text-shimmer {
-  background: linear-gradient(100deg, #a8861b 20%, #e9ce7a 40%, #a8861b 60%);
+  background: linear-gradient(100deg, #A8861B 20%, #E9CE7A 40%, #A8861B 60%);
   background-size: 200% auto;
   -webkit-background-clip: text;
   background-clip: text;
@@ -43,10 +54,24 @@ body {
   animation: shimmer 5s linear infinite;
 }
 @keyframes shimmer {
-  to { background-position: 200% center; }
+  to {
+    background-position: 200% center;
+  }
 }
 
 /* soft grain-free vignette for hero */
 .hero-vignette {
-  background: radial-gradient(ellipse 90% 70% at 50% 40%, transparent 40%, rgba(250, 245, 236, 0.9) 100%);
+  background: radial-gradient(ellipse 90% 70% at 50% 40%, transparent 40%, rgba(250, 247, 242, 0.9) 100%);
+}
+
+/* Reduced motion compliance (Rule R-39) */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

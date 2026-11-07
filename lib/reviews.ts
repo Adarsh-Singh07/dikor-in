@@ -1,4 +1,4 @@
-// DIKOR v2 — reviews feed.
+// DIKOR v2 :  reviews feed.
 // Verbatim customer words from @dikor_in's own public "Reviews ✨" highlight,
 // transcribed from Adarsh's screen recording of the highlight on 2026-10-21
 // (saved: workspace/dikor-in/research/dikor-reviews-highlight-2026-10-21.mp4).
@@ -81,7 +81,7 @@ export const REVIEWS: Review[] = [
   },
   {
     quote:
-      "Thank you for sending me these! I'm really impressed with the quality—they're absolutely amazing. Do check out their account, follow them, and place your order. Highly recommended!",
+      "Thank you for sending me these! I'm really impressed with the quality: they're absolutely amazing. Do check out their account, follow them, and place your order. Highly recommended!",
     handle: "bhuumiii0111",
     context: "Heart jewellery tray",
     date: "Jun 2026",

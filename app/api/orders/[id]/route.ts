@@ -20,7 +20,7 @@ const STATUSES: OrderStatus[] = [
 
 type Ctx = { params: { id: string } };
 
-// GET /api/orders/[id] — supports user session or query token
+// GET /api/orders/[id]: supports user session or query token
 export async function GET(req: NextRequest, { params }: Ctx) {
   const me = await getSessionUser(req);
   const token = req.nextUrl.searchParams.get("token");
@@ -39,7 +39,7 @@ export async function GET(req: NextRequest, { params }: Ctx) {
   return json({ order });
 }
 
-// PATCH /api/orders/[id] — admin manages price/status/video/production/delivery
+// PATCH /api/orders/[id]: admin manages price/status/video/production/delivery
 export async function PATCH(req: NextRequest, { params }: Ctx) {
   const me = await getSessionUser(req);
   if (!me) return err("Not signed in", 401);
@@ -64,7 +64,7 @@ export async function PATCH(req: NextRequest, { params }: Ctx) {
   }
   if (body.timelineDays !== undefined) {
     const t = Number(body.timelineDays);
-    if (!Number.isFinite(t) || t < 1 || t > 90) return err("Timeline must be 1–90 days", 400);
+    if (!Number.isFinite(t) || t < 1 || t > 90) return err("Timeline must be 1-90 days", 400);
     patch.timelineDays = Math.round(t);
   }
 

@@ -72,7 +72,7 @@ export default async function DashboardPage() {
 
                 {o.status === "approval_shared" && (
                   <p className="mt-4 rounded-2xl bg-blush px-4 py-2.5 text-xs font-semibold text-rosegold-dark">
-                    ✦ 360° craft video ready — tap to inspect &amp; approve
+                    ✦ 360° craft video ready :  tap to inspect &amp; approve
                   </p>
                 )}
 

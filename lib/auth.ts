@@ -1,4 +1,4 @@
-// Demo session handling — HMAC-signed cookie. Demo only, not production auth.
+// Demo session handling :  HMAC-signed cookie. Demo only, not production auth.
 import type { Role } from "./store";
 
 export const COOKIE_NAME = "dikor_session";
