@@ -32,7 +32,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 export const useAuth = () => useContext(AuthCtx);
 
-export async function api(path: string, init?: RequestInit) {
+export async function api<T = any>(path: string, init?: RequestInit): Promise<T> {
   const res = await fetch(path, {
     ...init,
     headers: { "Content-Type": "application/json", ...(init?.headers || {}) },

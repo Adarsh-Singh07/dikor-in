@@ -405,7 +405,7 @@ export default function AdminDashboardView({
               <label className="block text-xs font-semibold text-charcoal mb-1">Keepsake Title / Description</label>
               <input
                 type="text"
-                placeholder="e.g. Leo :  Golden Retriever 5-inch Sitting Pose"
+                placeholder="e.g. Leo: Golden Retriever 5-inch Sitting Pose"
                 value={manualTitle}
                 onChange={(e) => setManualTitle(e.target.value)}
                 className="w-full rounded-xl border border-charcoal/20 px-3.5 py-2.5 text-xs focus:outline-none"

@@ -1,7 +1,7 @@
 import { query } from "./pg";
 
 export type Role = "customer" | "admin";
-export type Category = "Pets" | "Couples" | "Kids" | "Idols" | "Decor";
+export type Category = "Dogs" | "Cats" | "Humans" | "Pets" | "Couples" | "Kids" | "Idols" | "Decor";
 
 export type OrderStatus =
   | "photos_received"

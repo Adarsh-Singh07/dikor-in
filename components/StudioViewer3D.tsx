@@ -4,7 +4,7 @@ import React, { useRef, useEffect, useState } from "react";
 import * as THREE from "three";
 
 interface StudioViewer3DProps {
-  category?: string; // 'Pets' | 'Couples' | 'Kids' | 'Idols' | 'Decor'
+  category?: "Dogs" | "Cats" | "Humans" | "Pets" | string;
   petName?: string;
   tagText?: string;
   sizeInches?: number;
@@ -13,7 +13,7 @@ interface StudioViewer3DProps {
 }
 
 export default function StudioViewer3D({
-  category = "Pets",
+  category = "Dogs",
   petName = "Babu",
   tagText = "DIKOR ATELIER",
   sizeInches = 5,
@@ -26,7 +26,6 @@ export default function StudioViewer3D({
   const [showComparison, setShowComparison] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  // Sync state if prop changes
   useEffect(() => {
     setActiveFinish(finish);
   }, [finish]);
@@ -35,13 +34,11 @@ export default function StudioViewer3D({
     const container = mountRef.current;
     if (!container) return;
 
-    // Dimensions
     const width = container.clientWidth || 400;
     const height = container.clientHeight || 450;
 
-    // Scene, Camera, Renderer
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color("#FAF5EC");
+    scene.background = new THREE.Color("#FAF7F2");
 
     const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 100);
     camera.position.set(0, 1.8, 4.5);
@@ -73,78 +70,143 @@ export default function StudioViewer3D({
     rimLight.position.set(0, 4, -5);
     scene.add(rimLight);
 
-    // Root Group
     const rootGroup = new THREE.Group();
     scene.add(rootGroup);
 
     // Pedestal Base (Walnut / Obsidian Beveled Plinth)
-    const baseGeo = new THREE.CylinderGeometry(1.35, 1.45, 0.28, 48);
+    const baseGeo = new THREE.CylinderGeometry(1.2, 1.35, 0.22, 48);
     const baseMat = new THREE.MeshStandardMaterial({
-      color: 0x1f1b19,
+      color: 0x221c1a,
       roughness: 0.35,
       metalness: 0.1,
     });
     const baseMesh = new THREE.Mesh(baseGeo, baseMat);
-    baseMesh.position.y = -0.14;
+    baseMesh.position.y = -0.11;
     baseMesh.receiveShadow = true;
     rootGroup.add(baseMesh);
 
-    // Gold Rim Ring on Pedestal
-    const ringGeo = new THREE.TorusGeometry(1.4, 0.02, 16, 64);
+    // Inset Brass Ring on Plinth
+    const ringGeo = new THREE.TorusGeometry(1.18, 0.02, 16, 48);
     const ringMat = new THREE.MeshStandardMaterial({
-      color: 0xc9a227,
+      color: 0xd4af37,
       metalness: 0.85,
       roughness: 0.2,
     });
     const ringMesh = new THREE.Mesh(ringGeo, ringMat);
     ringMesh.rotation.x = Math.PI / 2;
-    ringMesh.position.y = 0;
+    ringMesh.position.y = 0.005;
     rootGroup.add(ringMesh);
 
-    // Engraved Brass Plaque on Pedestal Face
-    const plaqueGeo = new THREE.BoxGeometry(0.85, 0.14, 0.02);
+    // Engraved Brass Name Plaque on Front of Base
+    const plaqueGeo = new THREE.BoxGeometry(0.85, 0.14, 0.03);
     const plaqueMat = new THREE.MeshStandardMaterial({
       color: 0xd4af37,
       metalness: 0.9,
-      roughness: 0.25,
+      roughness: 0.15,
     });
     const plaqueMesh = new THREE.Mesh(plaqueGeo, plaqueMat);
-    plaqueMesh.position.set(0, -0.12, 1.44);
+    plaqueMesh.position.set(0, -0.08, 1.25);
     rootGroup.add(plaqueMesh);
 
-    // Figurine Material based on finish
-    const getFigurineMaterial = (f: "painted" | "gold" | "white_resin") => {
-      if (f === "gold") {
-        return new THREE.MeshStandardMaterial({
-          color: 0xc9a227,
-          metalness: 0.88,
-          roughness: 0.22,
-        });
-      }
-      if (f === "white_resin") {
-        return new THREE.MeshStandardMaterial({
-          color: 0xfaf5ec,
-          metalness: 0.05,
-          roughness: 0.45,
-        });
-      }
-      // Hand-Painted Satin Finish
-      return new THREE.MeshStandardMaterial({
-        color: 0xb76e79,
-        roughness: 0.5,
-        metalness: 0.15,
+    // Material definitions for Figurines
+    let figurineMat: THREE.Material;
+    if (activeFinish === "gold") {
+      figurineMat = new THREE.MeshStandardMaterial({
+        color: 0xd4af37,
+        metalness: 0.88,
+        roughness: 0.22,
       });
-    };
+    } else if (activeFinish === "white_resin") {
+      figurineMat = new THREE.MeshStandardMaterial({
+        color: 0xf5f3ee,
+        roughness: 0.45,
+        metalness: 0.05,
+      });
+    } else {
+      // Hand-Painted Warm Satin Acrylic
+      figurineMat = new THREE.MeshStandardMaterial({
+        color: category === "Cats" ? 0xd88a58 : category === "Humans" ? 0xcc8d76 : 0xc68a4c,
+        roughness: 0.5,
+        metalness: 0.08,
+      });
+    }
 
-    const figurineMat = getFigurineMaterial(activeFinish);
-
-    // Sculpted Figurine Group
     const figurineGroup = new THREE.Group();
     rootGroup.add(figurineGroup);
 
-    // Build stylized artisan sculpt based on category
-    if (category === "Pets") {
-      // Dog / Cat Sculpted Body
+    // Build stylized artisan sculpt strictly for Dogs, Cats, and Humans
+    if (category === "Cats") {
+      // Slender Feline Body
+      const bodyGeo = new THREE.CylinderGeometry(0.32, 0.45, 1.05, 32);
+      const bodyMesh = new THREE.Mesh(bodyGeo, figurineMat);
+      bodyMesh.position.y = 0.52;
+      bodyMesh.castShadow = true;
+      figurineGroup.add(bodyMesh);
+
+      // Feline Head
+      const headGeo = new THREE.SphereGeometry(0.36, 32, 32);
+      const headMesh = new THREE.Mesh(headGeo, figurineMat);
+      headMesh.position.set(0, 1.2, 0.1);
+      headMesh.castShadow = true;
+      figurineGroup.add(headMesh);
+
+      // Cat Muzzle
+      const snoutGeo = new THREE.BoxGeometry(0.18, 0.14, 0.18);
+      const snoutMesh = new THREE.Mesh(snoutGeo, figurineMat);
+      snoutMesh.position.set(0, 1.12, 0.38);
+      snoutMesh.castShadow = true;
+      figurineGroup.add(snoutMesh);
+
+      // Pointed Triangle Cat Ears
+      const earGeo = new THREE.ConeGeometry(0.12, 0.28, 16);
+      const earL = new THREE.Mesh(earGeo, figurineMat);
+      earL.position.set(-0.22, 1.48, 0.1);
+      earL.rotation.z = -0.2;
+      figurineGroup.add(earL);
+
+      const earR = new THREE.Mesh(earGeo, figurineMat);
+      earR.position.set(0.22, 1.48, 0.1);
+      earR.rotation.z = 0.2;
+      figurineGroup.add(earR);
+
+      // Graceful Cat Tail
+      const tailCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(0, 0.1, -0.35),
+        new THREE.Vector3(0.1, 0.45, -0.6),
+        new THREE.Vector3(0.25, 0.75, -0.45),
+        new THREE.Vector3(0.2, 0.95, -0.35),
+      ]);
+      const tailGeo = new THREE.TubeGeometry(tailCurve, 24, 0.05, 12, false);
+      const tailMesh = new THREE.Mesh(tailGeo, figurineMat);
+      figurineGroup.add(tailMesh);
+    } else if (category === "Humans") {
+      // Human Torso & Shoulders
+      const torsoGeo = new THREE.CylinderGeometry(0.38, 0.46, 1.1, 32);
+      const torso = new THREE.Mesh(torsoGeo, figurineMat);
+      torso.position.y = 0.58;
+      torso.castShadow = true;
+      figurineGroup.add(torso);
+
+      // Neck
+      const neckGeo = new THREE.CylinderGeometry(0.14, 0.16, 0.2, 16);
+      const neck = new THREE.Mesh(neckGeo, figurineMat);
+      neck.position.set(0, 1.18, 0);
+      figurineGroup.add(neck);
+
+      // Head
+      const headGeo = new THREE.SphereGeometry(0.32, 32, 32);
+      const head = new THREE.Mesh(headGeo, figurineMat);
+      head.position.set(0, 1.42, 0);
+      head.castShadow = true;
+      figurineGroup.add(head);
+
+      // Hair Silhouette
+      const hairGeo = new THREE.SphereGeometry(0.34, 24, 24, 0, Math.PI * 2, 0, Math.PI * 0.6);
+      const hair = new THREE.Mesh(hairGeo, figurineMat);
+      hair.position.set(0, 1.44, -0.02);
+      figurineGroup.add(hair);
+    } else {
+      // Default: Dog Miniature Sculpt
       const bodyGeo = new THREE.CylinderGeometry(0.4, 0.55, 1.1, 32);
       const bodyMesh = new THREE.Mesh(bodyGeo, figurineMat);
       bodyMesh.position.y = 0.55;
@@ -165,7 +227,7 @@ export default function StudioViewer3D({
       snoutMesh.castShadow = true;
       figurineGroup.add(snoutMesh);
 
-      // Ears (Perky Golden Retriever / Cat Ears)
+      // Ears (Golden Retriever / Hound Flop Ears)
       const earGeo = new THREE.ConeGeometry(0.16, 0.35, 16);
       const earL = new THREE.Mesh(earGeo, figurineMat);
       earL.position.set(-0.3, 1.45, 0.1);
@@ -188,68 +250,25 @@ export default function StudioViewer3D({
       const tailGeo = new THREE.TubeGeometry(tailCurve, 20, 0.08, 12, false);
       const tailMesh = new THREE.Mesh(tailGeo, figurineMat);
       figurineGroup.add(tailMesh);
-    } else if (category === "Couples") {
-      // Two Figures Intertwined
-      const f1Body = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.42, 1.2, 24), figurineMat);
-      f1Body.position.set(-0.35, 0.6, 0);
-      f1Body.castShadow = true;
-      figurineGroup.add(f1Body);
-
-      const f1Head = new THREE.Mesh(new THREE.SphereGeometry(0.3, 24, 24), figurineMat);
-      f1Head.position.set(-0.35, 1.35, 0);
-      figurineGroup.add(f1Head);
-
-      const f2Body = new THREE.Mesh(new THREE.CylinderGeometry(0.28, 0.4, 1.1, 24), figurineMat);
-      f2Body.position.set(0.35, 0.55, 0);
-      f2Body.castShadow = true;
-      figurineGroup.add(f2Body);
-
-      const f2Head = new THREE.Mesh(new THREE.SphereGeometry(0.28, 24, 24), figurineMat);
-      f2Head.position.set(0.35, 1.25, 0);
-      figurineGroup.add(f2Head);
-
-      // Heart Accent Arc
-      const heartArcGeo = new THREE.TorusGeometry(0.7, 0.03, 16, 32, Math.PI);
-      const heartArcMat = new THREE.MeshStandardMaterial({ color: 0xb76e79, metalness: 0.6 });
-      const heartArc = new THREE.Mesh(heartArcGeo, heartArcMat);
-      heartArc.position.set(0, 1.3, 0);
-      heartArc.rotation.z = Math.PI;
-      figurineGroup.add(heartArc);
-    } else {
-      // Idols / Sculptural Figurine
-      const idolBody = new THREE.Mesh(new THREE.CylinderGeometry(0.35, 0.65, 1.3, 32), figurineMat);
-      idolBody.position.y = 0.65;
-      idolBody.castShadow = true;
-      figurineGroup.add(idolBody);
-
-      const idolCrown = new THREE.Mesh(new THREE.ConeGeometry(0.3, 0.55, 24), ringMat);
-      idolCrown.position.set(0, 1.55, 0);
-      figurineGroup.add(idolCrown);
-
-      const halo = new THREE.Mesh(new THREE.TorusGeometry(0.5, 0.03, 16, 48), ringMat);
-      halo.position.set(0, 1.45, -0.15);
-      figurineGroup.add(halo);
     }
 
     // Scale proportional to sizeInches
     const scaleFactor = Math.max(0.75, Math.min(1.4, sizeInches / 5));
     figurineGroup.scale.set(scaleFactor, scaleFactor, scaleFactor);
 
-    // Real-life scale comparison object (iPhone 16 Pro reference)
-    const phoneGroup = new THREE.Group();
-    const phoneGeo = new THREE.BoxGeometry(0.12, 1.45, 0.72);
-    const phoneMat = new THREE.MeshStandardMaterial({ color: 0x1c1917, roughness: 0.2, metalness: 0.8 });
-    const phoneMesh = new THREE.Mesh(phoneGeo, phoneMat);
-    phoneMesh.position.set(1.6, 0.72, 0);
-    phoneGroup.add(phoneMesh);
-
+    // Optional Phone for Scale Comparison
     if (showComparison) {
-      scene.add(phoneGroup);
+      const phoneGeo = new THREE.BoxGeometry(0.7, 1.45, 0.08);
+      const phoneMat = new THREE.MeshStandardMaterial({ color: 0x111111, roughness: 0.1, metalness: 0.8 });
+      const phoneMesh = new THREE.Mesh(phoneGeo, phoneMat);
+      phoneMesh.position.set(1.1, 0.65, 0);
+      phoneMesh.castShadow = true;
+      rootGroup.add(phoneMesh);
     }
 
     setLoading(false);
 
-    // Mouse Interaction / Orbit Dragging
+    // Mouse & Touch Interaction / Orbit Dragging
     let isDragging = false;
     let prevMouseX = 0;
     let prevMouseY = 0;
@@ -274,10 +293,35 @@ export default function StudioViewer3D({
       isDragging = false;
     };
 
+    const onTouchStart = (e: TouchEvent) => {
+      if (e.touches.length === 1) {
+        isDragging = true;
+        prevMouseX = e.touches[0].clientX;
+        prevMouseY = e.touches[0].clientY;
+      }
+    };
+
+    const onTouchMove = (e: TouchEvent) => {
+      if (!isDragging || e.touches.length !== 1) return;
+      const deltaX = e.touches[0].clientX - prevMouseX;
+      const deltaY = e.touches[0].clientY - prevMouseY;
+      rootGroup.rotation.y += deltaX * 0.01;
+      camera.position.y = Math.max(0.5, Math.min(3.5, camera.position.y - deltaY * 0.01));
+      prevMouseX = e.touches[0].clientX;
+      prevMouseY = e.touches[0].clientY;
+    };
+
+    const onTouchEnd = () => {
+      isDragging = false;
+    };
+
     const dom = renderer.domElement;
     dom.addEventListener("mousedown", onMouseDown);
     window.addEventListener("mousemove", onMouseMove);
     window.addEventListener("mouseup", onMouseUp);
+    dom.addEventListener("touchstart", onTouchStart, { passive: true });
+    window.addEventListener("touchmove", onTouchMove, { passive: true });
+    window.addEventListener("touchend", onTouchEnd);
 
     // Animation Loop
     let reqId: number;
@@ -291,7 +335,6 @@ export default function StudioViewer3D({
     };
     animate();
 
-    // Resize Handler
     const handleResize = () => {
       if (!container) return;
       const w = container.clientWidth;
@@ -307,20 +350,23 @@ export default function StudioViewer3D({
       dom.removeEventListener("mousedown", onMouseDown);
       window.removeEventListener("mousemove", onMouseMove);
       window.removeEventListener("mouseup", onMouseUp);
+      dom.removeEventListener("touchstart", onTouchStart);
+      window.removeEventListener("touchmove", onTouchMove);
+      window.removeEventListener("touchend", onTouchEnd);
       window.removeEventListener("resize", handleResize);
       renderer.dispose();
     };
   }, [category, activeFinish, sizeInches, isRotating, showComparison]);
 
   return (
-    <div className={`relative flex flex-col bg-cream-dark/30 rounded-3xl border border-gold/40 p-4 overflow-hidden ${className}`}>
+    <div className={`relative flex flex-col bg-[#F5EFEB] rounded-2xl border border-charcoal/15 p-4 overflow-hidden ${className}`}>
       {/* 3D Canvas Container */}
       <div
         ref={mountRef}
-        className="w-full h-80 sm:h-96 cursor-grab active:cursor-grabbing rounded-2xl relative flex items-center justify-center"
+        className="w-full h-80 sm:h-96 cursor-grab active:cursor-grabbing rounded-xl relative flex items-center justify-center bg-[#FAF7F2]"
       >
         {loading && (
-          <div className="absolute inset-0 flex items-center justify-center bg-cream/80 backdrop-blur-sm z-10">
+          <div className="absolute inset-0 flex items-center justify-center bg-[#FAF7F2]/80 z-10">
             <span className="text-xs uppercase tracking-widest text-rosegold-dark font-semibold">
               Loading 3D Studio...
             </span>
@@ -330,41 +376,44 @@ export default function StudioViewer3D({
 
       {/* Floating Plaque Tag Realtime Preview */}
       <div className="absolute top-6 left-6 z-10 pointer-events-none">
-        <div className="bg-charcoal/85 text-cream px-3 py-1.5 rounded-full border border-gold/40 backdrop-blur-md shadow-card">
-          <p className="text-[10px] uppercase tracking-widest text-gold font-semibold">Live 3D Preview</p>
-          <p className="text-xs font-serif font-bold text-white tracking-wide">{petName || "Your Keepsake"}</p>
+        <div className="bg-charcoal/90 text-white px-3 py-1.5 rounded-lg border border-charcoal/30 shadow-sm">
+          <p className="text-[10px] uppercase tracking-widest text-gold-light font-semibold">Live 3D Studio</p>
+          <p className="text-xs font-serif font-bold text-white tracking-wide">{petName || "Your Miniature"}</p>
         </div>
       </div>
 
       {/* 3D Controls Bar */}
-      <div className="mt-3 flex flex-wrap items-center justify-between gap-3 pt-3 border-t border-charcoal/10">
+      <div className="mt-3 flex flex-wrap items-center justify-between gap-2.5 pt-3 border-t border-charcoal/10">
         {/* Finish Selector */}
-        <div className="flex items-center gap-1.5 bg-white/70 p-1 rounded-2xl border border-charcoal/15">
+        <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-charcoal/15">
           <button
+            type="button"
             onClick={() => setActiveFinish("painted")}
-            className={`px-3 py-1 rounded-xl text-xs font-medium transition ${
+            className={`min-h-[44px] px-3.5 py-1.5 rounded-lg text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rosegold-dark ${
               activeFinish === "painted"
-                ? "bg-rosegold text-cream font-semibold shadow-sm"
+                ? "bg-rosegold text-white shadow-sm"
                 : "text-charcoal-soft hover:text-charcoal"
             }`}
           >
             Hand-Painted
           </button>
           <button
+            type="button"
             onClick={() => setActiveFinish("gold")}
-            className={`px-3 py-1 rounded-xl text-xs font-medium transition ${
+            className={`min-h-[44px] px-3.5 py-1.5 rounded-lg text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rosegold-dark ${
               activeFinish === "gold"
-                ? "bg-gold text-charcoal font-semibold shadow-sm"
+                ? "bg-charcoal text-white shadow-sm"
                 : "text-charcoal-soft hover:text-charcoal"
             }`}
           >
             Antique Gold
           </button>
           <button
+            type="button"
             onClick={() => setActiveFinish("white_resin")}
-            className={`px-3 py-1 rounded-xl text-xs font-medium transition ${
+            className={`min-h-[44px] px-3.5 py-1.5 rounded-lg text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rosegold-dark ${
               activeFinish === "white_resin"
-                ? "bg-charcoal text-cream font-semibold shadow-sm"
+                ? "bg-charcoal text-white shadow-sm"
                 : "text-charcoal-soft hover:text-charcoal"
             }`}
           >
@@ -375,20 +424,22 @@ export default function StudioViewer3D({
         {/* Action Toggles */}
         <div className="flex items-center gap-2">
           <button
+            type="button"
             onClick={() => setIsRotating(!isRotating)}
-            className="px-3 py-1.5 rounded-xl border border-charcoal/20 bg-white/80 text-xs font-medium text-charcoal hover:border-gold"
+            className="min-h-[44px] px-4 py-2 rounded-xl border border-charcoal/20 bg-white text-xs font-semibold text-charcoal hover:border-charcoal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rosegold-dark"
           >
             {isRotating ? "Pause 360°" : "Auto-Rotate"}
           </button>
           <button
+            type="button"
             onClick={() => setShowComparison(!showComparison)}
-            className={`px-3 py-1.5 rounded-xl border text-xs font-medium transition ${
+            className={`min-h-[44px] px-4 py-2 rounded-xl border text-xs font-semibold transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rosegold-dark ${
               showComparison
-                ? "border-rosegold bg-blush text-rosegold-dark font-semibold"
-                : "border-charcoal/20 bg-white/80 text-charcoal"
+                ? "border-rosegold bg-blush text-rosegold-dark"
+                : "border-charcoal/20 bg-white text-charcoal hover:border-charcoal"
             }`}
           >
-            Scale vs iPhone
+            Scale Reference
           </button>
         </div>
       </div>

@@ -1,17 +1,14 @@
 import type { Metadata, Viewport } from "next";
-import { Cormorant_Garamond, Inter } from "next/font/google";
-import "./globals.css";
-import { AuthProvider } from "@/lib/client";
-import LenisProvider from "@/components/LenisProvider";
+import { Playfair_Display, Inter } from "next/font/google";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import LenisProvider from "@/components/LenisProvider";
 import SWRegister from "@/components/SWRegister";
+import "./globals.css";
 
-const display = Cormorant_Garamond({
+const display = Playfair_Display({
   subsets: ["latin"],
   variable: "--font-display",
-  weight: ["400", "500", "600", "700"],
-  style: ["normal", "italic"],
   display: "swap",
 });
 
@@ -22,21 +19,21 @@ const body = Inter({
 });
 
 export const metadata: Metadata = {
-  title: { default: "DIKOR · Custom 3D-Printed Keepsakes", template: "%s · DIKOR" },
+  title: { default: "DIKOR · Custom 3D Miniatures Studio", template: "%s · DIKOR" },
   description:
-    "DIKOR crafts custom 3D-printed figurines from your photos :  pet replicas, couple miniatures, idols & decor. Made with precision, shipped pan-India.",
+    "DIKOR crafts custom 3D miniatures from your photos: dogs, cats, and human portraits. Hand-sculpted in resin, hand-painted in acrylic, delivered across India.",
   manifest: "/manifest.webmanifest",
   appleWebApp: { capable: true, statusBarStyle: "default", title: "DIKOR" },
   icons: { icon: "/favicon.svg", apple: "/favicon.svg" },
   openGraph: {
-    title: "DIKOR · Custom 3D-Printed Keepsakes",
-    description: "Turn your favourite photo into a hand-finished keepsake. Made with precision.",
+    title: "DIKOR · Custom 3D Miniatures Studio",
+    description: "Turn your favourite photo into a hand-finished 3D miniature. Crafted with precision in Jalandhar.",
     type: "website",
   },
 };
 
 export const viewport: Viewport = {
-  themeColor: "#FAF5EC",
+  themeColor: "#FAF7F2",
   width: "device-width",
   initialScale: 1,
 };
@@ -44,15 +41,13 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en" className={`${display.variable} ${body.variable}`}>
-      <body className="font-body bg-cream text-charcoal antialiased">
-        <AuthProvider>
-          <LenisProvider>
-            <Navbar />
-            <main className="min-h-screen">{children}</main>
-            <Footer />
-          </LenisProvider>
-        </AuthProvider>
-        <SWRegister />
+      <body className="min-h-screen bg-[#FAF7F2] font-sans text-charcoal antialiased selection:bg-rosegold selection:text-white">
+        <LenisProvider>
+          <SWRegister />
+          <Navbar />
+          <main className="min-h-screen">{children}</main>
+          <Footer />
+        </LenisProvider>
       </body>
     </html>
   );

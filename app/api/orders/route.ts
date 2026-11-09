@@ -2,7 +2,7 @@ import { NextRequest } from "next/server";
 import { db, type Category } from "@/lib/store";
 import { getSessionUser, json, err } from "@/lib/api-lib";
 
-const CATS: Category[] = ["Pets", "Couples", "Kids", "Idols", "Decor"];
+const CATS: Category[] = ["Dogs", "Cats", "Humans", "Pets", "Couples", "Kids", "Idols", "Decor"];
 
 // GET /api/orders :  customer: own orders · admin: all
 export async function GET(req: NextRequest) {
