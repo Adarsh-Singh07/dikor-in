@@ -29,7 +29,10 @@ export function Logo({ compact = false, dark = false }: { compact?: boolean; dar
 
 /* ---------- Buttons: solid colours only, no gradients, no arrows ----------
    Redesign's solid styling, plus upstream's explicit `disabled` pass-through,
-   44px minimum tap target and focus-visible ring. */
+   44px minimum tap target and focus-visible ring.
+   Round 3: ONE restrained dark CTA everywhere — the mustard-gold pill read as
+   cheap, so gold is now reserved for tiny accents (prices, micro-labels,
+   the D-mark, hairlines). GhostButton stays the outlined secondary. */
 export function GoldButton({
   children,
   className = "",
@@ -40,7 +43,7 @@ export function GoldButton({
     <button
       {...rest}
       disabled={disabled}
-      className={`inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full bg-gold px-7 py-3.5 text-sm font-semibold uppercase tracking-[0.14em] text-charcoal transition-colors duration-200 hover:bg-gold-dark hover:text-cream focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rosegold-dark focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
+      className={`inline-flex min-h-[44px] items-center justify-center gap-2 rounded-full bg-charcoal px-7 py-3.5 text-sm font-semibold uppercase tracking-[0.14em] text-cream transition-colors duration-200 hover:bg-black focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rosegold-dark focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${className}`}
     >
       {children}
     </button>

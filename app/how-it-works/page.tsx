@@ -1,27 +1,13 @@
 import Link from "next/link";
 import { SectionHeading } from "@/components/ui";
+import { FLOW_STEPS, INCLUDED_ALWAYS } from "@/lib/catalog";
 
-/**
- * Steps and included-items copy live here, not in lib/catalog: the catalog's
- * upstream versions still name the advance split and the old delivery window,
- * which must not appear on this pre-login page. Keep in sync with the redesign's
- * FLOW_STEPS copy (7–10 days, no advance split).
- */
-const FLOW_STEPS = [
-  { n: 1, title: "Send 4–5 clear photos", copy: "Start here — share photos of your pet or subject. We'll guide you on size, pose and the name tag text." },
-  { n: 2, title: "Confirm your order", copy: "Your order is confirmed and your production slot is reserved. Payment details appear in your dashboard after you sign in." },
-  { n: 3, title: "We print & hand-paint", copy: "Your piece is 3D-printed layer by layer, then hand-painted by our artists.", eta: "4–5 days" },
-  { n: 4, title: "Approve your video", copy: "We send photos or a video of the finished piece. We only ship it when you say it's perfect." },
-  { n: 5, title: "Approve & we ship", copy: "Say it's perfect and your keepsake ships to your doorstep, packed with care.", eta: "7–10 days delivery" },
-];
-
-const INCLUDED_ALWAYS = [
-  "Personalised name tag on every figurine",
-  "Shipping across India included in the price",
-  "Photos / video of the finished piece for your approval before shipping",
-  "Carefully packed, made-to-order just for you",
-];
-
+/* How it works (round 3): the steps live in lib/catalog now — one source of
+   truth, shared with the homepage craft line (step 5 is "We ship", not a
+   second "Approve"). The scroll-jacked horizontal carousel is gone; the
+   steps are a plain 5-column layout. The AI-looking hand-painting photo
+   is gone too; the one studio image is a real photo of finished pieces.
+   Per-step photos need a reshoot — no photo is shown where none exists. */
 const DETAILS = [
   {
     t: "Made to order, just for you",
@@ -49,31 +35,29 @@ export default function HowItWorksPage() {
         sub="A process designed around one promise: you approve everything before it ships."
       />
 
-      <div className="mx-auto max-w-4xl">
+      <div className="grid gap-10 md:grid-cols-5 md:gap-6">
         {FLOW_STEPS.map((s) => (
-          <div key={s.n} className="flex gap-6 border-b border-charcoal/10 py-8 first:pt-0">
-            <span className="grid h-16 w-16 shrink-0 place-items-center rounded-full bg-gold font-display text-3xl text-charcoal">
+          <div key={s.n} className="border-t-2 border-charcoal pt-6">
+            <span className="grid h-12 w-12 place-items-center rounded-full bg-charcoal font-display text-2xl text-cream">
               {s.n}
             </span>
-            <div>
-              <h3 className="font-display text-2xl text-charcoal md:text-3xl">{s.title}</h3>
-              <p className="mt-2 leading-relaxed text-charcoal-muted">{s.copy}</p>
-              {s.eta && (
-                <p className="mt-3 text-xs font-bold uppercase tracking-[0.16em] text-gold-dark">
-                  {s.eta}
-                </p>
-              )}
-            </div>
+            <h3 className="mt-4 font-display text-2xl leading-snug text-charcoal">{s.title}</h3>
+            <p className="mt-2 text-sm leading-relaxed text-charcoal-muted">{s.copy}</p>
+            {s.eta && (
+              <p className="mt-3 text-xs font-bold uppercase tracking-[0.16em] text-gold-dark">
+                {s.eta}
+              </p>
+            )}
           </div>
         ))}
       </div>
 
       <div className="mx-auto mt-16 max-w-4xl">
-        <div className="overflow-hidden rounded-sm">
+        <div className="overflow-hidden rounded-sm bg-cream-dark">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src="/images/process-painting.webp" alt="DIKOR artists hand-painting a 3D-printed figurine" className="aspect-[16/9] w-full object-cover" loading="lazy" />
+          <img src="/images/pets-group.webp" alt="Finished DIKOR pet miniatures, ready to ship" className="aspect-[16/9] w-full object-contain" loading="lazy" />
         </div>
-        <p className="mt-3 text-center text-xs uppercase tracking-[0.2em] text-charcoal-muted">Inside the studio — hand-painted, layer by layer</p>
+        <p className="mt-3 text-center text-xs uppercase tracking-[0.2em] text-charcoal-muted">Finished pieces, ready to ship</p>
       </div>
 
       <div className="mx-auto mt-16 grid max-w-5xl gap-6 md:grid-cols-2">
@@ -93,7 +77,7 @@ export default function HowItWorksPage() {
       </div>
 
       <div className="mt-12 text-center">
-        <Link href="/order" className="inline-block rounded-full bg-gold px-7 py-3.5 text-sm font-semibold uppercase tracking-[0.14em] text-charcoal transition hover:bg-gold-light">
+        <Link href="/order" className="inline-block rounded-full bg-charcoal px-7 py-3.5 text-sm font-semibold uppercase tracking-[0.14em] text-cream transition hover:bg-black">
           Start your custom order
         </Link>
       </div>

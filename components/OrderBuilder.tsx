@@ -288,12 +288,14 @@ export default function OrderBuilder({ onConfig, compact = false }: {
                 className={`flex w-full items-center gap-4 rounded-sm border-2 p-3 text-left transition ${category === c.key ? "border-rosegold bg-blush/50" : "border-charcoal/10 bg-cream/50 hover:border-rosegold/60"}`}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={c.image} alt={c.key} className="h-16 w-16 shrink-0 rounded-sm object-cover" loading="lazy" />
+                <img src={c.image} alt={c.key} className="h-20 w-20 shrink-0 rounded-sm object-cover" loading="lazy" />
                 <span className="flex-1">
                   <span className="block font-semibold text-charcoal">{c.key}</span>
                   <span className="block text-sm text-charcoal-muted">{c.tagline}</span>
                 </span>
-                <span className="text-right text-sm font-bold text-gold-dark">{c.fromPrice}</span>
+                <span className="text-right text-sm font-bold text-gold-dark">
+                  {c.priceConfirmed ? c.fromPrice : <span className="text-xs font-semibold text-charcoal-muted">Price confirmed on WhatsApp</span>}
+                </span>
               </button>
             ))}
           </div>
@@ -433,7 +435,7 @@ export default function OrderBuilder({ onConfig, compact = false }: {
                 </div>
               </div>
             ) : (
-              <div className="mt-6 rounded-sm border border-gold/40 bg-cream p-5 text-center">
+              <div className="mt-6 rounded-sm border border-charcoal/15 bg-cream p-5 text-center">
                 <p className="text-sm text-charcoal">One quick step: <strong>sign in</strong> to place your order and track it in your studio.</p>
                 <Link href="/auth" className="mt-4 inline-block">
                   <GoldButton>Sign in to finish</GoldButton>

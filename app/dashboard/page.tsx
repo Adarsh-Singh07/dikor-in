@@ -23,7 +23,7 @@ export default async function DashboardPage() {
         </div>
         <Link
           href="/dashboard/new"
-          className="rounded-full bg-gold px-7 py-3.5 text-sm font-bold uppercase tracking-[0.14em] text-charcoal"
+          className="rounded-full bg-charcoal px-7 py-3.5 text-sm font-bold uppercase tracking-[0.14em] text-cream"
         >
           + New order
         </Link>

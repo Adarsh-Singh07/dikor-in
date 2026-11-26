@@ -109,12 +109,12 @@ export default function OrderDetail({ id, backHref }: { id: string; backHref: st
 
       {/* Guest claim notification banner */}
       {!order.userId && (
-        <div className="mt-6 p-4 rounded-2xl bg-cream-dark/60 border border-gold/40 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
+        <div className="mt-6 p-4 rounded-2xl bg-cream-dark/60 border border-charcoal/15 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs">
           <div>
             <p className="font-bold text-charcoal">Viewing as Guest Order</p>
             <p className="text-charcoal-muted">Sign up or log in using your phone or email to save this keepsake permanently to your account dashboard.</p>
           </div>
-          <Link href="/auth" className="px-4 py-2 rounded-full bg-gold text-charcoal font-bold uppercase tracking-wider text-[10px]">
+          <Link href="/auth" className="px-4 py-2 rounded-full bg-charcoal text-cream font-bold uppercase tracking-wider text-[10px]">
             Claim to Account
           </Link>
         </div>

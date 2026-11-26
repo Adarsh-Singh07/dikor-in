@@ -1,34 +1,34 @@
 "use client";
 import { useState } from "react";
 import { SectionHeading } from "@/components/ui";
-import Cylinder from "@/components/Cylinder";
+import { REVIEWS } from "@/lib/reviews";
 
 const FILTERS = ["All", "Pets", "Cats", "Kids", "Decor"] as const;
 
 interface Piece { category: (typeof FILTERS)[number]; title: string; note: string; image: string; }
 
-/** Real pieces from the DIKOR studio — upstream's eight, remapped to the
-    Pets / Cats / Kids / Decor taxonomy, plus the decor pieces. */
+/** Real pieces from the DIKOR studio (round 3) — one unique, correctly
+    captioned, full-frame image per product. Removed: the AI-looking
+    hand-painting photo, the stone-carver workshop mislabelled as feline
+    detailing, the "reference vs figurine" tile that showed only a real
+    dog, and the second decor tile reusing the same vase photo.
+    The real-dog photo is labelled as what it is — a reference photo,
+    not a figurine. The collection ring is gone (it duplicated the
+    homepage); the grid is the gallery now. */
 const PIECES: Piece[] = [
   { category: "Pets", title: "Hand-painted Golden dog miniature", note: "5-inch on a walnut plinth, engraved brass name tag, from ₹1,500", image: "/images/hero-dog.webp" },
-  { category: "Pets", title: "Sculpted Indie & Beagle likeness", note: "Printed from your phone photos, hand-detailed muzzle", image: "/images/dog-figurine.jpg" },
+  { category: "Pets", title: "Pet portrait — the reference photo", note: "A real pet photo, the kind you send us to start your miniature", image: "/images/dog-figurine.jpg" },
   { category: "Pets", title: "Studio pet minis collection", note: "Every breed, finished and ready to ship across India", image: "/images/pets-group.webp" },
-  { category: "Pets", title: "Atelier hand-painting booth", note: "Acrylic highlights, applied coat by coat in Jalandhar", image: "/images/process-painting.webp" },
-  { category: "Pets", title: "Client reference vs final figurine", note: "Our fidelity check — your photo against the finished piece", image: "/images/dog-real.webp" },
-  { category: "Cats", title: "Persian & Indie cat miniature", note: "Hand-painted glazes, true eye colour and coat markings, from ₹1,500", image: "/images/cat-figurine-card.jpg" },
-  { category: "Cats", title: "Fine detailing & acrylic glazing", note: "Close-up — feline markings, whiskers, natural colour", image: "/images/artisan-painting.jpg" },
+  { category: "Cats", title: "Simba, the cat miniature", note: "Hand-painted ginger tabby, with his name tag on the plinth, from ₹1,500", image: "/images/cat-figurine-card.jpg" },
   { category: "Kids", title: "Child milestone portrait miniature", note: "Sculpted in fine resin from front and side portraits", image: "/images/kid.webp" },
   { category: "Decor", title: "Sculptural 3D vase", note: "Printed to order, finished by hand", image: "/images/decor.webp" },
-  { category: "Decor", title: "Stackable jewelry tray", note: "A tray for the things you reach for every day.", image: "/images/decor.webp" },
 ];
 
-/** The collection ring — the gallery's one living moment (drag to spin). */
-const RING_IMAGES = [
-  { src: "/images/hero-dog.webp", label: "Pet miniature" },
-  { src: "/images/pets-group.webp", label: "Pet minis" },
-  { src: "/images/kid.webp", label: "Child miniature" },
-  { src: "/images/decor.webp", label: "Home decor" },
-];
+/* The three reviews featured on the homepage stay there; the other 15
+   live here. One-line shout-outs stay in the list, labelled by handle
+   and context — no stars or photos are invented for them. */
+const FEATURED_HANDLES = new Set(["niddhi_irl", "dlinsvi9", "themeghamood"]);
+const MORE_REVIEWS = REVIEWS.filter((r) => !FEATURED_HANDLES.has(r.handle ?? ""));
 
 export default function GalleryPage() {
   const [filter, setFilter] = useState<(typeof FILTERS)[number]>("All");
@@ -39,24 +39,6 @@ export default function GalleryPage() {
         title="Keepsakes with a heartbeat"
         sub="Every piece below began as a customer's photograph — pets like Chivas (Mumbai) and Daisy (New Delhi), a custom piece all the way to Kanpur. Yours could be next."
       />
-      {/* the collection ring — drag to spin, the gallery's one living moment */}
-      <div className="mb-14 border-b border-charcoal/10 pb-14">
-        <Cylinder
-          items={RING_IMAGES}
-          itemWidth={200}
-          itemHeight={235}
-          ariaLabel="DIKOR collection preview"
-          render={(it) => (
-            <div className="flex h-full w-full flex-col overflow-hidden rounded-sm border border-charcoal/10 bg-white">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={it.src} alt={it.label} className="min-h-0 w-full flex-1 object-cover" loading="lazy" draggable={false} />
-              <span className="bg-charcoal px-3 py-2 text-center text-[10px] font-bold uppercase tracking-[0.18em] text-gold-light">
-                {it.label}
-              </span>
-            </div>
-          )}
-        />
-      </div>
       <div className="mb-10 flex flex-wrap justify-center gap-3">
         {FILTERS.map((c) => (
           <button
@@ -64,7 +46,7 @@ export default function GalleryPage() {
             onClick={() => setFilter(c)}
             className={`min-h-[2.75rem] rounded-full px-6 py-2.5 text-xs font-bold uppercase tracking-[0.16em] ${
               filter === c
-                ? "bg-gold text-charcoal"
+                ? "bg-charcoal text-cream"
                 : "border border-charcoal/15 bg-white/60 text-charcoal-soft hover:border-rosegold hover:text-rosegold-dark"
             }`}
           >
@@ -88,6 +70,25 @@ export default function GalleryPage() {
       <p className="mt-10 text-center text-xs uppercase tracking-[0.2em] text-charcoal-muted">
         From @dikor_in — see the full collection on Instagram
       </p>
+
+      {/* reviews: the other 15, below the pieces */}
+      <section id="reviews" className="mt-20 scroll-mt-24 border-t border-charcoal/10 pt-14">
+        <SectionHeading
+          title="What customers say"
+          sub="The other 15 real reviews from our Reviews highlight on @dikor_in."
+        />
+        <ul className="mx-auto max-w-3xl space-y-8">
+          {MORE_REVIEWS.map((r) => (
+            <li key={r.handle ?? r.context} className="border-t border-charcoal/10 pt-6">
+              <p className="text-lg leading-relaxed text-charcoal">“{r.quote}”</p>
+              <p className="mt-3 text-sm text-charcoal-muted">
+                {r.handle ? `@${r.handle} — ` : ""}
+                {r.context}, {r.date}
+              </p>
+            </li>
+          ))}
+        </ul>
+      </section>
     </div>
   );
 }

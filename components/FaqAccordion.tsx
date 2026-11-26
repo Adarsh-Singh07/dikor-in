@@ -2,14 +2,16 @@
 import { useState } from "react";
 import { FAQS } from "@/lib/catalog";
 
+/* FAQ accordion (round 3): hairline rows, no white cards, no gold border.
+   One question open at a time; the first is open by default. */
 export default function FaqAccordion() {
   const [open, setOpen] = useState<number | null>(0);
   return (
-    <div className="mx-auto max-w-3xl divide-y divide-charcoal/15 border-y border-charcoal/15">
+    <div className="mx-auto max-w-3xl border-y border-charcoal/15">
       {FAQS.map((f, i) => {
         const isOpen = open === i;
         return (
-          <div key={i} className={`mb-3 overflow-hidden border-b border-charcoal/10 bg-white/80 ${isOpen ? "border-gold/50" : ""}`}>
+          <div key={i} className="border-b border-charcoal/10 last:border-b-0">
             <button
               type="button"
               className="flex min-h-[48px] w-full items-center justify-between gap-4 py-4 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rosegold-dark rounded-lg px-2"

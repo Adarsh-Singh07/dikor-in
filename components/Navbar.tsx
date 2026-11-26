@@ -88,7 +88,7 @@ export default function Navbar() {
 
         {/* Mobile menu trigger: 44px by 44px min tap target */}
         <button
-          className={`grid h-10 w-10 place-items-center rounded-full border md:hidden ${
+          className={`grid h-11 w-11 place-items-center rounded-full border md:hidden ${
             onDark ? "border-cream/30 text-cream" : "border-charcoal/15 text-charcoal"
           }`}
           onClick={() => setOpen(!open)}

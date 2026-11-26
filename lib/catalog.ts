@@ -106,39 +106,28 @@ export interface Faq {
   a: string;
 }
 
-/** FAQ content — round-2 wording: payment steps live in the dashboard, delivery 7–10 days. */
+/** FAQ content — round-3 wording: five short questions only. Prices live in
+ *  the pricing table on the homepage, photo guidance lives on /order. */
 export const FAQS: Faq[] = [
   {
-    q: "What is the price and size of a custom pet miniature?",
-    a: "Our custom 3D pet miniatures come with a personalised name tag, and shipping is included. A 5-inch miniature is ₹1,500 for slim breeds and ₹2,000 for bulky breeds. A 7-inch miniature starts at ₹1,700 for slim breeds — the 7-inch bulky price is confirmed with you personally on WhatsApp.",
-  },
-  {
     q: "How does payment work?",
-    a: "Sign in to your dashboard and you'll see the payment steps for your order there. Every piece is custom-made for you, and we share pictures or a video of the finished product for your approval before it ships.",
-  },
-  {
-    q: "How do I place an order?",
-    a: "It's simple: send us 4–5 clear photos of your pet (or the person/subject), and we'll guide you through the rest — size, name tag text, pose and colour details.",
+    a: "Sign in to your dashboard and you will see the payment steps for your order there. We share photos or a video of the finished piece for your approval before it ships.",
   },
   {
     q: "How long does delivery take?",
     a: "Printing and hand-painting take 4–5 days. Delivery usually takes 7–10 days after that, depending on your location. We ship across India.",
   },
   {
-    q: "What kind of photos should I send?",
-    a: "Clear, well-lit photos work best — show the face from the front and the full body so we can match markings, colours and proportions. The more angles, the better the likeness.",
-  },
-  {
     q: "Will I see the figurine before it ships?",
-    a: "Yes. Every order includes an approval step: we share photos or a video of your finished piece and only ship it once you love it.",
+    a: "Yes. We share photos or a video of your finished piece and only ship it once you love it.",
   },
   {
     q: "Is Cash on Delivery available?",
-    a: "No — every piece is made to order just for you, so we take payment online. Sign in to see the payment steps for your order. The approval photos are your guarantee.",
+    a: "No. Every piece is made to order just for you, so we take payment online. The approval photos are your guarantee.",
   },
   {
     q: "What is a DIKOR figurine made of?",
-    a: "Your piece is 3D-printed layer by layer and then hand-painted by our studio artists — a display keepsake, not a toy. Keep it dry and handle it with care.",
+    a: "Your piece is 3D-printed layer by layer and then hand-painted by our studio artists. It is a display keepsake, not a toy. Keep it dry and handle it with care.",
   },
 ];
 
@@ -154,7 +143,7 @@ export const FLOW_STEPS: FlowStep[] = [
   { n: 2, title: "Confirm your order", copy: "Your order is confirmed and your production slot is reserved. Payment details appear in your dashboard after you sign in." },
   { n: 3, title: "We print & hand-paint", copy: "Your piece is 3D-printed layer by layer, then hand-painted by our artists.", eta: "4–5 days" },
   { n: 4, title: "Approve your video", copy: "We send photos or a video of the finished piece. We only ship it when you say it's perfect." },
-  { n: 5, title: "Approve & we ship", copy: "Say it's perfect and your keepsake ships to your doorstep, packed with care.", eta: "7–10 days delivery" },
+  { n: 5, title: "We ship", copy: "Say it's perfect and your keepsake ships to your doorstep, packed with care.", eta: "7–10 days delivery" },
 ];
 
 /** Map public catalogue keys to database categories.

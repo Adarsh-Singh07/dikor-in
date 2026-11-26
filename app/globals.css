@@ -4,6 +4,10 @@
 
 html {
   scroll-behavior: auto;
+  /* Round 3: clip (not hidden) on BOTH html and body. `hidden` on body alone
+     does not stop the page being a horizontal scroll container on mobile
+     Safari, which is how the left side and the menu button got cut off. */
+  overflow-x: clip;
 }
 
 html.lenis, html.lenis body {
@@ -16,7 +20,7 @@ html.lenis, html.lenis body {
 body {
   background: #faf5ec;
   color: #1c1917;
-  overflow-x: hidden;
+  overflow-x: clip;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
