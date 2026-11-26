@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="DIKOR mark">
+  <title>DIKOR — D monogram on a gold plinth rule (light version for dark backgrounds)</title>
+  <!-- Stem of the D: cream -->
+  <rect x="16" y="12" width="8" height="36" rx="2" fill="#FAF5EC"/>
+  <!-- Bowl of the D: light rose-gold -->
+  <path d="M24 12 H31 A18 18 0 0 1 31 48 H24 V39 H31 A9 9 0 0 0 31 21 H24 Z" fill="#E8B4B8"/>
+  <!-- Plinth rule: gold -->
+  <rect x="13" y="54" width="38" height="3" rx="1.5" fill="#C9A227"/>
+</svg>

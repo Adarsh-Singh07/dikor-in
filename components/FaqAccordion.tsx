@@ -9,7 +9,7 @@ export default function FaqAccordion() {
       {FAQS.map((f, i) => {
         const isOpen = open === i;
         return (
-          <div key={i} className="py-2">
+          <div key={i} className={`mb-3 overflow-hidden border-b border-charcoal/10 bg-white/80 ${isOpen ? "border-gold/50" : ""}`}>
             <button
               type="button"
               className="flex min-h-[48px] w-full items-center justify-between gap-4 py-4 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rosegold-dark rounded-lg px-2"

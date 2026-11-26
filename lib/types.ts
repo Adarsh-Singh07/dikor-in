@@ -1,5 +1,5 @@
 export type Role = "customer" | "admin";
-export type Category = "Dogs" | "Cats" | "Humans" | "Pets" | "Couples" | "Kids" | "Idols" | "Decor";
+export type Category = "Dogs" | "Cats" | "Humans" | "Pets" | "Kids" | "Decor";
 
 export type OrderStatus =
   | "photos_received"
@@ -135,9 +135,10 @@ export const STATUS_LABELS: Record<OrderStatus, string> = {
 };
 
 export const CATEGORIES: { key: Category; tagline: string; from: string }[] = [
-  { key: "Dogs", tagline: "Hand-painted 3D dog miniatures", from: "₹1,500" },
-  { key: "Cats", tagline: "Handcrafted feline keepsakes", from: "₹1,500" },
-  { key: "Humans", tagline: "Custom portrait & milestone figurines", from: "₹1,999" },
+  { key: "Pets", tagline: "Lifelike replicas of your furry family", from: "₹1,500" },
+  { key: "Cats", tagline: "Lifelike replicas of your cat", from: "₹1,500" },
+  { key: "Kids", tagline: "Adorable keepsakes of little moments", from: "₹1,999" },
+  { key: "Decor", tagline: "Custom showpieces for warm homes", from: "₹1,499" },
 ];
 
 export const inr = (n: number) => "₹" + (n || 0).toLocaleString("en-IN");

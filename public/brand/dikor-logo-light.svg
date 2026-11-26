@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 64" role="img" aria-label="DIKOR logo">
+  <title>DIKOR — horizontal lockup (light version for dark backgrounds)</title>
+  <g>
+    <rect x="16" y="12" width="8" height="36" rx="2" fill="#FAF5EC"/>
+    <path d="M24 12 H31 A18 18 0 0 1 31 48 H24 V39 H31 A9 9 0 0 0 31 21 H24 Z" fill="#E8B4B8"/>
+    <rect x="13" y="54" width="38" height="3" rx="1.5" fill="#C9A227"/>
+  </g>
+  <text x="72" y="39" font-family="Inter Tight, Inter, Arial, sans-serif" font-size="30" font-weight="800" letter-spacing="3" fill="#FAF5EC">DIKOR</text>
+  <text x="73" y="56" font-family="Inter, Arial, sans-serif" font-size="10" font-weight="600" letter-spacing="4.5" fill="#E9CE7A">DIKOR.IN</text>
+</svg>

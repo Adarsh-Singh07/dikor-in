@@ -2,7 +2,11 @@ import { NextRequest } from "next/server";
 import { db, type Category } from "@/lib/store";
 import { getSessionUser, json, err } from "@/lib/api-lib";
 
-const CATS: Category[] = ["Dogs", "Cats", "Humans", "Pets", "Couples", "Kids", "Idols", "Decor"];
+// Round-2 categories only. Dogs + Humans kept for stored-data compat — the
+// builder maps Dogs/Cats -> Pets and Humans -> Kids via
+// catalogKeyToStoreCategory before POSTing, so live traffic sends
+// Pets / Cats / Kids / Decor.
+const CATS: Category[] = ["Dogs", "Cats", "Humans", "Pets", "Kids", "Decor"];
 
 // GET /api/orders :  customer: own orders · admin: all
 export async function GET(req: NextRequest) {

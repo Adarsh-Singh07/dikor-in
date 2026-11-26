@@ -3,7 +3,7 @@
 import { useSearchParams, useRouter } from "next/navigation";
 import { useState, useEffect, Suspense } from "react";
 import BrandLogo from "@/components/BrandLogo";
-import { Sparkle, GoldButton, GhostButton } from "@/components/ui";
+import { GoldButton, GhostButton } from "@/components/ui";
 
 function PaymentContent() {
   const searchParams = useSearchParams();
@@ -200,7 +200,6 @@ function PaymentContent() {
 
         {/* Footer Guarantee */}
         <div className="bg-cream-dark/50 px-6 py-3 border-t border-charcoal/10 flex items-center justify-center gap-2 text-[11px] text-charcoal-soft">
-          <Sparkle className="w-3.5 h-3.5 text-gold" />
           <span>256-Bit SSL Encrypted &bull; 100% Satisfaction Craft Approval Guarantee</span>
         </div>
       </div>

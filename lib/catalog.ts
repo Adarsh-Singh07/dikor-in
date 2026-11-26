@@ -1,5 +1,8 @@
 // DIKOR v2: single source of truth for the public site.
-// Focused exclusively on custom 3D miniatures: Dogs, Cats, Humans.
+// Round-2 editorial categories only: Pets, Cats, Kids, Decor.
+// Pricing facts come from DIKOR's Instagram Q&A (2026-10-16). Values flagged
+// PENDING_ADARSH are placeholders Adarsh will confirm — do not present them as
+// DIKOR's real prices in any quote/checkout until confirmed.
 
 export const WHATSAPP_NUMBER = "919878070123";
 export const WHATSAPP_LINK = `https://wa.me/${WHATSAPP_NUMBER}`;
@@ -24,11 +27,11 @@ export const PRODUCT_SIZES: PetSizeOption[] = [
   { id: "dog-7-slim", label: '7" · Dog (Slim Breed: Indie, Beagle, Spaniel)', category: "Dogs", build: "slim", price: 1700 },
   { id: "dog-7-bulky", label: '7" · Dog (Bulky Breed: Large Breeds)', category: "Dogs", build: "bulky", price: null },
 
-  // Cats
+  // Cats — same pet miniature rates as dogs (round-2 redesign)
   { id: "cat-5-standard", label: '5" · Cat (Standard Pose)', category: "Cats", price: 1500 },
   { id: "cat-7-collector", label: '7" · Cat (Collector Scale)', category: "Cats", price: 1700 },
 
-  // Humans
+  // Humans — single-person portraits / child milestones
   { id: "human-5-portrait", label: '5" · Human Miniature (Individual Portrait)', category: "Humans", price: 1999 },
   { id: "human-7-collector", label: '7" · Human Miniature (Collector Scale)', category: "Humans", price: 2499 },
 ];
@@ -37,7 +40,7 @@ export const PRODUCT_SIZES: PetSizeOption[] = [
 export const PET_SIZES = PRODUCT_SIZES;
 
 export interface Category {
-  key: "Dogs" | "Cats" | "Humans";
+  key: "Pets" | "Cats" | "Kids" | "Decor";
   title: string;
   tagline: string;
   fromPrice: string;
@@ -49,34 +52,44 @@ export interface Category {
 
 export const CATEGORIES: Category[] = [
   {
-    key: "Dogs",
-    title: "Custom Dog Miniature",
-    tagline: "Your dog, sculpted and hand-painted",
+    key: "Pets",
+    title: "Custom Pet Miniature",
+    tagline: "Your pet, frozen in miniature",
     fromPrice: "₹1,500",
     priceConfirmed: true,
     image: "/images/hero-dog.webp",
-    copy: "Hand-sculpted from 4-5 clear photos of your dog. We match coat markings, ear angles, and facial expressions in high-precision resin.",
-    cta: "Customise Dog Miniature",
+    copy: "Hand-painted replicas of your dog from 4–5 clear photos. Lifelike enough that friends will do a double take.",
+    cta: "Start a pet figurine",
   },
   {
     key: "Cats",
     title: "Custom Cat Miniature",
-    tagline: "Lifelike feline detail from your photos",
+    tagline: "Your cat, frozen in miniature",
     fromPrice: "₹1,500",
     priceConfirmed: true,
-    image: "/images/cat-figurine.jpg",
-    copy: "From Persian to Indie cats, our studio artists hand-layer acrylic colors and fine details to honor your cat in physical form.",
-    cta: "Customise Cat Miniature",
+    image: "/images/cat-figurine-card.jpg",
+    copy: "Hand-painted replicas of your cat from 4–5 clear photos — same sizes and prices as our pet miniatures.",
+    cta: "Start a cat figurine",
   },
   {
-    key: "Humans",
-    title: "Custom Human Miniature",
-    tagline: "Individual portraits and milestone keepsakes",
-    fromPrice: "₹1,999",
-    priceConfirmed: true,
+    key: "Kids",
+    title: "Custom Kid Miniature",
+    tagline: "Little moments, kept forever",
+    fromPrice: "From ₹1,999",
+    priceConfirmed: false, // PENDING_ADARSH
     image: "/images/kid.webp",
-    copy: "Preserve a child's milestone or a personal portrait. 3D-sculpted directly from photographs and individually hand-detailed in Jalandhar.",
-    cta: "Customise Human Miniature",
+    copy: "A child's favourite pose or a family's newest member, turned into a keepsake you'll hold for decades.",
+    cta: "Start a kid figurine",
+  },
+  {
+    key: "Decor",
+    title: "Custom Decor",
+    tagline: "Showpieces for warm homes",
+    fromPrice: "From ₹1,499",
+    priceConfirmed: false, // PENDING_ADARSH
+    image: "/images/decor.webp",
+    copy: "Sculptural vases, stackable trays and custom decor — designed for your space, printed to order.",
+    cta: "Browse decor",
   },
 ];
 
@@ -93,55 +106,60 @@ export interface Faq {
   a: string;
 }
 
-/** FAQ content addressing pet and human miniature craftsmanship */
+/** FAQ content — round-2 wording: payment steps live in the dashboard, delivery 7–10 days. */
 export const FAQS: Faq[] = [
   {
-    q: "What is the price and size of a custom miniature?",
-    a: "Our custom 3D miniatures include an engraved brass plaque and free pan-India courier shipping. A 5-inch dog or cat miniature is ₹1,500 for slim breeds and ₹2,000 for bulky breeds. A 7-inch dog miniature starts at ₹1,700 for slim breeds. 5-inch human portrait miniatures start at ₹1,999.",
+    q: "What is the price and size of a custom pet miniature?",
+    a: "Our custom 3D pet miniatures come with a personalised name tag, and shipping is included. A 5-inch miniature is ₹1,500 for slim breeds and ₹2,000 for bulky breeds. A 7-inch miniature starts at ₹1,700 for slim breeds — the 7-inch bulky price is confirmed with you personally on WhatsApp.",
   },
   {
     q: "How does payment work?",
-    a: "You pay 75% advance to confirm your order and reserve your 3D sculpting slot. The remaining 25% balance is due only after you inspect and approve the finished 360-degree craft video of your piece.",
+    a: "Sign in to your dashboard and you'll see the payment steps for your order there. Every piece is custom-made for you, and we share pictures or a video of the finished product for your approval before it ships.",
   },
   {
     q: "How do I place an order?",
-    a: "Simply upload 4-5 clear photos (front face, side angles, full standing pose) on this page or send them directly via our WhatsApp link. We guide you through size selection, posture, and plaque text.",
+    a: "It's simple: send us 4–5 clear photos of your pet (or the person/subject), and we'll guide you through the rest — size, name tag text, pose and colour details.",
   },
   {
     q: "How long does delivery take?",
-    a: "3D CAD sculpting, resin printing, and hand-painting take 4-5 days. Pan-India courier delivery takes 6-7 days after your video approval.",
+    a: "Printing and hand-painting take 4–5 days. Delivery usually takes 7–10 days after that, depending on your location. We ship across India.",
   },
   {
-    q: "What kind of photos work best?",
-    a: "Clear, well-lit photos taken at eye level. Show the face straight-on and full body views so we accurately replicate fur patterns, colors, and proportions.",
+    q: "What kind of photos should I send?",
+    a: "Clear, well-lit photos work best — show the face from the front and the full body so we can match markings, colours and proportions. The more angles, the better the likeness.",
   },
   {
     q: "Will I see the figurine before it ships?",
-    a: "Yes. Every single order includes an approval step: our studio records a 360-degree turntable video of your completed piece and only ships after you confirm it looks right.",
+    a: "Yes. Every order includes an approval step: we share photos or a video of your finished piece and only ship it once you love it.",
   },
   {
-    q: "Why is Cash on Delivery not available?",
-    a: "Because each figurine is permanently personalized and bespoke to your photos. The 75% advance covers raw resin and artist allocation, and the 360-degree video proof guarantees your satisfaction before final dispatch.",
+    q: "Is Cash on Delivery available?",
+    a: "No — every piece is made to order just for you, so we take payment online. Sign in to see the payment steps for your order. The approval photos are your guarantee.",
+  },
+  {
+    q: "What is a DIKOR figurine made of?",
+    a: "Your piece is 3D-printed layer by layer and then hand-painted by our studio artists — a display keepsake, not a toy. Keep it dry and handle it with care.",
   },
 ];
 
-/** Customer-facing journey */
+/** Customer-facing journey, in plain language — mirrors the real order states. */
 export interface FlowStep {
   n: number;
   title: string;
   copy: string;
   eta?: string;
 }
-
 export const FLOW_STEPS: FlowStep[] = [
-  { n: 1, title: "Send 4-5 clear photos", copy: "Share front, side, and standing photos of your dog, cat, or portrait subject." },
-  { n: 2, title: "Pay 75% advance", copy: "Confirms your order and locks in studio sculpting and printing time." },
-  { n: 3, title: "We 3D-sculpt & hand-paint", copy: "Layer-by-layer resin 3D printing followed by acrylic hand-detailing by Jalandhar artists.", eta: "4-5 days" },
-  { n: 4, title: "Approve 360-degree video", copy: "Inspect every angle of the finished piece. We only ship once you give approval." },
-  { n: 5, title: "Pay 25% balance & courier ships", copy: "Clear the remaining 25% and your keepsake is couriered in an insured wooden crate.", eta: "6-7 days delivery" },
+  { n: 1, title: "Send 4–5 clear photos", copy: "Start here — share photos of your pet or subject. We'll guide you on size, pose and the name tag text." },
+  { n: 2, title: "Confirm your order", copy: "Your order is confirmed and your production slot is reserved. Payment details appear in your dashboard after you sign in." },
+  { n: 3, title: "We print & hand-paint", copy: "Your piece is 3D-printed layer by layer, then hand-painted by our artists.", eta: "4–5 days" },
+  { n: 4, title: "Approve your video", copy: "We send photos or a video of the finished piece. We only ship it when you say it's perfect." },
+  { n: 5, title: "Approve & we ship", copy: "Say it's perfect and your keepsake ships to your doorstep, packed with care.", eta: "7–10 days delivery" },
 ];
 
-/** Map public catalogue keys to database categories */
+/** Map public catalogue keys to database categories.
+ *  Kept from upstream: the builder works in Dogs / Cats / Humans and the API
+ *  stores Pets / Cats / Kids, so Dogs -> Pets and Humans -> Kids. */
 export function catalogKeyToStoreCategory(key: string): string {
   switch (key) {
     case "Dogs":
@@ -161,7 +179,7 @@ export function priceFor(categoryKey: string, sizeId?: string): number | null {
     if (opt && opt.price !== null) return opt.price;
   }
   if (categoryKey === "Dogs" || categoryKey === "Cats" || categoryKey === "Pets") return 1500;
-  if (categoryKey === "Humans") return 1999;
+  if (categoryKey === "Humans" || categoryKey === "Kids") return 1999;
   return 1500;
 }
 
@@ -172,7 +190,7 @@ export function splitFor(total: number) {
   return { advance, balance: total - advance };
 }
 
-/** Prefilled WhatsApp message for an order, or a generic enquiry */
+/** Prefilled WhatsApp message for an order, or a generic enquiry. */
 export function whatsappOrderLink(summary: string) {
   return `${WHATSAPP_LINK}?text=${encodeURIComponent(summary)}`;
 }

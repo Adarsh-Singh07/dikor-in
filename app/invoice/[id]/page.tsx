@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import BrandLogo, { DikorSeal } from "@/components/BrandLogo";
-import { Sparkle, GoldButton, GhostButton } from "@/components/ui";
+import { GoldButton, GhostButton } from "@/components/ui";
 
 interface OrderData {
   id: string;

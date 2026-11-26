@@ -48,17 +48,9 @@ export default function Cylinder<T>({
     pauseTimer.current = window.setTimeout(() => setPaused(false), 4000);
   }, []);
 
-  // idle auto-rotation
-  useEffect(() => {
-    if (paused || reduceMotion.current || n < 2) return;
-    let raf = 0;
-    const tick = () => {
-      setAngle((a) => a + 0.12);
-      raf = requestAnimationFrame(tick);
-    };
-    raf = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(raf);
-  }, [paused, n]);
+  // idle auto-rotation removed per the premium-editorial-design skill:
+  // the page has exactly ONE living moment (the hero sculpture). The cylinder
+  // moves only when the user drags it or uses the arrow keys / buttons.
 
   // inertia after drag release
   useEffect(() => {
@@ -156,7 +148,7 @@ export default function Cylinder<T>({
             tabIndex={-1}
           >←</button>
           <p className="text-xs font-semibold uppercase tracking-[0.2em] text-charcoal-muted">
-            {activeIndex + 1} / {n} · drag to spin
+            {activeIndex + 1} / {n} — drag to spin
           </p>
           <button
             className="grid h-11 w-11 place-items-center rounded-full border border-charcoal/15 bg-white/70 text-xl text-charcoal transition hover:border-rosegold"

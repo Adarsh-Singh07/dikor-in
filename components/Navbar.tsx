@@ -2,7 +2,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import BrandLogo from "./BrandLogo";
+import { Logo } from "./ui";
 import { useAuth, api } from "@/lib/client";
 
 const LINKS = [
@@ -11,6 +11,12 @@ const LINKS = [
   { href: "/how-it-works", label: "Craft Process" },
 ];
 
+/**
+ * Minimal nav (skill tell 28): wordmark left, 2–3 text links right, no blurry
+ * background, no border, no shadow, no CTA button — the glass dock is the CTA.
+ * Transparent over the dark hero (cream text on the home page at the top),
+ * solid cream once scrolled.
+ */
 export default function Navbar() {
   const pathname = usePathname();
   const router = useRouter();
@@ -31,25 +37,26 @@ export default function Navbar() {
     setOpen(false);
   };
 
-  return (
-    <header
-      className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
-        scrolled ? "bg-[#FAF7F2]/95 backdrop-blur-md shadow-card border-b border-charcoal/10" : "bg-transparent"
-      }`}
-    >
-      <nav className="mx-auto flex max-w-7xl items-center justify-between px-5 py-3.5 md:px-8">
-        <BrandLogo size="md" />
+  const isHome = pathname === "/";
+  const onDark = isHome && !scrolled;
+  const linkCls = (active: boolean) =>
+    `text-sm font-medium tracking-wide ${
+      active
+        ? onDark
+          ? "text-gold-light"
+          : "text-rosegold-dark"
+        : onDark
+          ? "text-cream/80 hover:text-gold-light"
+          : "text-charcoal-soft hover:text-rosegold-dark"
+    }`;
 
-        {/* Desktop Navigation Links */}
-        <div className="hidden items-center gap-7 md:flex">
+  return (
+    <header className={`fixed inset-x-0 top-0 z-50 ${scrolled ? "bg-cream" : "bg-transparent"}`}>
+      <nav className="mx-auto flex h-16 max-w-7xl items-center justify-between px-5 md:px-8">
+        <Logo dark={onDark} />
+        <div className="hidden items-center gap-8 md:flex">
           {LINKS.map((l) => (
-            <Link
-              key={l.href}
-              href={l.href}
-              className={`min-h-[44px] flex items-center text-xs font-bold uppercase tracking-[0.14em] transition-colors hover:text-rosegold-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rosegold-dark focus-visible:ring-offset-2 rounded-lg px-2 ${
-                pathname === l.href ? "text-rosegold-dark" : "text-charcoal"
-              }`}
-            >
+            <Link key={l.href} href={l.href} className={linkCls(pathname === l.href)}>
               {l.label}
             </Link>
           ))}
@@ -58,13 +65,13 @@ export default function Navbar() {
             <div className="flex items-center gap-4">
               <Link
                 href={me.role === "admin" ? "/admin" : "/dashboard"}
-                className="min-h-[44px] flex items-center text-xs font-bold uppercase tracking-[0.14em] text-charcoal hover:text-rosegold-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rosegold-dark rounded-lg px-2"
+                className={linkCls(pathname === (me.role === "admin" ? "/admin" : "/dashboard"))}
               >
                 {me.role === "admin" ? "Studio Panel" : "My Orders"}
               </Link>
               <button
                 onClick={logout}
-                className="min-h-[44px] px-3 flex items-center text-xs font-bold uppercase tracking-[0.14em] text-charcoal-muted hover:text-charcoal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rosegold-dark rounded-lg"
+                className={`text-sm font-medium ${onDark ? "text-cream/60 hover:text-cream" : "text-charcoal-muted hover:text-charcoal"}`}
               >
                 Sign out
               </button>
@@ -73,31 +80,22 @@ export default function Navbar() {
               </span>
             </div>
           ) : (
-            <div className="flex items-center gap-4">
-              <Link
-                href="/auth"
-                className="min-h-[44px] flex items-center text-xs font-bold uppercase tracking-[0.14em] text-charcoal hover:text-rosegold-dark focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rosegold-dark rounded-lg px-3"
-              >
-                Sign In
-              </Link>
-              <Link
-                href="/order"
-                className="inline-flex min-h-[44px] items-center justify-center rounded-full bg-gradient-to-r from-[#D4AF37] via-[#C5A059] to-[#E2CA76] px-6 py-2.5 text-xs font-bold uppercase tracking-[0.14em] text-charcoal shadow-gold transition-transform hover:scale-[1.03] active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rosegold-dark focus-visible:ring-offset-2"
-              >
-                Start Order
-              </Link>
-            </div>
+            <Link href="/auth" className={linkCls(pathname === "/auth")}>
+              Sign in
+            </Link>
           )}
         </div>
 
         {/* Mobile menu trigger: 44px by 44px min tap target */}
         <button
-          className="grid h-11 w-11 min-h-[44px] min-w-[44px] place-items-center rounded-full border border-charcoal/20 bg-white/70 text-charcoal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rosegold-dark md:hidden"
+          className={`grid h-10 w-10 place-items-center rounded-full border md:hidden ${
+            onDark ? "border-cream/30 text-cream" : "border-charcoal/15 text-charcoal"
+          }`}
           onClick={() => setOpen(!open)}
           aria-expanded={open}
           aria-label={open ? "Close Navigation Menu" : "Open Navigation Menu"}
         >
-          <span className="text-xl font-bold leading-none">{open ? "✕" : "☰"}</span>
+          <span className="text-xl">{open ? "✕" : "☰"}</span>
         </button>
       </nav>
 
@@ -135,24 +133,7 @@ export default function Navbar() {
                 </button>
               </>
             ) : (
-              <>
-                <Link
-                  href="/auth"
-                  onClick={() => setOpen(false)}
-                  className="min-h-[44px] flex items-center text-sm font-semibold text-charcoal px-2"
-                >
-                  Customer Sign In
-                </Link>
-                <div className="pt-2">
-                  <Link
-                    href="/order"
-                    onClick={() => setOpen(false)}
-                    className="flex min-h-[44px] w-full items-center justify-center rounded-full bg-gradient-to-r from-[#D4AF37] via-[#C5A059] to-[#E2CA76] px-6 text-center text-xs font-bold uppercase tracking-[0.14em] text-charcoal shadow-gold"
-                  >
-                    Start Order
-                  </Link>
-                </div>
-              </>
+              <Link href="/auth" onClick={() => setOpen(false)} className="py-1 text-charcoal-soft">Sign in</Link>
             )}
           </div>
         </div>

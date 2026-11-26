@@ -22,7 +22,7 @@ const config: Config = {
         gold: {
           light: "#E9CE7A",
           DEFAULT: "#C9A227",
-          dark: "#A8861B",
+          dark: "#7C6510",
         },
         charcoal: {
           DEFAULT: "#2A2320",
@@ -34,6 +34,7 @@ const config: Config = {
       fontFamily: {
         display: ["var(--font-display)", "Georgia", "serif"],
         body: ["var(--font-body)", "system-ui", "sans-serif"],
+        grotesk: ["var(--font-grotesk)", "Archivo", "system-ui", "sans-serif"],
       },
       boxShadow: {
         soft: "0 10px 40px -12px rgba(183, 110, 121, 0.25)",

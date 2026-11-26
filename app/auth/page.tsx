@@ -2,8 +2,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Reveal } from "@/components/Reveal";
-import { GoldButton, Field, inputCls, Sparkle } from "@/components/ui";
-import BrandLogo from "@/components/BrandLogo";
+import { GoldButton, Field, inputCls, DemoBadge } from "@/components/ui";
 import { api, useAuth } from "@/lib/client";
 
 type Mode = "login" | "signup";
@@ -60,43 +59,40 @@ export default function AuthPage() {
 
   return (
     <div className="mx-auto flex min-h-screen max-w-7xl items-center justify-center px-5 pb-20 pt-32 md:px-8">
-      <div className="grid w-full max-w-4xl overflow-hidden rounded-[2.5rem] bg-white shadow-soft md:grid-cols-2 border border-gold/30">
-        {/* Brand visual panel */}
-        <div className="relative hidden flex-col justify-between bg-gradient-to-br from-charcoal via-[#332a26] to-[#1f1a18] p-10 text-cream md:flex">
-          <BrandLogo size="md" theme="dark" variant="full" />
-          <div className="my-auto py-12">
-            <span className="text-xs uppercase tracking-[0.24em] font-bold text-gold flex items-center gap-1.5 mb-3">
-              <Sparkle className="w-3.5 h-3.5 text-gold" /> DIKOR Keepsake Account
-            </span>
-            <h2 className="font-serif text-3xl md:text-4xl leading-tight text-white font-bold">
-              Your keepsake journey begins here.
-            </h2>
-            <p className="mt-4 text-cream/70 text-sm leading-relaxed">
-              Track live 3D print progress, view &amp; approve your 360° video proof, and download official tax invoices.
+      <div className="grid w-full max-w-4xl overflow-hidden rounded-sm border border-charcoal/10 bg-white md:grid-cols-2">
+        {/* brand panel */}
+        <div className="relative hidden flex-col justify-between bg-charcoal p-10 text-cream md:flex">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/brand/dikor-logo-light.svg" alt="DIKOR" className="h-12 w-auto shrink-0 self-start" draggable={false} />
+          <div>
+            <h2 className="mt-8 font-display text-4xl leading-tight">Your keepsake journey begins here.</h2>
+            <p className="mt-4 text-cream/70">
+              Track print progress, approve your video proof, and download tax invoices — all from your dashboard.
             </p>
-            <div className="mt-6 p-4 rounded-2xl bg-white/5 border border-white/10 text-xs text-cream/80">
-              <p className="font-semibold text-gold">Placed a Guest WhatsApp Order?</p>
-              <p className="text-[11px] text-cream/60 mt-1">
-                Enter the same mobile number or email you used on WhatsApp :  all your orders will be instantly linked to your account!
+            <div className="mt-6 border border-white/10 bg-white/5 p-4 text-xs text-cream/80">
+              <p className="font-semibold text-gold-light">Placed a Guest WhatsApp Order?</p>
+              <p className="mt-1 text-cream/60">
+                Enter the same mobile number or email you used on WhatsApp — all your orders will be instantly linked to your account.
               </p>
             </div>
           </div>
-          <p className="text-[10px] uppercase tracking-[0.24em] text-cream/50">dikor.in &bull; Jalandhar, Punjab</p>
+          <p className="text-xs uppercase tracking-[0.24em] text-cream/50">dikor.in — made with precision</p>
         </div>
 
         {/* Form panel */}
         <div className="p-8 md:p-10">
           <Reveal>
-            <div className="mb-6">
-              <h1 className="font-serif text-3xl font-bold text-charcoal">
-                {mode === "login" ? "Welcome Back" : "Create Account"}
+            <div className="mb-6 flex items-center gap-3">
+              <h1 className="font-display text-4xl text-charcoal">
+                {mode === "login" ? "Welcome back" : "Join DIKOR"}
               </h1>
-              <p className="text-xs text-charcoal-muted mt-1">
-                {mode === "login"
-                  ? "Access your studio dashboard and orders"
-                  : "Sign up to track and approve your 3D miniature"}
-              </p>
+              <DemoBadge />
             </div>
+            <p className="mb-6 text-xs text-charcoal-muted">
+              {mode === "login"
+                ? "Access your studio dashboard and orders"
+                : "Sign up to track and approve your 3D miniature"}
+            </p>
 
             <div className="mb-6 grid grid-cols-2 rounded-full bg-cream-dark p-1">
               {(["login", "signup"] as Mode[]).map((m) => (
@@ -107,7 +103,7 @@ export default function AuthPage() {
                     setError("");
                   }}
                   className={`rounded-full py-2.5 text-xs font-bold uppercase tracking-[0.16em] transition-all ${
-                    mode === m ? "bg-white text-charcoal shadow-card" : "text-charcoal-muted"
+                    mode === m ? "border border-charcoal/10 bg-white text-charcoal" : "text-charcoal-muted"
                   }`}
                 >
                   {m === "login" ? "Sign in" : "Sign up"}
@@ -165,33 +161,32 @@ export default function AuthPage() {
                 />
               </Field>
 
-              {error && <p className="rounded-2xl bg-red-50 px-4 py-3 text-xs text-red-700 font-medium">{error}</p>}
+              {error && <p className="rounded-sm bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>}
 
               <GoldButton type="submit" disabled={busy} className="w-full">
                 {busy ? "Authorizing..." : mode === "login" ? "Sign In to Dashboard" : "Create My Account"}
               </GoldButton>
             </form>
 
-            <div className="mt-8 rounded-2xl bg-cream-dark/60 p-4 border border-charcoal/10">
-              <p className="mb-2.5 text-[11px] font-bold uppercase tracking-[0.18em] text-charcoal-muted">
-                Studio Test Accounts (One-Tap):
-              </p>
-              <div className="flex flex-wrap gap-2">
+            <div className="mt-8 rounded-sm border border-charcoal/10 bg-cream-dark p-5">
+              <p className="mb-3 text-xs font-bold uppercase tracking-[0.2em] text-charcoal-soft">Try the demo — one tap</p>
+              <div className="flex flex-wrap gap-3">
                 <button
                   type="button"
                   onClick={() => fill("customer@demo.in", "demo123")}
-                  className="rounded-full border border-rosegold/40 bg-white px-3 py-1.5 text-xs font-semibold text-rosegold-dark transition hover:bg-blush"
+                  className="rounded-full border border-rosegold/40 bg-white px-4 py-2 text-xs font-semibold text-rosegold-dark transition hover:bg-blush"
                 >
-                  Customer Account
+                  Customer demo
                 </button>
                 <button
                   type="button"
                   onClick={() => fill("admin@demo.in", "admin123")}
-                  className="rounded-full border border-gold/50 bg-white px-3 py-1.5 text-xs font-semibold text-gold-dark transition hover:bg-cream"
+                  className="rounded-full border border-gold/50 bg-white px-4 py-2 text-xs font-semibold text-gold-dark transition hover:bg-cream"
                 >
-                  Studio Admin
+                  Studio admin demo
                 </button>
               </div>
+              <p className="mt-3 text-xs text-charcoal-muted">customer@demo.in / demo123, admin@demo.in / admin123</p>
             </div>
           </Reveal>
         </div>

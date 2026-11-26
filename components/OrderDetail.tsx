@@ -5,21 +5,16 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Reveal } from "@/components/Reveal";
 import OrderTimeline from "@/components/OrderTimeline";
-import { StatusPill, Sparkle, GoldButton, GhostButton, Field, inputCls } from "@/components/ui";
+import { StatusPill, GoldButton, GhostButton, Field, inputCls } from "@/components/ui";
 import { api } from "@/lib/client";
 import { inr, advanceAmount, balanceAmount, type Order } from "@/lib/types";
 
 function Card({ children, className = "" }: { children: React.ReactNode; className?: string }) {
-  return <div className={`rounded-3xl bg-white p-6 shadow-card md:p-8 ${className}`}>{children}</div>;
+  return <div className={`rounded-sm border border-charcoal/10 bg-white p-6 md:p-8 ${className}`}>{children}</div>;
 }
 
 function CardTitle({ children }: { children: React.ReactNode }) {
-  return (
-    <h2 className="mb-5 flex items-center gap-2 font-serif text-2xl text-charcoal font-bold">
-      <Sparkle className="h-4 w-4 text-gold" />
-      {children}
-    </h2>
-  );
+  return <h2 className="mb-5 font-display text-2xl text-charcoal">{children}</h2>;
 }
 
 export default function OrderDetail({ id, backHref }: { id: string; backHref: string }) {
@@ -101,9 +96,7 @@ export default function OrderDetail({ id, backHref }: { id: string; backHref: st
   return (
     <div className="mx-auto max-w-6xl px-5 pb-28 pt-32 md:px-8">
       <Reveal>
-        <Link href={backHref} className="text-xs font-semibold uppercase tracking-wider text-charcoal-muted hover:text-rosegold-dark">
-          ← Back
-        </Link>
+        <Link href={backHref} className="text-sm text-charcoal-muted hover:text-rosegold-dark">Back</Link>
         <div className="mt-3 flex flex-wrap items-start justify-between gap-4">
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.24em] text-gold-dark">{order.category} &bull; #{order.id}</p>
@@ -112,8 +105,7 @@ export default function OrderDetail({ id, backHref }: { id: string; backHref: st
           <StatusPill status={order.status} />
         </div>
       </Reveal>
-
-      {error && <p className="mt-4 rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>}
+      {error && <p className="mt-4 rounded-sm bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>}
 
       {/* Guest claim notification banner */}
       {!order.userId && (
@@ -138,7 +130,7 @@ export default function OrderDetail({ id, backHref }: { id: string; backHref: st
                 {order.photos && order.photos.length > 0 ? (
                   order.photos.map((p, i) => (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img key={i} src={p} alt={`Reference ${i + 1}`} className="aspect-square w-full rounded-2xl border border-charcoal/10 object-cover" />
+                    <img key={i} src={p} alt={`Reference ${i + 1}`} className="aspect-square w-full rounded-sm border border-charcoal/10 object-cover" />
                   ))
                 ) : (
                   <p className="text-xs text-charcoal-muted col-span-3">Photos received on WhatsApp chat.</p>
@@ -165,24 +157,24 @@ export default function OrderDetail({ id, backHref }: { id: string; backHref: st
               <CardTitle>Price & Split Payment Breakdown</CardTitle>
               {order.totalPrice ? (
                 <div className="grid gap-4 sm:grid-cols-3">
-                  <div className="rounded-2xl bg-cream p-5">
+                  <div className="rounded-sm bg-cream p-5">
                     <p className="text-xs uppercase tracking-[0.18em] text-charcoal-muted font-bold">Total Price</p>
-                    <p className="mt-1 font-serif text-3xl font-bold text-charcoal">{inr(order.totalPrice)}</p>
+                    <p className="mt-1 font-display text-3xl text-charcoal">{inr(order.totalPrice)}</p>
                     <p className="mt-1 text-xs text-emerald-800 font-semibold">Free Pan-India Delivery</p>
                   </div>
-                  <div className="rounded-2xl bg-cream p-5">
+                  <div className="rounded-sm bg-cream p-5">
                     <p className="text-xs uppercase tracking-[0.18em] text-charcoal-muted font-bold">75% Advance</p>
-                    <p className="mt-1 font-serif text-3xl font-bold text-charcoal">{inr(adv)}</p>
+                    <p className="mt-1 font-display text-3xl text-charcoal">{inr(adv)}</p>
                     <p className="mt-1 text-xs font-semibold">{order.advancePaid ? <span className="text-emerald-700">✓ Paid via Easebuzz</span> : "Due to begin 3D print"}</p>
                   </div>
-                  <div className="rounded-2xl bg-cream p-5">
+                  <div className="rounded-sm bg-cream p-5">
                     <p className="text-xs uppercase tracking-[0.18em] text-charcoal-muted font-bold">25% Balance</p>
-                    <p className="mt-1 font-serif text-3xl font-bold text-charcoal">{inr(bal)}</p>
+                    <p className="mt-1 font-display text-3xl text-charcoal">{inr(bal)}</p>
                     <p className="mt-1 text-xs font-semibold">{order.balancePaid ? <span className="text-emerald-700">✓ Paid</span> : "Due only after you approve video"}</p>
                   </div>
                 </div>
               ) : (
-                <p className="rounded-2xl bg-cream-dark px-5 py-4 text-sm text-charcoal-muted">
+                <p className="rounded-sm bg-cream-dark px-5 py-4 text-sm text-charcoal-muted">
                   Our studio is confirming your price on WhatsApp.
                 </p>
               )}
@@ -208,13 +200,12 @@ export default function OrderDetail({ id, backHref }: { id: string; backHref: st
               <Card className="border border-gold/40">
                 <CardTitle>360° Craft Proof: Inspect Before It Ships</CardTitle>
                 {order.approvalVideoUrl ? (
-                  <video src={order.approvalVideoUrl} controls className="aspect-video w-full rounded-2xl bg-charcoal" />
+                  <video src={order.approvalVideoUrl} controls className="aspect-video w-full rounded-sm bg-charcoal" />
                 ) : (
-                  <div className="grid aspect-video w-full place-items-center rounded-2xl bg-gradient-to-br from-cream-dark to-blush">
+                  <div className="grid aspect-video w-full place-items-center rounded-sm bg-cream-dark">
                     <div className="text-center p-6">
-                      <div className="mx-auto w-12 h-12 rounded-full bg-rosegold/10 text-rosegold-dark grid place-items-center text-xl">🎬</div>
-                      <p className="mt-2 text-sm font-semibold text-charcoal">Studio Craft Video Proof Ready</p>
-                      <p className="text-xs text-charcoal-muted mt-1">Our artists have finished 3D printing & hand-painting.</p>
+                      <p className="mt-2 text-sm font-semibold text-charcoal">Approval video not shared yet</p>
+                      <p className="text-xs text-charcoal-muted mt-1">We share photos or a video of the finished piece for your approval before anything ships.</p>
                     </div>
                   </div>
                 )}
@@ -235,14 +226,9 @@ export default function OrderDetail({ id, backHref }: { id: string; backHref: st
                         </GhostButton>
                       </div>
                     ) : (
-                      <div className="space-y-3 rounded-2xl bg-cream p-5">
-                        <Field label="What would you like our artist to tweak?">
-                          <textarea
-                            className={`${inputCls} min-h-20`}
-                            value={revNote}
-                            onChange={(e) => setRevNote(e.target.value)}
-                            placeholder="e.g. Please darken the spot around the left ear slightly..."
-                          />
+                      <div className="space-y-3 rounded-sm bg-cream p-5">
+                        <Field label="What should we tweak?">
+                          <textarea className={`${inputCls} min-h-20`} value={revNote} onChange={(e) => setRevNote(e.target.value)} placeholder="e.g. make the ears a touch darker…" />
                         </Field>
                         <div className="flex gap-3">
                           <GoldButton
@@ -287,7 +273,7 @@ export default function OrderDetail({ id, backHref }: { id: string; backHref: st
           {/* Tracking & Delivery Completed with Invoice */}
           {["shipped", "delivered"].includes(order.status) && (
             <Reveal>
-              <Card className="bg-gradient-to-br from-cream to-white border-2 border-gold/40">
+              <Card className="border border-gold/40">
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                   <div>
                     <span className="text-[10px] uppercase tracking-widest font-bold text-emerald-800 bg-emerald-100 px-3 py-1 rounded-full">

@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Reveal } from "@/components/Reveal";
 import OrderTimeline from "@/components/OrderTimeline";
-import { StatusPill, Sparkle, GoldButton, GhostButton, Field, inputCls } from "@/components/ui";
+import { StatusPill, GoldButton, GhostButton, Field, inputCls } from "@/components/ui";
 import { api, fileToDataURL } from "@/lib/client";
 import { inr, type Order, type OrderStatus } from "@/lib/types";
 
@@ -18,8 +18,6 @@ const NEXT: { from: OrderStatus[]; to: OrderStatus; label: string; note: string 
   { from: ["shipped"], to: "delivered", label: "Mark Delivered (Generates Tax Invoice)", note: "Delivered to customer doorstep" },
 ];
 
-const STAGES = ["3D CAD Sculpting", "SLA Resin 3D Printing", "Layer Curing & Sanding", "Artisan Hand-Painting", "UV Clear Coating", "Quality Inspection", "Velvet Wooden Crate Packing"];
-
 export default function AdminOrderDetail({ id }: { id: string }) {
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
@@ -30,7 +28,6 @@ export default function AdminOrderDetail({ id }: { id: string }) {
   const [courierPartner, setCourierPartner] = useState("BlueDart Express");
   const [approvalVideoUrl, setApprovalVideoUrl] = useState("");
   const [studioNotes, setStudioNotes] = useState("");
-  const [stage, setStage] = useState(STAGES[1]);
 
   useEffect(() => {
     let live = true;
@@ -102,7 +99,7 @@ export default function AdminOrderDetail({ id }: { id: string }) {
     <div className="mx-auto max-w-6xl px-5 pb-28 pt-32 md:px-8">
       <Reveal>
         <div className="flex items-center justify-between">
-          <Link href="/admin" className="text-sm font-semibold text-charcoal-muted hover:text-rosegold-dark">← All Orders</Link>
+          <Link href="/admin" className="text-sm text-charcoal-muted hover:text-rosegold-dark">All orders</Link>
           <div className="flex gap-2">
             <a
               href={waUpdateUrl}
@@ -125,34 +122,31 @@ export default function AdminOrderDetail({ id }: { id: string }) {
         <div className="mt-4 flex flex-wrap items-start justify-between gap-4">
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.24em] text-gold-dark">{order.category} &bull; #{order.id}</p>
-            <h1 className="mt-1 font-serif text-3xl md:text-4xl text-charcoal font-bold">{order.title}</h1>
+            <h1 className="mt-1 font-display text-4xl text-charcoal">{order.title}</h1>
             <p className="text-xs text-charcoal-muted mt-1">Client: <strong>{order.customerName}</strong> ({order.customerPhone || order.customerEmail || "Guest"}) &bull; Placed via {order.source || "web"}</p>
           </div>
           <StatusPill status={order.status} />
         </div>
       </Reveal>
-
-      {error && <p className="mt-4 rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>}
+      {error && <p className="mt-4 rounded-sm bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>}
 
       <div className="mt-8 grid gap-6 lg:grid-cols-3">
         <div className="space-y-6 lg:col-span-2">
           {/* Photos and Customer brief */}
           <Reveal>
-            <div className="rounded-3xl bg-white p-6 shadow-card md:p-8">
-              <h2 className="mb-4 flex items-center gap-2 font-serif text-2xl text-charcoal font-bold">
-                <Sparkle className="h-4 w-4 text-gold" /> Reference Photos & Specs
-              </h2>
+            <div className="rounded-sm border border-charcoal/10 bg-white p-6 md:p-8">
+              <h2 className="mb-4 font-display text-2xl text-charcoal">Reference Photos & Specs</h2>
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
                 {order.photos && order.photos.length > 0 ? (
                   order.photos.map((p, i) => (
                     // eslint-disable-next-line @next/next/no-img-element
-                    <img key={i} src={p} alt={`Reference ${i + 1}`} className="aspect-square w-full rounded-2xl border border-charcoal/10 object-cover" />
+                    <img key={i} src={p} alt={`Reference ${i + 1}`} className="aspect-square w-full rounded-sm border border-charcoal/10 object-cover" />
                   ))
                 ) : (
                   <p className="text-xs text-charcoal-muted col-span-4">No uploaded photos. Customer communicating on WhatsApp.</p>
                 )}
               </div>
-              <div className="mt-4 space-y-1 text-xs text-charcoal-soft bg-cream/40 p-4 rounded-2xl">
+              <div className="mt-4 space-y-1 text-xs text-charcoal-soft bg-cream/40 p-4 rounded-sm">
                 <p><strong>Engraved Brass Plaque:</strong> &ldquo;{order.tagText || order.subjectName || "DIKOR"}&rdquo;</p>
                 <p><strong>Scale & Size:</strong> {order.size}</p>
                 <p><strong>Shipping City:</strong> {order.city || "Pan India"}</p>
@@ -163,10 +157,8 @@ export default function AdminOrderDetail({ id }: { id: string }) {
 
           {/* Pricing & Split Payment Overrides */}
           <Reveal>
-            <div className="rounded-3xl bg-white p-6 shadow-card md:p-8">
-              <h2 className="mb-4 flex items-center gap-2 font-serif text-2xl text-charcoal font-bold">
-                <Sparkle className="h-4 w-4 text-gold" /> Pricing & Payment Split
-              </h2>
+            <div className="rounded-sm border border-charcoal/10 bg-white p-6 md:p-8">
+              <h2 className="mb-4 font-display text-2xl text-charcoal">Pricing & Payment Split</h2>
               <div className="grid gap-4 sm:grid-cols-2">
                 <Field label="Total Price (₹)">
                   <input
@@ -216,14 +208,12 @@ export default function AdminOrderDetail({ id }: { id: string }) {
 
           {/* Approval Video Proof */}
           <Reveal>
-            <div className="rounded-3xl border border-gold/30 bg-white p-6 shadow-card md:p-8">
-              <h2 className="mb-4 flex items-center gap-2 font-serif text-2xl text-charcoal font-bold">
-                <Sparkle className="h-4 w-4 text-gold" /> 360° Craft Approval Video
-              </h2>
+            <div className="rounded-sm border border-gold/30 bg-white p-6 md:p-8">
+              <h2 className="mb-4 font-display text-2xl text-charcoal">360° Craft Approval Video</h2>
               {order.approvalVideoUrl ? (
-                <video src={order.approvalVideoUrl} controls className="aspect-video w-full rounded-2xl bg-charcoal" />
+                <video src={order.approvalVideoUrl} controls className="aspect-video w-full rounded-sm bg-charcoal" />
               ) : (
-                <p className="rounded-2xl bg-cream-dark px-5 py-4 text-xs text-charcoal-muted">No approval video shared yet.</p>
+                <p className="rounded-sm bg-cream-dark px-5 py-4 text-xs text-charcoal-muted">No approval video shared yet.</p>
               )}
               <div className="mt-4 grid gap-4 sm:grid-cols-2">
                 <Field label="Upload Video (≤25MB)">
@@ -238,10 +228,8 @@ export default function AdminOrderDetail({ id }: { id: string }) {
 
           {/* Shipping Details */}
           <Reveal>
-            <div className="rounded-3xl bg-white p-6 shadow-card md:p-8">
-              <h2 className="mb-4 flex items-center gap-2 font-serif text-2xl text-charcoal font-bold">
-                <Sparkle className="h-4 w-4 text-gold" /> Shipping & Dispatch Details
-              </h2>
+            <div className="rounded-sm border border-charcoal/10 bg-white p-6 md:p-8">
+              <h2 className="mb-4 font-display text-2xl text-charcoal">Shipping & Dispatch Details</h2>
               <div className="grid gap-4 sm:grid-cols-2">
                 <Field label="Courier Partner">
                   <input
@@ -272,10 +260,8 @@ export default function AdminOrderDetail({ id }: { id: string }) {
 
           {/* Status Pipeline Step Advance */}
           <Reveal>
-            <div className="rounded-3xl bg-white p-6 shadow-card md:p-8">
-              <h2 className="mb-4 flex items-center gap-2 font-serif text-2xl text-charcoal font-bold">
-                <Sparkle className="h-4 w-4 text-gold" /> Advance Order Status
-              </h2>
+            <div className="rounded-sm border border-charcoal/10 bg-white p-6 md:p-8">
+              <h2 className="mb-4 font-display text-2xl text-charcoal">Advance Order Status</h2>
               <div className="flex flex-wrap gap-3">
                 {NEXT.filter((n) => n.from.includes(order.status)).map((n) => (
                   <GoldButton
@@ -286,6 +272,11 @@ export default function AdminOrderDetail({ id }: { id: string }) {
                     {n.label}
                   </GoldButton>
                 ))}
+                {NEXT.every((n) => !n.from.includes(order.status)) && (
+                  <p className="text-sm text-charcoal-muted">
+                    {order.status === "delivered" ? "This order is complete." : "Waiting on the customer for the next step."}
+                  </p>
+                )}
               </div>
             </div>
           </Reveal>
@@ -294,10 +285,8 @@ export default function AdminOrderDetail({ id }: { id: string }) {
         {/* Sidebar Journey */}
         <div className="lg:sticky lg:top-28 lg:self-start space-y-6">
           <Reveal delay={0.1}>
-            <div className="rounded-3xl bg-white p-6 shadow-card md:p-8">
-              <h2 className="mb-5 flex items-center gap-2 font-serif text-2xl text-charcoal font-bold">
-                <Sparkle className="h-4 w-4 text-gold" /> Milestone Progress
-              </h2>
+            <div className="rounded-sm border border-charcoal/10 bg-white p-6 md:p-8">
+              <h2 className="mb-5 font-display text-2xl text-charcoal">Journey</h2>
               <OrderTimeline status={order.status} />
               <div className="mt-6 border-t border-charcoal/10 pt-5 text-xs space-y-2">
                 <div className="flex justify-between">

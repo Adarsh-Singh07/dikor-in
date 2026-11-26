@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import Link from "next/link";
-import { Sparkle, GoldButton, GhostButton, StatusPill } from "@/components/ui";
+import { GoldButton, GhostButton, StatusPill } from "@/components/ui";
 import BrandLogo from "@/components/BrandLogo";
 import type { DBOrder, DBProduct, OrderStatus, Category } from "@/lib/db";
 import { inr, whatsappOrderLink } from "@/lib/catalog";
@@ -143,7 +143,7 @@ export default function AdminDashboardView({
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-charcoal/10 pb-6">
         <div>
           <span className="text-xs uppercase tracking-[0.24em] font-bold text-rosegold-dark flex items-center gap-1.5">
-            <Sparkle className="w-3.5 h-3.5 text-gold" /> DIKOR Studio Headquarters
+            DIKOR Studio Headquarters
           </span>
           <h1 className="font-serif text-3xl md:text-4xl font-bold text-charcoal mt-1">Artisan Command Center</h1>
           <p className="text-xs text-charcoal-muted mt-1">Signed in as {adminName} &bull; Pan-India Production & Order Fulfillment</p>
@@ -393,9 +393,8 @@ export default function AdminDashboardView({
                   className="w-full rounded-xl border border-charcoal/20 px-3.5 py-2.5 text-xs focus:outline-none"
                 >
                   <option value="Pets">Pets (Dog / Cat)</option>
-                  <option value="Couples">Couples</option>
+                  <option value="Cats">Cats</option>
                   <option value="Kids">Kids</option>
-                  <option value="Idols">Religious / Idols</option>
                   <option value="Decor">Custom Decor</option>
                 </select>
               </div>

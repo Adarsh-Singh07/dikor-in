@@ -140,12 +140,6 @@ export const REVIEWS: Review[] = [
     date: "Sep 2026",
   },
   {
-    quote:
-      "Radha Krishna aaj mil gaye aur main bahut khush hu 😍 Aap logon ne itne pyaar aur mehnat se banaya hai… dekhte hi mann khush ho gaya. Finishing bhi kamaal ki hai aur packaging bhi bahut secure thi. Thank you so much 🙏 and wishing you both all the very best for the future, keep up the good work 😊",
-    context: "3D printed Radha Krishna",
-    date: "Oct 2026",
-  },
-  {
     quote: "THANK YOU SO MUCH!",
     handle: "rubysaini1560",
     context: "Personalised name signs",
